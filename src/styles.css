@@ -57,6 +57,14 @@ p { line-height:1.6; color:#526a7f; }
 .product-card,.panel,.notice { margin:18px 0; border-radius:18px; padding:16px; border:1px solid #d9e8f0; background:#f9fcfe; }
 .product-card div { display:flex; justify-content:space-between; gap:16px; padding:8px 0; border-bottom:1px solid #e7f0f5; }.product-card div:last-child{border-bottom:0}.product-card span{color:#71879a}.product-card strong{text-align:right}
 .notice { background:#eef8fb; color:#3f6177; }
+.medauth-logo {
+  width: 180px;
+  max-width: 70%;
+  height: auto;
+  display: block;
+  margin: 0 auto 12px;
+  object-fit: contain;
+}
 .details-list { margin:20px 0; border-top:1px solid #dfebf2; }
 .detail-row { display:grid; grid-template-columns:1fr 1.3fr; gap:18px; padding:15px 0; border-bottom:1px solid #dfebf2; }.detail-row span{color:#6e8396}.detail-row strong{text-align:right;word-break:break-word}
 .success-badge { background:linear-gradient(135deg,var(--brand-blue),var(--brand-teal)); width:84px;height:84px;font-size:2.8rem; }
