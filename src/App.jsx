@@ -63,7 +63,21 @@ export default function App() {
           </label>
         </div>
       </header>
+<div className="hero">
+  <img
+    src="/medauth/medauth-logo.png"
+    alt="MedAuth"
+    className="medauth-logo"
+  />
 
+  <p className="brand-line">Verify. Trust. Protect.</p>
+
+  <h1>Verify your medicine in seconds.</h1>
+
+  <p className="hero-copy">
+    Scan. Check. Stay informed.
+  </p>
+</div>
       <main className="phone-stage">
         {screen === "home" && (
           <section className="screen hero-screen">
