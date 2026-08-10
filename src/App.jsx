@@ -131,77 +131,73 @@ export default function App() {
         "--brand-aqua": palette.aqua,
       }}
     >
-      {/* TOP CONNECTION STATUS */}
-
-      <header className="topbar">
-        <div
-          className="topbar-spacer"
-          aria-hidden="true"
-        />
-
-        <NetworkBadge
-          offline={offline}
-          onToggle={() =>
-            setOffline(
-              (current) => !current
-            )
-          }
-        />
-      </header>
-
       <main className="phone-stage">
 
-        {/* ==============================
+        {/* ============================
             HOME
-        ============================== */}
+        ============================ */}
 
         {screen === "home" && (
           <section className="screen home-screen">
 
-            <div className="home-brand">
-              <img
-                className="hero-logo"
-                src={`${import.meta.env.BASE_URL}medauth-logo.png`}
-                alt="MedAuth"
+            <div className="home-status-row">
+              <NetworkBadge
+                offline={offline}
+                onToggle={() =>
+                  setOffline(
+                    (current) => !current
+                  )
+                }
               />
             </div>
 
-            <div className="home-actions">
+            <div className="home-content">
 
-              <PrimaryButton
-                onClick={() =>
-                  setScreen("scan")
-                }
-              >
-                Scan Medicine
-              </PrimaryButton>
+              <div className="home-brand">
+                <img
+                  className="hero-logo"
+                  src={`${import.meta.env.BASE_URL}medauth-logo.png`}
+                  alt="MedAuth"
+                />
+              </div>
 
-              <SecondaryButton
-                onClick={() =>
-                  setScreen("manual")
-                }
-              >
-                Enter Code Instead
-              </SecondaryButton>
+              <div className="home-actions">
 
-              <button
-                className="login-link"
-                type="button"
-                onClick={() =>
-                  setScreen("login")
-                }
-              >
-                Log In
-              </button>
+                <PrimaryButton
+                  onClick={() =>
+                    setScreen("scan")
+                  }
+                >
+                  Scan Medicine
+                </PrimaryButton>
 
+                <SecondaryButton
+                  onClick={() =>
+                    setScreen("manual")
+                  }
+                >
+                  Enter Code Instead
+                </SecondaryButton>
+
+                <button
+                  className="login-link"
+                  type="button"
+                  onClick={() =>
+                    setScreen("login")
+                  }
+                >
+                  Log In
+                </button>
+
+              </div>
             </div>
 
           </section>
         )}
 
-        {/* ==============================
-            SCANNER
-        ============================== */}
+        {/* ============================
+            SCAN
+        ============================ */}
 
         {screen === "scan" && (
           <section className="screen">
@@ -300,9 +296,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ==============================
+        {/* ============================
             MANUAL ENTRY
-        ============================== */}
+        ============================ */}
 
         {screen === "manual" && (
           <section className="screen">
@@ -316,7 +312,6 @@ export default function App() {
             </h1>
 
             <label className="field">
-
               Product code
 
               <input
@@ -328,11 +323,9 @@ export default function App() {
                 }
                 placeholder="e.g. MED-001"
               />
-
             </label>
 
             <label className="field">
-
               Batch (optional)
 
               <input
@@ -344,7 +337,6 @@ export default function App() {
                 }
                 placeholder="e.g. B1001"
               />
-
             </label>
 
             <PrimaryButton
@@ -364,17 +356,12 @@ export default function App() {
           </section>
         )}
 
-        {/* ==============================
+        {/* ============================
             CHECKING
-        ============================== */}
+        ============================ */}
 
         {screen === "checking" && (
-          <section
-            className="
-              screen
-              center-screen
-            "
-          >
+          <section className="screen center-screen">
 
             <div className="loader" />
 
@@ -391,9 +378,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ==============================
+        {/* ============================
             RESULT
-        ============================== */}
+        ============================ */}
 
         {screen === "result" &&
           result && (
@@ -404,11 +391,7 @@ export default function App() {
                 <StatusCard
                   status="MATCH"
                   title="Match"
-                  text="
-                    This code and batch
-                    match the prototype
-                    record.
-                  "
+                  text="This code and batch match the prototype record."
                 />
               )}
 
@@ -417,12 +400,7 @@ export default function App() {
                 <StatusCard
                   status="NO_MATCH"
                   title="No Match"
-                  text="
-                    The code was found,
-                    but the batch does
-                    not match the
-                    prototype record.
-                  "
+                  text="The code was found, but the batch does not match the prototype record."
                 />
               )}
 
@@ -431,22 +409,16 @@ export default function App() {
                 <StatusCard
                   status="NOT_COVERED"
                   title="Unable to Verify"
-                  text="
-                    This product is not
-                    yet covered by the
-                    prototype data.
-                    This does not mean
-                    it is counterfeit.
-                  "
+                  text="This product is not yet covered by the prototype data. This does not mean it is counterfeit."
                 />
               )}
 
               {result.offline && (
                 <div className="notice">
-                  Offline result:
-                  cached prototype data
-                  may be used. Sync will
-                  resume when online.
+                  Offline result: cached
+                  prototype data may be
+                  used. Sync will resume
+                  when online.
                 </div>
               )}
 
@@ -498,9 +470,7 @@ export default function App() {
                   "MATCH" && (
                   <PrimaryButton
                     onClick={() =>
-                      setScreen(
-                        "details"
-                      )
+                      setScreen("details")
                     }
                   >
                     View Medicine Details
@@ -511,9 +481,7 @@ export default function App() {
                   "MATCH" && (
                   <PrimaryButton
                     onClick={() =>
-                      setScreen(
-                        "report"
-                      )
+                      setScreen("report")
                     }
                   >
                     Report Medicine
@@ -544,9 +512,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ==============================
-            MEDICINE DETAILS
-        ============================== */}
+        {/* ============================
+            DETAILS
+        ============================ */}
 
         {screen === "details" &&
           result?.product && (
@@ -628,9 +596,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ==============================
+        {/* ============================
             REPORT
-        ============================== */}
+        ============================ */}
 
         {screen === "report" && (
           <section className="screen">
@@ -645,58 +613,44 @@ export default function App() {
 
             <div className="notice">
               Prototype only.
-              Do not enter real
-              personal or health
-              information.
+              Do not enter real personal
+              or health information.
             </div>
 
             <label className="field">
-
               Product code
 
               <input
                 value={code}
                 readOnly
               />
-
             </label>
 
             <label className="field">
-
               Batch
 
               <input
                 value={batch}
                 readOnly
               />
-
             </label>
 
             <label className="field">
-
               Comment
 
               <textarea
-                placeholder="
-                  Example: Packaging
-                  looks different.
-                "
+                placeholder="Example: Packaging looks different."
                 rows="4"
               />
-
             </label>
 
             <label className="field">
-
               Coarse location
               (optional)
 
               <input
-                placeholder="
-                  e.g. Adelaide SA
-                "
+                placeholder="e.g. Adelaide SA"
               />
-
             </label>
 
             <PrimaryButton
@@ -720,18 +674,13 @@ export default function App() {
           </section>
         )}
 
-        {/* ==============================
-            REPORT CONFIRMATION
-        ============================== */}
+        {/* ============================
+            CONFIRMATION
+        ============================ */}
 
         {screen ===
           "confirmation" && (
-          <section
-            className="
-              screen
-              center-screen
-            "
-          >
+          <section className="screen center-screen">
 
             <div className="success-badge">
               ✓
@@ -757,9 +706,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ==============================
-            PROFESSIONAL LOGIN
-        ============================== */}
+        {/* ============================
+            LOGIN
+        ============================ */}
 
         {screen === "login" && (
           <section className="screen">
@@ -773,7 +722,6 @@ export default function App() {
             </h1>
 
             <label className="field">
-
               Role
 
               <select
@@ -784,7 +732,6 @@ export default function App() {
                   )
                 }
               >
-
                 <option value="manufacturer">
                   Manufacturer
                 </option>
@@ -796,38 +743,30 @@ export default function App() {
                 <option value="admin">
                   Admin
                 </option>
-
               </select>
-
             </label>
 
             <label className="field">
-
               Email
 
               <input
                 value={`${role}@demo.com`}
                 readOnly
               />
-
             </label>
 
             <label className="field">
-
               Password
 
               <input
                 value="demo123"
                 readOnly
               />
-
             </label>
 
             <PrimaryButton
               onClick={() =>
-                setScreen(
-                  "dashboard"
-                )
+                setScreen("dashboard")
               }
             >
               Log In
@@ -836,9 +775,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ==============================
-            PROFESSIONAL DASHBOARD
-        ============================== */}
+        {/* ============================
+            DASHBOARD
+        ============================ */}
 
         {screen ===
           "dashboard" && (
@@ -847,7 +786,6 @@ export default function App() {
             <div className="dashboard-head">
 
               <div>
-
                 <div className="eyebrow">
                   Professional dashboard
                 </div>
@@ -858,7 +796,6 @@ export default function App() {
                     .toUpperCase() +
                     role.slice(1)}
                 </h1>
-
               </div>
 
               <span className="role-badge">
@@ -902,17 +839,12 @@ export default function App() {
   );
 }
 
-/* ======================================
-   DETAIL ROW
-====================================== */
-
 function Row({
   label,
   value,
 }) {
   return (
     <div className="detail-row">
-
       <span>
         {label}
       </span>
@@ -920,14 +852,9 @@ function Row({
       <strong>
         {value}
       </strong>
-
     </div>
   );
 }
-
-/* ======================================
-   MANUFACTURER DASHBOARD
-====================================== */
 
 function ManufacturerDashboard({
   totals,
@@ -959,7 +886,6 @@ function ManufacturerDashboard({
       </div>
 
       <div className="panel">
-
         <h3>
           Brand alerts
         </h3>
@@ -974,11 +900,9 @@ function ManufacturerDashboard({
           No Match • Adelaide SA •
           Under review
         </p>
-
       </div>
 
       <div className="panel">
-
         <h3>
           Products & GS1
         </h3>
@@ -994,15 +918,10 @@ function ManufacturerDashboard({
         <p>
           TestMed 5mg — not yet covered
         </p>
-
       </div>
     </>
   );
 }
-
-/* ======================================
-   PHARMACIST DASHBOARD
-====================================== */
 
 function PharmacistDashboard({
   onVerify,
@@ -1016,7 +935,6 @@ function PharmacistDashboard({
       </PrimaryButton>
 
       <div className="panel">
-
         <h3>
           Batch lookup
         </h3>
@@ -1033,11 +951,9 @@ function PharmacistDashboard({
           regulatory sources for real
           decisions.
         </p>
-
       </div>
 
       <div className="panel">
-
         <h3>
           Recent activity
         </h3>
@@ -1049,15 +965,10 @@ function PharmacistDashboard({
         <p>
           MED-002 / B2045 — No Match
         </p>
-
       </div>
     </>
   );
 }
-
-/* ======================================
-   ADMIN DASHBOARD
-====================================== */
 
 function AdminDashboard() {
   return (
@@ -1101,17 +1012,12 @@ function AdminDashboard() {
   );
 }
 
-/* ======================================
-   METRIC CARD
-====================================== */
-
 function Metric({
   label,
   value,
 }) {
   return (
     <div className="metric">
-
       <span>
         {label}
       </span>
@@ -1119,7 +1025,6 @@ function Metric({
       <strong>
         {value}
       </strong>
-
     </div>
   );
 }
