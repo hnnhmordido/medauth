@@ -1,4 +1,9 @@
-export function PrimaryButton({ children, onClick, type = "button", disabled = false }) {
+export function PrimaryButton({
+  children,
+  onClick,
+  type = "button",
+  disabled = false,
+}) {
   return (
     <button
       className="btn btn-primary"
@@ -11,29 +16,42 @@ export function PrimaryButton({ children, onClick, type = "button", disabled = f
   );
 }
 
-export function SecondaryButton({ children, onClick, type = "button" }) {
+export function SecondaryButton({
+  children,
+  onClick,
+  type = "button",
+  disabled = false,
+}) {
   return (
     <button
       className="btn btn-secondary"
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>
   );
 }
 
-export function NetworkBadge({ offline, onToggle }) {
-  const label = offline ? "Offline" : "Online";
+export function NetworkBadge({
+  offline,
+  onToggle,
+}) {
+  const label = offline
+    ? "Offline"
+    : "Online";
 
   return (
     <button
-      className={`network-badge ${offline ? "offline" : "online"}`}
       type="button"
+      className={`network-badge ${
+        offline
+          ? "offline"
+          : "online"
+      }`}
       onClick={onToggle}
-      aria-label={`Connection status: ${label}. Tap to switch ${
-        offline ? "online" : "offline"
-      }.`}
+      aria-label={`Connection status: ${label}`}
       aria-pressed={!offline}
     >
       <svg
@@ -57,7 +75,11 @@ export function NetworkBadge({ offline, onToggle }) {
   );
 }
 
-export function StatusCard({ status, title, text }) {
+export function StatusCard({
+  status,
+  title,
+  text,
+}) {
   const icon =
     status === "MATCH"
       ? "✓"
@@ -66,14 +88,23 @@ export function StatusCard({ status, title, text }) {
       : "?";
 
   return (
-    <div className={`status-card ${status.toLowerCase()}`}>
-      <div className="status-icon" aria-hidden="true">
+    <div
+      className={`status-card ${status.toLowerCase()}`}
+    >
+      <div
+        className="status-icon"
+        aria-hidden="true"
+      >
         {icon}
       </div>
 
       <div>
-        <div className="eyebrow">Verification result</div>
+        <div className="eyebrow">
+          Verification result
+        </div>
+
         <h2>{title}</h2>
+
         <p>{text}</p>
       </div>
     </div>
