@@ -9,7 +9,8 @@
     sans-serif;
 
   color: #17324d;
-  background: #f7fbfd;
+  background: #f4f9fc;
+
   font-synthesis: none;
 }
 
@@ -17,16 +18,24 @@
   box-sizing: border-box;
 }
 
-html {
+html,
+body,
+#root {
+  width: 100%;
   min-width: 320px;
-  background: #f7fbfd;
+  min-height: 100%;
+  margin: 0;
+}
+
+html {
+  background: #f4f9fc;
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
   min-height: 100vh;
-  background: #f7fbfd;
+  min-height: 100dvh;
+
+  background: #f4f9fc;
 }
 
 button,
@@ -41,12 +50,18 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ======================================
+   APP ROOT
+====================================== */
+
 .app-shell {
+  width: 100%;
+
   min-height: 100vh;
   min-height: 100dvh;
 
   display: flex;
-  flex-direction: column;
+  justify-content: center;
 
   background:
     linear-gradient(
@@ -56,151 +71,121 @@ button {
     );
 }
 
-/* TOP CONNECTION AREA */
-
-.topbar {
-  min-height: 54px;
-
-  padding:
-    max(10px, env(safe-area-inset-top))
-    18px
-    4px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  background: transparent;
-}
-
-.topbar-spacer {
-  width: 1px;
-  height: 1px;
-}
-
-.network-badge {
-  appearance: none;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-
-  min-height: 38px;
-
-  padding: 7px 11px;
-
-  border: 0;
-  border-radius: 999px;
-
-  background: transparent;
-
-  font-size: 0.78rem;
-  font-weight: 750;
-
-  transition:
-    color 0.18s ease,
-    background-color 0.18s ease,
-    transform 0.12s ease;
-}
-
-.network-badge:active {
-  transform: scale(0.97);
-}
-
-.network-badge:focus-visible {
-  outline: 3px solid rgba(11, 99, 182, 0.2);
-  outline-offset: 2px;
-}
-
-.network-badge.online {
-  color: #147d64;
-  background: #eaf8f3;
-}
-
-.network-badge.offline {
-  color: #697886;
-  background: #eef2f5;
-}
-
-.wifi-icon {
-  width: 18px;
-  height: 18px;
-
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-}
-
-.wifi-dot {
-  fill: currentColor;
-  stroke: none;
-}
-
-/* PHONE CONTENT */
+/* ======================================
+   SHARED PHONE CONTAINER
+====================================== */
 
 .phone-stage {
-  width: min(100%, 430px);
+  width: 100%;
+  max-width: 430px;
 
-  margin: 0 auto;
-
-  padding:
-    0
-    18px
-    max(20px, env(safe-area-inset-bottom));
-
-  flex: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
 
   display: flex;
   flex-direction: column;
+
+  padding:
+    max(10px, env(safe-area-inset-top))
+    10px
+    max(10px, env(safe-area-inset-bottom));
 }
+
+/*
+  Every page uses this same screen.
+  Home, Login, Scan, Manual Entry,
+  Results and Dashboard therefore keep
+  exactly the same outside dimensions.
+*/
 
 .screen {
+  width: 100%;
+
+  flex: 1;
+
+  min-height: 0;
+
+  padding: 22px 20px;
+
   background: #ffffff;
 
-  border: 1px solid #e1ebf1;
-  border-radius: 24px;
+  border:
+    1px solid
+    #e1ebf1;
+
+  border-radius: 22px;
 
   box-shadow:
-    0 8px 28px rgba(14, 62, 96, 0.06);
+    0 5px 20px
+    rgba(8, 75, 153, 0.05);
 
-  padding: 24px;
-
-  min-height: 590px;
+  overflow-x: hidden;
 }
 
-/* NEW PROFESSIONAL HOME */
+/* ======================================
+   HOME
+====================================== */
 
 .home-screen {
-  min-height: min(
-    620px,
-    calc(100dvh - 76px)
-  );
+  display: flex;
+  flex-direction: column;
+
+  /*
+    No different fixed height.
+    It uses the same .screen sizing
+    as every other page.
+  */
+}
+
+.home-status-row {
+  width: 100%;
+
+  min-height: 40px;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+
+  margin-bottom: 4px;
+}
+
+.home-content {
+  flex: 1;
+
+  width: 100%;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
 
-  padding: 28px 24px;
+  padding:
+    4px 0
+    28px;
 }
 
 .home-brand {
-  display: grid;
-  place-items: center;
+  width: 100%;
 
-  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 32px;
 }
 
 .hero-logo {
-  width: clamp(
-    115px,
-    34vw,
-    145px
-  );
+  display: block;
+
+  width:
+    clamp(
+      108px,
+      34vw,
+      138px
+    );
+
+  max-width: 44%;
 
   height: auto;
-
-  display: block;
 
   object-fit: contain;
 }
@@ -213,26 +198,103 @@ button {
   gap: 14px;
 }
 
-/* BUTTONS */
+/* ======================================
+   WIFI / CONNECTION STATUS
+====================================== */
+
+.network-badge {
+  appearance: none;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  min-height: 36px;
+
+  padding:
+    6px 10px;
+
+  border: 0;
+  border-radius: 999px;
+
+  font-size: 0.78rem;
+  font-weight: 750;
+
+  line-height: 1;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    transform 0.12s ease;
+}
+
+.network-badge.online {
+  color: #147d64;
+
+  background: #eaf8f3;
+}
+
+.network-badge.offline {
+  color: #697886;
+
+  background: #eef2f5;
+}
+
+.network-badge:active {
+  transform: scale(0.97);
+}
+
+.network-badge:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.18);
+
+  outline-offset: 2px;
+}
+
+.wifi-icon {
+  width: 17px;
+  height: 17px;
+
+  fill: none;
+  stroke: currentColor;
+
+  stroke-width: 1.9;
+
+  stroke-linecap: round;
+}
+
+.wifi-dot {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ======================================
+   BUTTONS
+====================================== */
 
 .btn {
   width: 100%;
 
   min-height: 56px;
 
-  padding: 14px 18px;
+  padding:
+    14px 18px;
+
+  border:
+    1px solid
+    transparent;
 
   border-radius: 15px;
-  border: 1px solid transparent;
 
-  font-weight: 760;
+  font-weight: 750;
   font-size: 0.98rem;
 
   transition:
     transform 0.12s ease,
+    opacity 0.18s ease,
     background-color 0.18s ease,
-    border-color 0.18s ease,
-    opacity 0.18s ease;
+    border-color 0.18s ease;
 }
 
 .btn:active {
@@ -249,12 +311,14 @@ button {
 
 .btn:disabled {
   opacity: 0.5;
+
   cursor: not-allowed;
+
   transform: none;
 }
 
 .btn-primary {
-  color: white;
+  color: #ffffff;
 
   background:
     linear-gradient(
@@ -264,16 +328,17 @@ button {
     );
 
   box-shadow:
-    0 5px 12px
-    rgba(11, 99, 182, 0.12);
+    0 4px 10px
+    rgba(11, 99, 182, 0.1);
 }
 
 .btn-secondary {
-  color: var(--brand-deep);
+  color:
+    var(--brand-deep);
 
   background: #ffffff;
 
-  border-color: #8fc0dd;
+  border-color: #91c2de;
 }
 
 .login-link {
@@ -283,14 +348,16 @@ button {
 
   margin-top: 2px;
 
-  padding: 10px 24px;
+  padding:
+    10px 24px;
 
   border: 0;
   border-radius: 12px;
 
   background: transparent;
 
-  color: var(--brand-blue);
+  color:
+    var(--brand-blue);
 
   font-weight: 750;
   font-size: 0.95rem;
@@ -308,17 +375,26 @@ button {
   outline-offset: 2px;
 }
 
-/* OTHER EXISTING SCREENS */
+/* ======================================
+   TYPOGRAPHY
+====================================== */
 
 h1 {
-  margin: 18px 0 10px;
+  margin:
+    18px 0
+    10px;
 
   font-size:
-    clamp(2rem, 7vw, 3.1rem);
+    clamp(
+      2rem,
+      7vw,
+      3rem
+    );
 
-  line-height: 1.02;
+  line-height: 1.04;
 
-  letter-spacing: -0.045em;
+  letter-spacing:
+    -0.04em;
 
   color: #12304b;
 }
@@ -330,11 +406,13 @@ h3 {
 
 p {
   line-height: 1.6;
+
   color: #526a7f;
 }
 
 .eyebrow {
-  color: var(--brand-teal);
+  color:
+    var(--brand-teal);
 
   font-size: 0.8rem;
   font-weight: 800;
@@ -344,21 +422,24 @@ p {
   letter-spacing: 0.14em;
 }
 
-.action-stack {
-  display: grid;
-  gap: 12px;
+.hint,
+.muted {
+  font-size: 0.9rem;
 
-  width: 100%;
-
-  margin-top: 22px;
+  color: #72879a;
 }
+
+/* ======================================
+   FORM FIELDS
+====================================== */
 
 .field {
   display: grid;
 
   gap: 8px;
 
-  margin: 18px 0;
+  margin:
+    18px 0;
 
   font-weight: 750;
 
@@ -370,7 +451,8 @@ p {
 .field textarea {
   width: 100%;
 
-  padding: 14px 15px;
+  padding:
+    14px 15px;
 
   border:
     1px solid
@@ -396,22 +478,33 @@ p {
     rgba(11, 99, 182, 0.1);
 }
 
-.hint,
-.muted {
-  font-size: 0.9rem;
+/* ======================================
+   ACTION STACK
+====================================== */
 
-  color: #72879a;
+.action-stack {
+  width: 100%;
+
+  display: grid;
+
+  gap: 12px;
+
+  margin-top: 22px;
 }
 
-/* SCANNER SCREEN REMAINS AVAILABLE
-   BUT DOES NOT APPEAR ON HOME */
+/* ======================================
+   SCANNER
+====================================== */
 
 .scanner-panel {
   height: 300px;
 
-  margin: 28px 0 18px;
+  margin:
+    28px 0
+    18px;
 
   position: relative;
+
   overflow: hidden;
 
   display: grid;
@@ -480,6 +573,9 @@ p {
 
   border-width:
     5px 0 0 5px;
+
+  border-radius:
+    14px 0 0 0;
 }
 
 .scan-corners span:nth-child(2) {
@@ -488,6 +584,9 @@ p {
 
   border-width:
     5px 5px 0 0;
+
+  border-radius:
+    0 14px 0 0;
 }
 
 .scan-corners span:nth-child(3) {
@@ -496,6 +595,9 @@ p {
 
   border-width:
     0 0 5px 5px;
+
+  border-radius:
+    0 0 0 14px;
 }
 
 .scan-corners span:nth-child(4) {
@@ -504,7 +606,14 @@ p {
 
   border-width:
     0 5px 5px 0;
+
+  border-radius:
+    0 0 14px 0;
 }
+
+/* ======================================
+   SAMPLE SCAN BUTTONS
+====================================== */
 
 .sample-box {
   display: grid;
@@ -525,7 +634,8 @@ p {
 }
 
 .sample-box button {
-  padding: 11px 12px;
+  padding:
+    11px 12px;
 
   border: 0;
   border-radius: 12px;
@@ -536,6 +646,10 @@ p {
 
   color: #27536f;
 }
+
+/* ======================================
+   CHECKING SCREEN
+====================================== */
 
 .center-screen {
   display: flex;
@@ -563,14 +677,20 @@ p {
   border-radius: 50%;
 
   animation:
-    spin 0.9s linear infinite;
+    spin 0.9s
+    linear infinite;
 }
 
 @keyframes spin {
   to {
-    transform: rotate(360deg);
+    transform:
+      rotate(360deg);
   }
 }
+
+/* ======================================
+   RESULT STATUS
+====================================== */
 
 .status-card {
   display: grid;
@@ -584,13 +704,15 @@ p {
 
   padding: 20px;
 
-  border: 1px solid;
+  border:
+    1px solid;
 
   border-radius: 22px;
 }
 
 .status-card h2 {
-  margin: 3px 0;
+  margin:
+    3px 0;
 
   font-size: 2rem;
 }
@@ -599,7 +721,8 @@ p {
   margin: 0;
 }
 
-.status-icon {
+.status-icon,
+.success-badge {
   width: 64px;
   height: 64px;
 
@@ -608,7 +731,7 @@ p {
 
   border-radius: 50%;
 
-  color: white;
+  color: #ffffff;
 
   font-size: 2.1rem;
   font-weight: 900;
@@ -616,37 +739,48 @@ p {
 
 .status-card.match {
   background: #eaf9f6;
+
   border-color: #9edfd7;
 }
 
-.status-card.match .status-icon {
+.status-card.match
+.status-icon {
   background:
     var(--brand-teal);
 }
 
 .status-card.no_match {
   background: #fff5e9;
+
   border-color: #f0c994;
 }
 
-.status-card.no_match .status-icon {
+.status-card.no_match
+.status-icon {
   background: #c97900;
 }
 
 .status-card.not_covered {
   background: #eef5fb;
+
   border-color: #b9d5e7;
 }
 
-.status-card.not_covered .status-icon {
+.status-card.not_covered
+.status-icon {
   background:
     var(--brand-blue);
 }
 
+/* ======================================
+   PANELS / PRODUCT DETAILS
+====================================== */
+
 .product-card,
 .panel,
 .notice {
-  margin: 18px 0;
+  margin:
+    18px 0;
 
   padding: 16px;
 
@@ -662,11 +796,13 @@ p {
 .product-card div {
   display: flex;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
   gap: 16px;
 
-  padding: 8px 0;
+  padding:
+    8px 0;
 
   border-bottom:
     1px solid
@@ -691,74 +827,239 @@ p {
   color: #3f6177;
 }
 
-/* MOBILE RESPONSIVE */
+/* ======================================
+   DETAILS
+====================================== */
 
-@media (max-width: 600px) {
-  .topbar {
-    min-height: 48px;
+.details-list {
+  margin:
+    20px 0;
 
-    padding-left: 14px;
-    padding-right: 14px;
-  }
+  border-top:
+    1px solid
+    #dfebf2;
+}
+
+.detail-row {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1.3fr;
+
+  gap: 18px;
+
+  padding:
+    15px 0;
+
+  border-bottom:
+    1px solid
+    #dfebf2;
+}
+
+.detail-row span {
+  color: #6e8396;
+}
+
+.detail-row strong {
+  text-align: right;
+
+  word-break:
+    break-word;
+}
+
+/* ======================================
+   SUCCESS
+====================================== */
+
+.success-badge {
+  width: 84px;
+  height: 84px;
+
+  font-size: 2.8rem;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--brand-blue),
+      var(--brand-teal)
+    );
+}
+
+/* ======================================
+   DASHBOARD
+====================================== */
+
+.dashboard-head {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    flex-start;
+
+  gap: 18px;
+}
+
+.dashboard-head h1 {
+  margin-top: 8px;
+}
+
+.role-badge {
+  padding:
+    7px 10px;
+
+  border-radius:
+    999px;
+
+  background: #e8f4fb;
+
+  color:
+    var(--brand-deep);
+
+  text-transform:
+    capitalize;
+
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.metric-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 12px;
+
+  margin:
+    18px 0;
+}
+
+.metric {
+  padding: 16px;
+
+  border:
+    1px solid
+    #d5e8f1;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f4faff,
+      #f2fffd
+    );
+}
+
+.metric span {
+  display: block;
+
+  color: #698197;
+
+  font-size: 0.82rem;
+}
+
+.metric strong {
+  font-size: 1.8rem;
+
+  color:
+    var(--brand-deep);
+}
+
+/* ======================================
+   PHONE RESPONSIVE
+====================================== */
+
+@media (max-width: 480px) {
 
   .phone-stage {
-    padding-left: 12px;
-    padding-right: 12px;
+    max-width: none;
+
+    padding:
+      max(
+        8px,
+        env(safe-area-inset-top)
+      )
+      8px
+      max(
+        8px,
+        env(safe-area-inset-bottom)
+      );
   }
 
   .screen {
-    border-radius: 21px;
+    padding:
+      18px;
 
-    min-height:
-      calc(100dvh - 68px);
-
-    padding: 22px 20px;
-
-    box-shadow:
-      0 5px 20px
-      rgba(8, 75, 153, 0.05);
+    border-radius:
+      20px;
   }
 
-  .home-screen {
+  .home-status-row {
     min-height:
-      calc(100dvh - 68px);
+      38px;
+  }
 
-    padding:
-      22px 22px
-      28px;
+  .home-content {
+    padding-bottom:
+      22px;
   }
 
   .home-brand {
-    margin-bottom: 34px;
+    margin-bottom:
+      28px;
   }
 
   .hero-logo {
     width:
-      clamp(
-        110px,
-        36vw,
-        138px
-      );
+      115px;
+
+    max-width:
+      46%;
+  }
+
+  .status-card {
+    grid-template-columns:
+      58px 1fr;
+  }
+
+  .status-icon {
+    width: 52px;
+    height: 52px;
   }
 }
 
-/* SMALL PHONE HEIGHT */
+/* ======================================
+   SHORT PHONES
+====================================== */
 
 @media (max-height: 650px) {
-  .home-screen {
-    justify-content: flex-start;
 
-    min-height: 0;
+  .screen {
+    overflow-y: auto;
+  }
 
-    padding-top: 16px;
+  .home-content {
+    justify-content:
+      flex-start;
+
+    padding-top:
+      14px;
   }
 
   .home-brand {
-    margin:
-      8px 0 24px;
+    margin-bottom:
+      22px;
   }
 
   .hero-logo {
-    width: 108px;
+    width: 100px;
+  }
+
+  .btn {
+    min-height:
+      52px;
   }
 }
