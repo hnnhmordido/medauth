@@ -67,7 +67,11 @@ export default function App() {
       <main className="phone-stage">
         {screen === "home" && (
           <section className="screen hero-screen">
-            <img className="hero-logo" src="/medauth-logo.png" alt="MedAuth logo" />
+            <img
+  src="/medauth/medauth-logo.png"
+  alt="MedAuth logo"
+  className="medauth-logo"
+/>
             <span className="trust-pill">Scan. Verify. Protect.</span>
             <h1>Check your medicine in seconds.</h1>
             <p className="lead">A simple university prototype for medicine verification. No consumer account is required.</p>
