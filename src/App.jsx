@@ -53,7 +53,7 @@ export default function App() {
     <div className="app-shell" style={{ "--brand-blue": palette.blue, "--brand-deep": palette.deepBlue, "--brand-teal": palette.teal, "--brand-aqua": palette.aqua }}>
       <header className="topbar">
         <button className="brand-button" onClick={reset} aria-label="Go to MedAuth home">
-          <img src="/medauth-logo.png" alt="MedAuth" />
+          <img src={`${import.meta.env.BASE_URL}medauth-logo.png`} alt="MedAuth logo"/>
         </button>
         <div className="topbar-actions">
           <NetworkBadge offline={offline} />
