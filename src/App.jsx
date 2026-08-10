@@ -59,6 +59,56 @@ function verifyMedicine(code, batch, offline) {
 }
 
 export default function App() {
+  const goBack = () => {
+  if (screen === "home") return;
+
+  if (screen === "scan") {
+    setScreen("home");
+    return;
+  }
+
+  if (screen === "manual") {
+    setScreen("home");
+    return;
+  }
+
+  if (screen === "checking") {
+    setScreen("manual");
+    return;
+  }
+
+  if (screen === "result") {
+    setScreen("home");
+    return;
+  }
+
+  if (screen === "details") {
+    setScreen("result");
+    return;
+  }
+
+  if (screen === "report") {
+    setScreen("result");
+    return;
+  }
+
+  if (screen === "confirmation") {
+    setScreen("home");
+    return;
+  }
+
+  if (screen === "login") {
+    setScreen("home");
+    return;
+  }
+
+  if (screen === "dashboard") {
+    setScreen("login");
+    return;
+  }
+
+  setScreen("home");
+};
   const [screen, setScreen] = useState("home");
   const [offline, setOffline] = useState(false);
 
@@ -132,6 +182,23 @@ export default function App() {
       }}
     >
       <main className="phone-stage">
+        {screen !== "home" && (
+  <button
+    type="button"
+    className="back-button"
+    onClick={goBack}
+    aria-label="Go back"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+
+    <span>Back</span>
+  </button>
+)}
 
         {/* ============================
             HOME
@@ -156,7 +223,7 @@ export default function App() {
               <div className="home-brand">
                 <img
                   className="hero-logo"
-                  src={`${import.meta.env.BASE_URL}medauth-logo.png`}
+                   src={`${import.meta.env.BASE_URL}medauth-logo.png`}
                   alt="MedAuth"
                 />
               </div>
