@@ -1,0 +1,24 @@
+{
+  "name": "MedAuth",
+  "short_name": "MedAuth",
+  "description": "Medicine verification prototype",
+  "start_url": "/medauth/",
+  "scope": "/medauth/",
+  "display": "standalone",
+  "background_color": "#F4F9FC",
+  "theme_color": "#0B63B6",
+  "icons": [
+    {
+      "src": "medauth-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "medauth-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
