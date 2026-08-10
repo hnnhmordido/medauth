@@ -70,6 +70,49 @@ p { line-height:1.6; color:#526a7f; }
   margin: 8px auto 6px;
   object-fit: contain;
 }
+.hero {
+  text-align: center;
+  padding: 6px 0 18px;
+}
+
+.brand-line {
+  margin: 4px 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0b63b6;
+}
+
+.hero h1 {
+  margin: 0 auto 8px;
+  max-width: 280px;
+  font-size: 24px;
+  line-height: 1.15;
+  color: #12304a;
+}
+
+.hero-copy {
+  margin: 0;
+  font-size: 13px;
+  color: #61738a;
+}
+.action-card {
+  background: white;
+  border: 1px solid #e2ebf3;
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(20, 55, 90, 0.07);
+}
+
+.primary-button {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #0b63b6, #00989f);
+  color: white;
+}
 .details-list { margin:20px 0; border-top:1px solid #dfebf2; }
 .detail-row { display:grid; grid-template-columns:1fr 1.3fr; gap:18px; padding:15px 0; border-bottom:1px solid #dfebf2; }.detail-row span{color:#6e8396}.detail-row strong{text-align:right;word-break:break-word}
 .success-badge { background:linear-gradient(135deg,var(--brand-blue),var(--brand-teal)); width:84px;height:84px;font-size:2.8rem; }
