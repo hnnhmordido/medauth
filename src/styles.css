@@ -57,6 +57,7 @@ svg {
   display: block;
 }
 
+
 /* ==================================================
    APP
 ================================================== */
@@ -82,8 +83,9 @@ svg {
     );
 }
 
+
 /* ==================================================
-   PHONE - KEEP 393 x 852
+   PHONE - KEEP 393 × 852
 ================================================== */
 
 .phone-stage {
@@ -109,8 +111,9 @@ svg {
     rgba(18, 55, 84, 0.09);
 }
 
+
 /* ==================================================
-   SCREEN
+   ALL SCREENS
 ================================================== */
 
 .screen {
@@ -136,7 +139,10 @@ svg {
   overflow-x: hidden;
 
   background: #ffffff;
+
+  scrollbar-width: thin;
 }
+
 
 /* ==================================================
    HOME
@@ -144,6 +150,7 @@ svg {
 
 .home-screen {
   display: flex;
+
   flex-direction: column;
 }
 
@@ -156,13 +163,18 @@ svg {
 
   justify-content: flex-end;
   align-items: flex-start;
+
+  flex-shrink: 0;
 }
+
 
 /* ==================================================
    NETWORK
 ================================================== */
 
 .network-badge {
+  appearance: none;
+
   min-height: 34px;
 
   display: inline-flex;
@@ -181,6 +193,11 @@ svg {
   font-weight: 800;
 
   line-height: 1;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    transform 0.12s ease;
 }
 
 .network-badge.online {
@@ -193,6 +210,18 @@ svg {
   color: #687783;
 
   background: #edf1f3;
+}
+
+.network-badge:active {
+  transform: scale(0.97);
+}
+
+.network-badge:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.17);
+
+  outline-offset: 2px;
 }
 
 .wifi-icon {
@@ -215,6 +244,7 @@ svg {
   stroke: none;
 }
 
+
 /* ==================================================
    HOME LOGO
 ================================================== */
@@ -231,6 +261,8 @@ svg {
 }
 
 .hero-logo {
+  display: block;
+
   width: 245px;
 
   max-width: 78%;
@@ -241,6 +273,7 @@ svg {
 
   object-fit: contain;
 }
+
 
 /* ==================================================
    HOME SCAN BUTTON
@@ -261,6 +294,7 @@ svg {
   padding: 14px 18px;
 
   border: 0;
+
   border-radius: 15px;
 
   background:
@@ -274,6 +308,26 @@ svg {
 
   font-size: 1rem;
   font-weight: 800;
+
+  box-shadow:
+    0 6px 16px
+    rgba(11, 99, 182, 0.13);
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease;
+}
+
+.home-scan-button:active {
+  transform: scale(0.985);
+}
+
+.home-scan-button:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.18);
+
+  outline-offset: 2px;
 }
 
 .home-scan-icon {
@@ -293,8 +347,9 @@ svg {
   stroke-linejoin: round;
 }
 
+
 /* ==================================================
-   DIVIDER
+   HOME DIVIDER
 ================================================== */
 
 .home-divider {
@@ -324,6 +379,7 @@ svg {
 
   background: #cad9e3;
 }
+
 
 /* ==================================================
    LOGIN
@@ -378,6 +434,14 @@ svg {
   color: #17324d;
 
   font-size: 0.9rem;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.home-login-field input::placeholder {
+  color: #91a3b1;
 }
 
 .home-login-field input:focus {
@@ -388,6 +452,7 @@ svg {
     0 0 0 3px
     rgba(11, 99, 182, 0.09);
 }
+
 
 /* ==================================================
    PASSWORD
@@ -433,12 +498,19 @@ svg {
   width: 19px;
   height: 19px;
 
+  max-width: 19px;
+  max-height: 19px;
+
   fill: none;
 
   stroke: currentColor;
 
   stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
+
 
 /* ==================================================
    LOGIN OPTIONS
@@ -456,6 +528,8 @@ svg {
 }
 
 .remember-device {
+  min-width: 0;
+
   display: inline-flex;
 
   align-items: center;
@@ -465,6 +539,8 @@ svg {
   color: #486a84;
 
   font-size: 0.74rem;
+
+  white-space: nowrap;
 }
 
 .remember-device input {
@@ -478,11 +554,15 @@ svg {
 }
 
 .forgot-password {
+  appearance: none;
+
+  min-width: 0;
   min-height: 36px;
 
   display: inline-flex;
 
   align-items: center;
+  justify-content: center;
 
   padding: 5px 0;
 
@@ -495,7 +575,18 @@ svg {
 
   font-size: 0.74rem;
   font-weight: 750;
+
+  box-shadow: none;
 }
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.forgot-password:active {
+  opacity: 0.7;
+}
+
 
 /* ==================================================
    SIGN IN
@@ -516,6 +607,7 @@ svg {
   padding: 14px 18px;
 
   border: 0;
+
   border-radius: 14px;
 
   background:
@@ -529,7 +621,12 @@ svg {
 
   font-size: 0.96rem;
   font-weight: 800;
+
+  box-shadow:
+    0 5px 14px
+    rgba(11, 99, 182, 0.12);
 }
+
 
 /* ==================================================
    LOGIN ERROR
@@ -551,10 +648,12 @@ svg {
   color: #a43d3d;
 
   font-size: 0.72rem;
+  line-height: 1.4;
 }
 
+
 /* ==================================================
-   SECURITY
+   SECURITY FOOTER
 ================================================== */
 
 .security-footer {
@@ -588,13 +687,20 @@ svg {
 
   max-width: 13px;
 
+  flex:
+    0 0 13px;
+
   fill: none;
 
   stroke:
     var(--brand-teal);
 
   stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
+
 
 /* ==================================================
    BACK BUTTON
@@ -631,10 +737,18 @@ svg {
   font-size: 0.9rem;
 
   font-weight: 700;
+
+  flex-shrink: 0;
 }
 
+.back-button:hover,
+.back-button:active {
+  background: #edf6fb;
+}
+
+
 /* ==================================================
-   FORGOT
+   FORGOT PASSWORD
 ================================================== */
 
 .forgot-screen {
@@ -644,14 +758,14 @@ svg {
 }
 
 .forgot-brand {
+  width: 100%;
+
   display: flex;
 
   justify-content: center;
+  align-items: center;
 
-  margin:
-    5px
-    0
-    22px;
+  margin: 5px 0 22px;
 }
 
 .forgot-logo {
@@ -678,6 +792,8 @@ svg {
 }
 
 .forgot-form {
+  width: 100%;
+
   display: flex;
 
   flex-direction: column;
@@ -696,6 +812,8 @@ svg {
   align-items: center;
 
   text-align: center;
+
+  padding-bottom: 60px;
 }
 
 .reset-success-icon {
@@ -720,10 +838,16 @@ svg {
   width: 32px;
   height: 32px;
 
+  max-width: 32px;
+  max-height: 32px;
+
   fill: none;
 
   stroke: currentColor;
+
+  stroke-width: 1.7;
 }
+
 
 /* ==================================================
    SHARED BUTTONS
@@ -745,6 +869,20 @@ svg {
   font-size: 0.96rem;
 
   font-weight: 760;
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.985);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -756,6 +894,10 @@ svg {
       var(--brand-blue),
       var(--brand-teal)
     );
+
+  box-shadow:
+    0 5px 14px
+    rgba(11, 99, 182, 0.1);
 }
 
 .btn-secondary {
@@ -766,6 +908,7 @@ svg {
 
   border-color: #90bfdc;
 }
+
 
 /* ==================================================
    TYPOGRAPHY
@@ -810,14 +953,16 @@ p {
   letter-spacing: 0.13em;
 }
 
+.hint,
 .muted {
   color: #72879a;
 
   font-size: 0.88rem;
 }
 
+
 /* ==================================================
-   FIELDS
+   FORM FIELDS
 ================================================== */
 
 .field {
@@ -854,7 +999,27 @@ p {
   background: #fbfdff;
 
   color: #17324d;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color:
+    var(--brand-blue);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(11, 99, 182, 0.09);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
 
 /* ==================================================
    SCANNER
@@ -888,6 +1053,12 @@ p {
       #eff8fc,
       #e8f7f4
     );
+}
+
+.scanner-panel small {
+  color: #7290a3;
+
+  font-size: 0.75rem;
 }
 
 .scan-line {
@@ -982,11 +1153,14 @@ p {
     0;
 }
 
+
 /* ==================================================
-   SAMPLE
+   SAMPLE BOX
 ================================================== */
 
 .sample-box {
+  width: 100%;
+
   display: grid;
 
   gap: 8px;
@@ -1004,6 +1178,12 @@ p {
   background: #f6fbfd;
 }
 
+.sample-box strong {
+  color: #234b67;
+
+  font-size: 0.8rem;
+}
+
 .sample-box button {
   padding: 10px 11px;
 
@@ -1016,7 +1196,14 @@ p {
   color: #27536f;
 
   text-align: left;
+
+  font-size: 0.78rem;
 }
+
+.sample-box button:hover {
+  background: #eef7fb;
+}
+
 
 /* ==================================================
    LOADING
@@ -1059,11 +1246,14 @@ p {
   }
 }
 
+
 /* ==================================================
    RESULTS
 ================================================== */
 
 .action-stack {
+  width: 100%;
+
   display: grid;
 
   gap: 12px;
@@ -1072,6 +1262,8 @@ p {
 }
 
 .status-card {
+  width: 100%;
+
   display: grid;
 
   grid-template-columns:
@@ -1088,6 +1280,21 @@ p {
     1px solid;
 
   border-radius: 18px;
+}
+
+.status-card h2 {
+  margin:
+    3px
+    0
+    5px;
+
+  font-size: 1.6rem;
+}
+
+.status-card p {
+  margin: 0;
+
+  font-size: 0.82rem;
 }
 
 .status-icon {
@@ -1142,6 +1349,7 @@ p {
     var(--brand-blue);
 }
 
+
 /* ==================================================
    PANELS
 ================================================== */
@@ -1149,6 +1357,8 @@ p {
 .product-card,
 .panel,
 .notice {
+  width: 100%;
+
   margin:
     16px
     0;
@@ -1162,6 +1372,27 @@ p {
   border-radius: 16px;
 
   background: #f9fcfe;
+}
+
+.panel h3 {
+  margin:
+    0
+    0
+    9px;
+
+  font-size: 1rem;
+}
+
+.panel p {
+  margin:
+    7px
+    0;
+}
+
+.notice {
+  background: #eef8fb;
+
+  color: #3f6177;
 }
 
 .product-card div {
@@ -1184,11 +1415,22 @@ p {
   border-bottom: 0;
 }
 
+.product-card span {
+  color: #71879a;
+}
+
+.product-card strong {
+  text-align: right;
+}
+
+
 /* ==================================================
    DETAILS
 ================================================== */
 
 .details-list {
+  width: 100%;
+
   margin:
     18px
     0;
@@ -1224,7 +1466,10 @@ p {
 
 .detail-row strong {
   text-align: right;
+
+  word-break: break-word;
 }
+
 
 /* ==================================================
    SUCCESS
@@ -1254,11 +1499,14 @@ p {
     );
 }
 
+
 /* ==================================================
-   GENERAL DASHBOARD
+   GENERAL DASHBOARD HEADER
 ================================================== */
 
 .dashboard-head {
+  width: 100%;
+
   display: flex;
 
   justify-content: space-between;
@@ -1269,7 +1517,13 @@ p {
   margin-bottom: 12px;
 }
 
+.dashboard-head h1 {
+  margin-top: 7px;
+}
+
 .role-badge {
+  flex-shrink: 0;
+
   padding: 7px 10px;
 
   border-radius: 999px;
@@ -1284,7 +1538,14 @@ p {
   font-weight: 800;
 }
 
+
+/* ==================================================
+   GENERIC METRICS
+================================================== */
+
 .metric-grid {
+  width: 100%;
+
   display: grid;
 
   grid-template-columns:
@@ -1304,6 +1565,8 @@ p {
 }
 
 .metric {
+  min-width: 0;
+
   padding: 14px;
 
   border:
@@ -1339,8 +1602,10 @@ p {
   font-size: 1.55rem;
 }
 
+
 /* ==================================================
    PHARMACIST DASHBOARD
+   UPDATED TO USE MORE OF THE PHONE SCREEN
 ================================================== */
 
 .pharmacist-screen {
@@ -1353,13 +1618,14 @@ p {
   overflow: hidden;
 
   padding:
-    17px
-    15px
-    12px;
+    19px
+    18px
+    10px;
 }
 
+
 /* ==================================================
-   PHARMACIST PROFILE HEADER
+   PHARMACIST HEADER
 ================================================== */
 
 .pharmacist-profile-header {
@@ -1370,9 +1636,9 @@ p {
   justify-content: space-between;
   align-items: center;
 
-  gap: 10px;
+  gap: 12px;
 
-  margin-bottom: 11px;
+  margin-bottom: 12px;
 }
 
 .pharmacist-profile-main {
@@ -1382,23 +1648,25 @@ p {
 
   align-items: center;
 
-  gap: 11px;
+  gap: 12px;
 }
 
 .pharmacist-avatar {
-  width: 54px !important;
-  height: 54px !important;
+  width: 58px !important;
+  height: 58px !important;
 
-  min-width: 54px !important;
-  min-height: 54px !important;
+  min-width: 58px !important;
+  min-height: 58px !important;
 
-  max-width: 54px !important;
-  max-height: 54px !important;
+  max-width: 58px !important;
+  max-height: 58px !important;
 
   flex:
     0
     0
-    54px;
+    58px;
+
+  display: block;
 
   object-fit: cover;
 
@@ -1421,13 +1689,15 @@ p {
 .pharmacist-welcome {
   display: block;
 
+  margin-bottom: 2px;
+
   color: #73899c;
 
-  font-size: 10px;
+  font-size: 11px;
+
+  line-height: 1.2;
 
   font-weight: 650;
-
-  margin-bottom: 1px;
 }
 
 .pharmacist-greeting h1 {
@@ -1435,18 +1705,19 @@ p {
 
   color: #082f5a;
 
-  font-size: 22px;
+  font-size: 24px;
 
-  line-height: 1.05;
+  line-height: 1.04;
 
   letter-spacing:
     -0.025em;
 }
 
 .pharmacist-greeting p {
-  margin-top: 3px;
-
-  margin-bottom: 0;
+  margin:
+    4px
+    0
+    0;
 
   color:
     var(--brand-teal);
@@ -1458,6 +1729,11 @@ p {
   font-weight: 750;
 }
 
+
+/* ==================================================
+   PROFILE + SETTINGS BUTTONS
+================================================== */
+
 .pharmacist-profile-actions {
   flex-shrink: 0;
 
@@ -1467,8 +1743,8 @@ p {
 }
 
 .profile-icon-button {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
 
   display: grid;
 
@@ -1480,32 +1756,45 @@ p {
     1px solid
     #d8e5ed;
 
-  border-radius: 11px;
+  border-radius: 12px;
 
   background: #ffffff;
 
   color:
     var(--brand-blue);
+
+  transition:
+    background-color 0.15s ease,
+    transform 0.12s ease;
+}
+
+.profile-icon-button:hover {
+  background: #f5f9fc;
+}
+
+.profile-icon-button:active {
+  transform:
+    scale(0.97);
 }
 
 .profile-icon-button svg {
-  width: 18px !important;
-  height: 18px !important;
+  width: 19px !important;
+  height: 19px !important;
 
-  max-width: 18px !important;
-  max-height: 18px !important;
+  max-width: 19px !important;
+  max-height: 19px !important;
 
   fill: none !important;
 
   stroke:
     currentColor !important;
 
-  stroke-width: 1.7;
+  stroke-width: 1.8;
 
   stroke-linecap: round;
-
   stroke-linejoin: round;
 }
+
 
 /* ==================================================
    PHARMACIST SYSTEM STATUS
@@ -1514,22 +1803,26 @@ p {
 .pharmacist-system-status {
   width: 100%;
 
-  min-height: 48px;
+  min-height: 52px;
 
   display: flex;
 
   justify-content: space-between;
   align-items: center;
 
-  gap: 8px;
+  gap: 10px;
 
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 
   padding:
-    8px
-    12px;
+    9px
+    13px;
 
-  border-radius: 13px;
+  border:
+    1px solid
+    transparent;
+
+  border-radius: 14px;
 }
 
 .pharmacist-system-status > div {
@@ -1543,7 +1836,7 @@ p {
 }
 
 .pharmacist-system-status strong {
-  font-size: 11px;
+  font-size: 12px;
 
   line-height: 1.25;
 }
@@ -1556,30 +1849,40 @@ p {
   color: #17694f;
 
   background: #eaf8f3;
+
+  border-color: #d7eee5;
 }
 
 .pharmacist-system-status.is-offline {
   color: #586c7b;
 
   background: #f1f4f6;
+
+  border-color: #e3e9ed;
 }
 
 .pharmacist-system-status
 .network-badge {
-  min-height: 30px;
+  min-height: 31px;
 
   padding:
     6px
-    9px;
+    10px;
 
   font-size: 10px;
+
+  flex-shrink: 0;
 }
 
 .pharmacist-system-status
 .wifi-icon {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
+
+  max-width: 15px;
+  max-height: 15px;
 }
+
 
 /* ==================================================
    VERIFY MEDICINE
@@ -1588,24 +1891,24 @@ p {
 .pharmacist-primary-action {
   width: 100%;
 
-  min-height: 64px;
+  min-height: 68px;
 
   display: grid;
 
   grid-template-columns:
-    25px
+    27px
     1fr
     18px;
 
   align-items: center;
 
-  gap: 10px;
+  gap: 11px;
 
   padding:
-    11px
-    14px;
+    12px
+    15px;
 
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 
   border: 0;
 
@@ -1624,21 +1927,30 @@ p {
 
   box-shadow:
     0 5px 14px
-    rgba(
-      11,
-      99,
-      182,
-      0.11
-    );
+    rgba(11, 99, 182, 0.11);
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.15s ease;
 }
 
-.pharmacist-primary-action
-> svg {
-  width: 22px !important;
-  height: 22px !important;
+.pharmacist-primary-action:hover {
+  box-shadow:
+    0 7px 17px
+    rgba(11, 99, 182, 0.14);
+}
 
-  max-width: 22px !important;
-  max-height: 22px !important;
+.pharmacist-primary-action:active {
+  transform:
+    scale(0.985);
+}
+
+.pharmacist-primary-action > svg {
+  width: 24px !important;
+  height: 24px !important;
+
+  max-width: 24px !important;
+  max-height: 24px !important;
 
   fill: none !important;
 
@@ -1648,12 +1960,12 @@ p {
   stroke-width: 1.8;
 
   stroke-linecap: round;
-
   stroke-linejoin: round;
 }
 
-.pharmacist-primary-action
-> div {
+.pharmacist-primary-action > div {
+  min-width: 0;
+
   display: flex;
 
   flex-direction: column;
@@ -1661,9 +1973,8 @@ p {
   gap: 3px;
 }
 
-.pharmacist-primary-action
-strong {
-  font-size: 15px;
+.pharmacist-primary-action strong {
+  font-size: 16px;
 
   line-height: 1.2;
 
@@ -1674,13 +1985,21 @@ strong {
 div span {
   font-size: 10px;
 
-  line-height: 1.25;
+  line-height: 1.3;
 
-  opacity: 0.88;
+  opacity: 0.9;
 }
 
+.pharmacist-primary-action
+> span:last-child {
+  font-size: 18px;
+
+  line-height: 1;
+}
+
+
 /* ==================================================
-   PHARMACIST ACTION CARDS
+   PHARMACIST ACTION GRID
 ================================================== */
 
 .pharmacist-action-grid {
@@ -1697,50 +2016,72 @@ div span {
       )
     );
 
-  gap: 8px;
+  gap: 9px;
 
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 
 .pharmacist-action-card {
+  width: 100%;
+
   min-width: 0;
 
-  min-height: 85px;
+  min-height: 92px;
 
   display: grid;
 
   grid-template-columns:
-    27px
-    1fr;
+    29px
+    minmax(
+      0,
+      1fr
+    );
 
   align-items: center;
 
-  gap: 8px;
+  gap: 9px;
 
   padding:
-    11px
-    10px;
+    12px
+    11px;
 
   border:
     1px solid
     #d6e3ed;
 
-  border-radius: 13px;
+  border-radius: 14px;
 
   background: #ffffff;
 
   color: #17324d;
 
   text-align: left;
+
+  overflow: hidden;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.12s ease;
 }
 
-.pharmacist-action-card
-> svg {
-  width: 21px !important;
-  height: 21px !important;
+.pharmacist-action-card:hover {
+  background: #f9fcfe;
 
-  max-width: 21px !important;
-  max-height: 21px !important;
+  border-color: #c8dce7;
+}
+
+.pharmacist-action-card:active {
+  transform:
+    scale(0.985);
+}
+
+.pharmacist-action-card > svg {
+  width: 23px !important;
+  height: 23px !important;
+
+  max-width: 23px !important;
+  max-height: 23px !important;
 
   fill: none !important;
 
@@ -1750,8 +2091,9 @@ div span {
   stroke-width: 1.7;
 
   stroke-linecap: round;
-
   stroke-linejoin: round;
+
+  flex-shrink: 0;
 }
 
 .pharmacist-action-copy {
@@ -1761,34 +2103,42 @@ div span {
 
   flex-direction: column;
 
-  gap: 5px;
+  align-items: flex-start;
+
+  gap: 6px;
 }
 
-.pharmacist-action-copy
-strong {
+.pharmacist-action-copy strong {
+  display: block;
+
+  width: 100%;
+
   color: #092e56;
 
-  font-size: 12px;
+  font-size: 13px;
 
   line-height: 1.2;
 
   font-weight: 800;
 }
 
-.pharmacist-action-copy
-span {
+.pharmacist-action-copy span {
+  display: block;
+
+  width: 100%;
+
   color: #738496;
 
   font-size: 9px;
 
-  line-height: 1.25;
+  line-height: 1.35;
 }
 
-.pharmacist-escalate-card
-> svg {
+.pharmacist-escalate-card > svg {
   stroke:
     #c75f47 !important;
 }
+
 
 /* ==================================================
    PHARMACIST SUMMARY
@@ -1808,15 +2158,15 @@ span {
       )
     );
 
-  gap: 6px;
+  gap: 7px;
 
-  margin-bottom: 12px;
+  margin-bottom: 13px;
 }
 
 .pharmacist-metric {
   min-width: 0;
 
-  min-height: 63px;
+  min-height: 68px;
 
   display: flex;
 
@@ -1825,14 +2175,14 @@ span {
   justify-content: center;
 
   padding:
-    6px
+    7px
     4px;
 
   border:
     1px solid
     #d9e5ed;
 
-  border-radius: 11px;
+  border-radius: 12px;
 
   background: #f7fbfd;
 
@@ -1840,12 +2190,11 @@ span {
 }
 
 .pharmacist-metric span {
-  min-height: 24px;
+  min-height: 25px;
 
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   color: #64778a;
@@ -1858,16 +2207,17 @@ span {
 .pharmacist-metric strong {
   display: block;
 
-  margin-top: 3px;
+  margin-top: 4px;
 
   color: #082f59;
 
-  font-size: 17px;
+  font-size: 19px;
 
   line-height: 1;
 
   font-weight: 850;
 }
+
 
 /* ==================================================
    RECENT ACTIVITY
@@ -1876,9 +2226,16 @@ span {
 .pharmacist-recent {
   width: 100%;
 
-  flex: 1;
+  flex:
+    1
+    1
+    auto;
 
   min-height: 0;
+
+  display: flex;
+
+  flex-direction: column;
 
   overflow: hidden;
 }
@@ -1891,7 +2248,9 @@ span {
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 4px;
+  gap: 8px;
+
+  margin-bottom: 5px;
 }
 
 .section-heading-row h3 {
@@ -1899,13 +2258,19 @@ span {
 
   color: #092f58;
 
-  font-size: 13px;
+  font-size: 14px;
+
+  line-height: 1.2;
 
   font-weight: 800;
 }
 
 .text-action {
   min-height: 30px;
+
+  display: flex;
+
+  align-items: center;
 
   padding:
     4px
@@ -1923,20 +2288,24 @@ span {
   font-weight: 750;
 }
 
+.text-action:hover {
+  text-decoration: underline;
+}
+
 .recent-event-row {
   width: 100%;
 
-  min-height: 45px;
+  min-height: 52px;
 
   display: flex;
 
   justify-content: space-between;
   align-items: center;
 
-  gap: 8px;
+  gap: 10px;
 
   padding:
-    6px
+    7px
     0;
 
   border-bottom:
@@ -1951,11 +2320,11 @@ span {
 
   flex-direction: column;
 
-  gap: 2px;
+  gap: 3px;
 }
 
 .recent-event-row strong {
-  max-width: 190px;
+  max-width: 205px;
 
   color: #183a56;
 
@@ -1973,7 +2342,7 @@ span {
 .recent-event-row span {
   color: #778a99;
 
-  font-size: 8px;
+  font-size: 9px;
 
   line-height: 1.2;
 }
@@ -1984,12 +2353,15 @@ span {
   text-align: right;
 }
 
+
 /* ==================================================
-   PHARMACIST NAVIGATION
+   PHARMACIST NAV
 ================================================== */
 
 .pharmacist-nav {
   width: 100%;
+
+  flex-shrink: 0;
 
   display: grid;
 
@@ -2002,41 +2374,45 @@ span {
       )
     );
 
-  gap: 3px;
+  gap: 4px;
 
-  margin-top: 6px;
+  margin-top: 8px;
 
-  padding-top: 7px;
+  padding-top: 8px;
 
   border-top:
     1px solid
     #dce7ed;
 
   background: #ffffff;
-
-  flex-shrink: 0;
 }
 
 .pharmacist-nav button {
   min-width: 0;
 
-  min-height: 34px;
+  min-height: 38px;
 
   padding:
-    5px
+    6px
     2px;
 
   border: 0;
 
-  border-radius: 8px;
+  border-radius: 9px;
 
   background: transparent;
 
   color: #6f8190;
 
-  font-size: 8px;
+  font-size: 9px;
+
+  line-height: 1.1;
 
   font-weight: 700;
+}
+
+.pharmacist-nav button:hover {
+  background: #f4f8fa;
 }
 
 .pharmacist-nav button.active {
@@ -2045,6 +2421,7 @@ span {
 
   background: #edf6fb;
 }
+
 
 /* ==================================================
    PROFILE PAGE
@@ -2079,6 +2456,8 @@ span {
   max-width: 110px !important;
   max-height: 110px !important;
 
+  display: block;
+
   object-fit: cover;
 
   object-position:
@@ -2095,14 +2474,11 @@ span {
 
   border-radius: 50%;
 
+  overflow: hidden;
+
   box-shadow:
     0 6px 18px
-    rgba(
-      18,
-      55,
-      84,
-      0.08
-    );
+    rgba(18, 55, 84, 0.08);
 }
 
 .profile-page-header h1 {
@@ -2206,7 +2582,10 @@ span {
   color: #617b8e;
 
   font-size: 0.65rem;
+
+  line-height: 1.45;
 }
+
 
 /* ==================================================
    SETTINGS
@@ -2256,6 +2635,8 @@ span {
 }
 
 .settings-row > div {
+  min-width: 0;
+
   display: flex;
 
   flex-direction: column;
@@ -2289,6 +2670,11 @@ span {
   width: 18px;
   height: 18px;
 
+  flex:
+    0
+    0
+    18px;
+
   accent-color:
     var(--brand-blue);
 }
@@ -2320,19 +2706,23 @@ span {
   font-size: 0.72rem;
 
   font-weight: 750;
+
+  text-align: left;
 }
 
 .settings-link-row:last-child {
   border-bottom: 0;
 }
 
+
 /* ==================================================
-   BATCH / RECALL
+   BATCH LOOKUP
 ================================================== */
 
-.batch-result-card,
-.history-card {
-  margin-top: 14px;
+.batch-result-card {
+  width: 100%;
+
+  margin-top: 16px;
 
   padding: 14px;
 
@@ -2361,8 +2751,7 @@ span {
   font-weight: 800;
 }
 
-.recall-status.active,
-.recall-pill {
+.recall-status.active {
   background: #fff0ee;
 
   color: #b84d3d;
@@ -2374,17 +2763,14 @@ span {
   color: #27795d;
 }
 
-.recall-notice {
-  margin-top: 14px;
 
-  padding: 12px;
-
-  border-radius: 12px;
-
-  background: #fff6f1;
-}
+/* ==================================================
+   RECALLS
+================================================== */
 
 .recall-list {
+  width: 100%;
+
   display: grid;
 
   gap: 10px;
@@ -2414,6 +2800,37 @@ span {
   text-align: left;
 }
 
+.recall-list-card > div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.recall-list-card strong {
+  color: #273e51;
+
+  font-size: 0.83rem;
+}
+
+.recall-list-card span,
+.recall-list-card small {
+  color: #748793;
+
+  font-size: 0.66rem;
+}
+
+.recall-list-card p {
+  margin: 0;
+
+  color: #667b89;
+
+  font-size: 0.7rem;
+
+  line-height: 1.45;
+}
+
 .recall-pill {
   width: max-content;
 
@@ -2423,16 +2840,60 @@ span {
 
   border-radius: 999px;
 
-  font-size: 0.64rem;
+  background: #fff0ee;
+
+  color:
+    #b84d3d !important;
+
+  font-size:
+    0.64rem !important;
 
   font-weight: 800;
 }
+
+.recall-notice {
+  width: 100%;
+
+  margin-top: 14px;
+
+  padding: 12px;
+
+  border:
+    1px solid
+    #f3ddce;
+
+  border-radius: 12px;
+
+  background: #fff6f1;
+}
+
+.recall-notice strong {
+  color: #8f4a32;
+
+  font-size: 0.75rem;
+}
+
+.recall-notice p {
+  margin:
+    5px
+    0
+    0;
+
+  color: #745a4d;
+
+  font-size: 0.72rem;
+
+  line-height: 1.5;
+}
+
 
 /* ==================================================
    HISTORY
 ================================================== */
 
 .history-list {
+  width: 100%;
+
   display: grid;
 
   gap: 10px;
@@ -2440,7 +2901,23 @@ span {
   margin-top: 14px;
 }
 
+.history-card {
+  width: 100%;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #dce7ed;
+
+  border-radius: 15px;
+
+  background: #fbfdfe;
+}
+
 .history-card-head {
+  width: 100%;
+
   display: flex;
 
   justify-content: space-between;
@@ -2451,7 +2928,17 @@ span {
   margin-bottom: 8px;
 }
 
+.history-card-head strong {
+  min-width: 0;
+
+  color: #253b4e;
+
+  font-size: 0.82rem;
+}
+
 .history-status {
+  flex-shrink: 0;
+
   padding:
     4px
     7px;
@@ -2487,11 +2974,13 @@ span {
   color: #9c6807;
 }
 
+
 /* ==================================================
    MOBILE
 ================================================== */
 
 @media (max-width: 393px) {
+
   .app-shell {
     padding: 0;
   }
@@ -2500,6 +2989,8 @@ span {
     width: 100vw;
 
     height: 100dvh;
+
+    max-width: none;
 
     border: 0;
 
@@ -2515,17 +3006,20 @@ span {
   }
 
   .pharmacist-screen {
-    padding-left: 14px;
-
-    padding-right: 14px;
+    padding:
+      18px
+      17px
+      10px;
   }
 }
+
 
 /* ==================================================
    SMALL WIDTH
 ================================================== */
 
 @media (max-width: 360px) {
+
   .screen {
     padding-left: 17px;
 
@@ -2540,17 +3034,43 @@ span {
     gap: 2px;
   }
 
+  .pharmacist-profile-header {
+    gap: 8px;
+  }
+
+  .pharmacist-avatar {
+    width: 52px !important;
+    height: 52px !important;
+
+    min-width: 52px !important;
+    min-height: 52px !important;
+
+    max-width: 52px !important;
+    max-height: 52px !important;
+
+    flex-basis: 52px;
+  }
+
+  .pharmacist-greeting h1 {
+    font-size: 21px;
+  }
+
+  .profile-icon-button {
+    width: 36px;
+    height: 36px;
+  }
+
   .pharmacist-action-card {
-    min-height: 78px;
+    min-height: 84px;
 
     padding:
-      9px
-      8px;
+      10px
+      9px;
   }
 
   .pharmacist-action-copy
   strong {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .pharmacist-action-copy
@@ -2559,11 +3079,13 @@ span {
   }
 }
 
+
 /* ==================================================
-   SHORT PHONE
+   SHORT PHONES
 ================================================== */
 
 @media (max-height: 760px) {
+
   .home-brand {
     margin-bottom: 9px;
   }
@@ -2596,31 +3118,82 @@ span {
     min-height: 50px;
   }
 
+  .security-footer {
+    margin-top: 7px;
+  }
+
   .pharmacist-screen {
+    padding-top: 12px;
+
     overflow-y: auto;
   }
 
-  .pharmacist-action-card {
-    min-height: 74px;
+  .pharmacist-avatar {
+    width: 50px !important;
+    height: 50px !important;
+
+    min-width: 50px !important;
+    min-height: 50px !important;
+
+    max-width: 50px !important;
+    max-height: 50px !important;
+
+    flex-basis: 50px;
+  }
+
+  .pharmacist-greeting h1 {
+    font-size: 21px;
+  }
+
+  .pharmacist-system-status {
+    min-height: 45px;
+
+    margin-bottom: 8px;
   }
 
   .pharmacist-primary-action {
+    min-height: 58px;
+
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-action-grid {
+    gap: 7px;
+
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-action-card {
+    min-height: 76px;
+  }
+
+  .pharmacist-summary {
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-metric {
     min-height: 57px;
   }
 
   .recent-event-row {
-    min-height: 40px;
+    min-height: 42px;
+  }
+
+  .pharmacist-nav button {
+    min-height: 32px;
   }
 }
 
+
 /* ==================================================
-   ACCESSIBILITY
+   REDUCE MOTION
 ================================================== */
 
 @media (
   prefers-reduced-motion:
   reduce
 ) {
+
   *,
   *::before,
   *::after {
@@ -2632,5 +3205,8 @@ span {
 
     transition-duration:
       0.01ms !important;
+
+    scroll-behavior:
+      auto !important;
   }
 }
