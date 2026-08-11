@@ -268,7 +268,9 @@ export default function App() {
   const [
     verificationEvents,
     setVerificationEvents,
-  ] = useState(() => [...demoEvents]);
+  ] = useState(() => [
+    ...demoEvents,
+  ]);
 
   const [
     batchSearch,
@@ -317,12 +319,19 @@ export default function App() {
     useMemo(() => {
       return verificationEvents
         .map((event, index) =>
-          normaliseEvent(event, index)
+          normaliseEvent(
+            event,
+            index
+          )
         )
         .sort(
           (a, b) =>
-            new Date(b.timestamp).getTime() -
-            new Date(a.timestamp).getTime()
+            new Date(
+              b.timestamp
+            ).getTime() -
+            new Date(
+              a.timestamp
+            ).getTime()
         );
     }, [verificationEvents]);
 
@@ -389,10 +398,14 @@ export default function App() {
     setLoginError("");
 
     const normalizedEmail =
-      email.trim().toLowerCase();
+      email
+        .trim()
+        .toLowerCase();
 
     const user =
-      demoUsers[normalizedEmail];
+      demoUsers[
+        normalizedEmail
+      ];
 
     if (!user) {
       setLoginError(
@@ -401,7 +414,10 @@ export default function App() {
       return;
     }
 
-    if (user.password !== password) {
+    if (
+      user.password !==
+      password
+    ) {
       setLoginError(
         "Incorrect password. Please try again."
       );
@@ -413,19 +429,27 @@ export default function App() {
 
     switch (user.role) {
       case "manufacturer":
-        setScreen("manufacturerDashboard");
+        setScreen(
+          "manufacturerDashboard"
+        );
         break;
 
       case "pharmacist":
-        setScreen("pharmacistDashboard");
+        setScreen(
+          "pharmacistDashboard"
+        );
         break;
 
       case "consumer":
-        setScreen("consumerDashboard");
+        setScreen(
+          "consumerDashboard"
+        );
         break;
 
       case "admin":
-        setScreen("adminDashboard");
+        setScreen(
+          "adminDashboard"
+        );
         break;
 
       default:
@@ -462,7 +486,9 @@ export default function App() {
 
       setResult(verification);
 
-      if (role === "pharmacist") {
+      if (
+        role === "pharmacist"
+      ) {
         const normalizedCode =
           nextCode
             ?.trim()
@@ -470,11 +496,16 @@ export default function App() {
 
         const product =
           verification.product ||
-          medicines[normalizedCode];
+          medicines[
+            normalizedCode
+          ];
 
         const newEvent = {
-          id: `VERIFY-${Date.now()}`,
-          code: normalizedCode,
+          id:
+            `VERIFY-${Date.now()}`,
+
+          code:
+            normalizedCode,
 
           medicine:
             getMedicineName(
@@ -483,13 +514,15 @@ export default function App() {
             ),
 
           batch:
-            nextBatch || "—",
+            nextBatch ||
+            "—",
 
           result:
             verification.status,
 
           timestamp:
-            new Date().toISOString(),
+            new Date()
+              .toISOString(),
 
           offline,
 
@@ -534,7 +567,8 @@ export default function App() {
       const recall =
         prototypeRecalls.find(
           (item) =>
-            item.batch === search
+            item.batch ===
+            search
         );
 
       let medicineRecord =
@@ -542,14 +576,17 @@ export default function App() {
 
       Object.values(
         medicines
-      ).forEach((medicine) => {
-        if (
-          medicine.batch === search
-        ) {
-          medicineRecord =
-            medicine;
+      ).forEach(
+        (medicine) => {
+          if (
+            medicine.batch ===
+            search
+          ) {
+            medicineRecord =
+              medicine;
+          }
         }
-      });
+      );
 
       setBatchResult({
         batch: search,
@@ -566,12 +603,16 @@ export default function App() {
             : null),
       });
 
-      if (role === "pharmacist") {
+      if (
+        role === "pharmacist"
+      ) {
         const newEvent = {
-          id: `BATCH-${Date.now()}`,
+          id:
+            `BATCH-${Date.now()}`,
 
           medicine:
-            recall?.medicineName ||
+            recall
+              ?.medicineName ||
             getMedicineName(
               medicineRecord,
               search
@@ -583,7 +624,8 @@ export default function App() {
             "RECALL_CHECK",
 
           timestamp:
-            new Date().toISOString(),
+            new Date()
+              .toISOString(),
 
           offline,
 
@@ -612,28 +654,24 @@ export default function App() {
     const reference =
       `MA-2026-${Math.floor(
         10000 +
-          Math.random() * 89999
+          Math.random() *
+            89999
       )}`;
 
     const newReport = {
       id: reference,
       code,
       batch,
-
       comment:
         reportComment,
-
       location:
         reportLocation,
-
       imageName:
         reportImageName,
-
       createdAt:
-        new Date().toISOString(),
-
+        new Date()
+          .toISOString(),
       status: "New",
-
       role:
         role || "guest",
     };
@@ -648,7 +686,8 @@ export default function App() {
     );
 
     if (
-      role === "pharmacist" &&
+      role ===
+        "pharmacist" &&
       offline
     ) {
       setPendingSync(
@@ -657,7 +696,9 @@ export default function App() {
       );
     }
 
-    setScreen("confirmation");
+    setScreen(
+      "confirmation"
+    );
   };
 
   const reset = () => {
@@ -693,7 +734,8 @@ export default function App() {
       case "manual":
       case "result":
         if (
-          role === "pharmacist"
+          role ===
+          "pharmacist"
         ) {
           setScreen(
             "pharmacistDashboard"
@@ -709,7 +751,8 @@ export default function App() {
 
       case "report":
         if (
-          role === "pharmacist" &&
+          role ===
+            "pharmacist" &&
           reportOrigin ===
             "pharmacistDashboard"
         ) {
@@ -750,6 +793,7 @@ export default function App() {
 
       default:
         setScreen("home");
+        break;
     }
   };
 
@@ -759,20 +803,15 @@ export default function App() {
       style={{
         "--brand-blue":
           palette.blue,
-
         "--brand-deep":
           palette.deepBlue,
-
         "--brand-teal":
           palette.teal,
-
         "--brand-aqua":
           palette.aqua,
       }}
     >
       <main className="phone-stage">
-
-        {/* HOME */}
 
         {screen === "home" && (
           <section className="screen home-screen">
@@ -827,11 +866,12 @@ export default function App() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(event) => {
+                  onChange={(
+                    event
+                  ) => {
                     setEmail(
                       event.target.value
                     );
-
                     setLoginError("");
                   }}
                   placeholder="e.g. pharmacist@medauth.com"
@@ -856,11 +896,12 @@ export default function App() {
                         : "password"
                     }
                     value={password}
-                    onChange={(event) => {
+                    onChange={(
+                      event
+                    ) => {
                       setPassword(
                         event.target.value
                       );
-
                       setLoginError("");
                     }}
                     placeholder="••••••••"
@@ -876,6 +917,11 @@ export default function App() {
                         (current) =>
                           !current
                       )
+                    }
+                    aria-label={
+                      showPassword
+                        ? "Hide password"
+                        : "Show password"
                     }
                   >
                     {showPassword ? (
@@ -898,7 +944,9 @@ export default function App() {
                     checked={
                       rememberDevice
                     }
-                    onChange={(event) =>
+                    onChange={(
+                      event
+                    ) =>
                       setRememberDevice(
                         event.target.checked
                       )
@@ -915,7 +963,9 @@ export default function App() {
                   type="button"
                   className="forgot-password"
                   onClick={() => {
-                    setResetEmail(email);
+                    setResetEmail(
+                      email
+                    );
                     setResetSent(false);
                     setScreen(
                       "forgotPassword"
@@ -960,10 +1010,7 @@ export default function App() {
           </section>
         )}
 
-        {/* FORGOT PASSWORD */}
-
-        {screen ===
-          "forgotPassword" && (
+        {screen === "forgotPassword" && (
           <section className="screen forgot-screen">
 
             <BackButton
@@ -989,9 +1036,8 @@ export default function App() {
                 </h1>
 
                 <p className="forgot-description">
-                  Enter the email
-                  address linked to
-                  your MedAuth account.
+                  Enter the email address linked
+                  to your MedAuth account.
                 </p>
 
                 <form
@@ -1011,11 +1057,14 @@ export default function App() {
                       value={
                         resetEmail
                       }
-                      onChange={(event) =>
+                      onChange={(
+                        event
+                      ) =>
                         setResetEmail(
                           event.target.value
                         )
                       }
+                      placeholder="e.g. pharmacist@medauth.com"
                       required
                     />
 
@@ -1051,8 +1100,12 @@ export default function App() {
 
                 <PrimaryButton
                   onClick={() => {
-                    setScreen("home");
-                    setResetSent(false);
+                    setScreen(
+                      "home"
+                    );
+                    setResetSent(
+                      false
+                    );
                   }}
                 >
                   Return to Sign In
@@ -1064,15 +1117,16 @@ export default function App() {
           </section>
         )}
 
-        {/* SCAN */}
-
         {screen === "scan" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <div className="eyebrow">
-              {role === "pharmacist"
+              {role ===
+              "pharmacist"
                 ? "Pharmacist verification"
                 : "Guest verification"}
             </div>
@@ -1082,7 +1136,9 @@ export default function App() {
             </h1>
 
             <p>
-              Place the medicine code inside the scanning area.
+              Place the medicine
+              GS1/DataMatrix-style code inside
+              the scanning area.
             </p>
 
             <div className="scanner-panel">
@@ -1166,12 +1222,12 @@ export default function App() {
           </section>
         )}
 
-        {/* MANUAL */}
-
         {screen === "manual" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <div className="eyebrow">
               Manual verification
@@ -1186,11 +1242,14 @@ export default function App() {
 
               <input
                 value={code}
-                onChange={(event) =>
+                onChange={(
+                  event
+                ) =>
                   setCode(
                     event.target.value
                   )
                 }
+                placeholder="e.g. MED-001"
               />
             </label>
 
@@ -1199,11 +1258,14 @@ export default function App() {
 
               <input
                 value={batch}
-                onChange={(event) =>
+                onChange={(
+                  event
+                ) =>
                   setBatch(
                     event.target.value
                   )
                 }
+                placeholder="e.g. B1001"
               />
             </label>
 
@@ -1218,8 +1280,6 @@ export default function App() {
           </section>
         )}
 
-        {/* CHECKING */}
-
         {screen === "checking" && (
           <section className="screen center-screen">
 
@@ -1232,13 +1292,13 @@ export default function App() {
           </section>
         )}
 
-        {/* RESULT */}
-
         {screen === "result" &&
           result && (
             <section className="screen">
 
-              <BackButton onClick={goBack} />
+              <BackButton
+                onClick={goBack}
+              />
 
               {result.status === "MATCH" && (
                 <StatusCard
@@ -1274,7 +1334,9 @@ export default function App() {
                 <div className="product-card">
 
                   <div>
-                    <span>Medicine</span>
+                    <span>
+                      Medicine
+                    </span>
 
                     <strong>
                       {getMedicineName(
@@ -1297,7 +1359,9 @@ export default function App() {
                   </div>
 
                   <div>
-                    <span>Batch</span>
+                    <span>
+                      Batch
+                    </span>
 
                     <strong>
                       {batch}
@@ -1322,11 +1386,16 @@ export default function App() {
                 {result.status !== "MATCH" && (
                   <PrimaryButton
                     onClick={() => {
-                      setReportOrigin("result");
-                      setScreen("report");
+                      setReportOrigin(
+                        "result"
+                      );
+                      setScreen(
+                        "report"
+                      );
                     }}
                   >
-                    {role === "pharmacist"
+                    {role ===
+                    "pharmacist"
                       ? "Escalate / Report Suspicious Medicine"
                       : "Report Medicine"}
                   </PrimaryButton>
@@ -1355,13 +1424,13 @@ export default function App() {
             </section>
           )}
 
-        {/* DETAILS */}
-
         {screen === "details" &&
           result?.product && (
             <section className="screen">
 
-              <BackButton onClick={goBack} />
+              <BackButton
+                onClick={goBack}
+              />
 
               <div className="eyebrow">
                 Medicine details
@@ -1423,15 +1492,15 @@ export default function App() {
             </section>
           )}
 
-        {/* REPORT */}
-
         {screen === "report" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <div className="eyebrow">
-              Pharmacist escalation
+              Suspicious medicine report
             </div>
 
             <h1>
@@ -1464,13 +1533,18 @@ export default function App() {
               Comment
 
               <textarea
-                value={reportComment}
-                onChange={(event) =>
+                value={
+                  reportComment
+                }
+                onChange={(
+                  event
+                ) =>
                   setReportComment(
                     event.target.value
                   )
                 }
                 rows="4"
+                placeholder="Example: Packaging looks different."
               />
             </label>
 
@@ -1480,9 +1554,12 @@ export default function App() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(event) =>
+                onChange={(
+                  event
+                ) =>
                   setReportImageName(
-                    event.target.files?.[0]
+                    event.target
+                      .files?.[0]
                       ?.name || ""
                   )
                 }
@@ -1493,25 +1570,30 @@ export default function App() {
               Coarse location (optional)
 
               <input
-                value={reportLocation}
-                onChange={(event) =>
+                value={
+                  reportLocation
+                }
+                onChange={(
+                  event
+                ) =>
                   setReportLocation(
                     event.target.value
                   )
                 }
+                placeholder="e.g. Adelaide SA"
               />
             </label>
 
             <PrimaryButton
-              onClick={submitReport}
+              onClick={
+                submitReport
+              }
             >
               Submit Report
             </PrimaryButton>
 
           </section>
         )}
-
-        {/* CONFIRMATION */}
 
         {screen === "confirmation" && (
           <section className="screen center-screen">
@@ -1554,8 +1636,7 @@ export default function App() {
 
         {/* PHARMACIST DASHBOARD */}
 
-        {screen ===
-          "pharmacistDashboard" && (
+        {screen === "pharmacistDashboard" && (
           <section className="screen pharmacist-screen">
 
             <div className="pharmacist-profile-header">
@@ -1769,12 +1850,16 @@ export default function App() {
 
               <PharmacistMetric
                 label="Scans Today"
-                value={totals.scans}
+                value={
+                  totals.scans
+                }
               />
 
               <PharmacistMetric
                 label="Pending Sync"
-                value={pendingSync}
+                value={
+                  pendingSync
+                }
               />
 
               <PharmacistMetric
@@ -1786,7 +1871,9 @@ export default function App() {
 
               <PharmacistMetric
                 label="No Match"
-                value={totals.noMatch}
+                value={
+                  totals.noMatch
+                }
               />
 
             </div>
@@ -1814,11 +1901,13 @@ export default function App() {
               </div>
 
               {pharmacistEvents
-                .slice(0, 3)
+                .slice(0, 4)
                 .map((event) => (
                   <div
                     className="recent-event-row"
-                    key={event.id}
+                    key={
+                      event.id
+                    }
                   >
                     <div>
 
@@ -1855,7 +1944,9 @@ export default function App() {
 
             <PharmacistNav
               screen={screen}
-              setScreen={setScreen}
+              setScreen={
+                setScreen
+              }
             />
 
           </section>
@@ -1863,8 +1954,7 @@ export default function App() {
 
         {/* PROFILE */}
 
-        {screen ===
-          "pharmacistProfile" && (
+        {screen === "pharmacistProfile" && (
           <section className="screen pharmacist-sub-screen">
 
             <BackButton
@@ -1929,11 +2019,14 @@ export default function App() {
             </div>
 
             <div className="profile-note">
+
               <LockIcon />
 
               <span>
-                Demo professional profile. No patient health information is stored.
+                Demo professional profile.
+                No patient health information is stored.
               </span>
+
             </div>
 
           </section>
@@ -1941,8 +2034,7 @@ export default function App() {
 
         {/* SETTINGS */}
 
-        {screen ===
-          "pharmacistSettings" && (
+        {screen === "pharmacistSettings" && (
           <section className="screen pharmacist-sub-screen">
 
             <BackButton
@@ -2018,7 +2110,9 @@ export default function App() {
                   checked={
                     rememberDevice
                   }
-                  onChange={(event) =>
+                  onChange={(
+                    event
+                  ) =>
                     setRememberDevice(
                       event.target.checked
                     )
@@ -2083,11 +2177,12 @@ export default function App() {
 
         {/* BATCH LOOKUP */}
 
-        {screen ===
-          "pharmacistBatchLookup" && (
+        {screen === "pharmacistBatchLookup" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <div className="eyebrow">
               Pharmacist workflow
@@ -2109,7 +2204,9 @@ export default function App() {
                   value={
                     batchSearch
                   }
-                  onChange={(event) =>
+                  onChange={(
+                    event
+                  ) =>
                     setBatchSearch(
                       event.target.value
                     )
@@ -2200,7 +2297,9 @@ export default function App() {
 
             <PharmacistNav
               screen={screen}
-              setScreen={setScreen}
+              setScreen={
+                setScreen
+              }
             />
 
           </section>
@@ -2208,11 +2307,12 @@ export default function App() {
 
         {/* RECALLS */}
 
-        {screen ===
-          "pharmacistRecalls" && (
+        {screen === "pharmacistRecalls" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <div className="eyebrow">
               Pharmacist workflow
@@ -2264,20 +2364,21 @@ export default function App() {
 
             <PharmacistNav
               screen={screen}
-              setScreen={setScreen}
+              setScreen={
+                setScreen
+              }
             />
 
           </section>
         )}
 
-        {/* RECALL DETAIL */}
-
-        {screen ===
-          "pharmacistRecallDetail" &&
+        {screen === "pharmacistRecallDetail" &&
           selectedRecall && (
             <section className="screen">
 
-              <BackButton onClick={goBack} />
+              <BackButton
+                onClick={goBack}
+              />
 
               <div className="eyebrow">
                 Recall details
@@ -2329,7 +2430,9 @@ export default function App() {
                 </strong>
 
                 <p>
-                  {selectedRecall.reason}
+                  {
+                    selectedRecall.reason
+                  }
                 </p>
               </div>
 
@@ -2338,11 +2441,12 @@ export default function App() {
 
         {/* HISTORY */}
 
-        {screen ===
-          "pharmacistHistory" && (
+        {screen === "pharmacistHistory" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <div className="eyebrow">
               Pharmacist workflow
@@ -2378,7 +2482,9 @@ export default function App() {
 
                     <Row
                       label="Batch"
-                      value={event.batch}
+                      value={
+                        event.batch
+                      }
                     />
 
                     <Row
@@ -2407,7 +2513,9 @@ export default function App() {
 
             <PharmacistNav
               screen={screen}
-              setScreen={setScreen}
+              setScreen={
+                setScreen
+              }
             />
 
           </section>
@@ -2415,11 +2523,12 @@ export default function App() {
 
         {/* MANUFACTURER */}
 
-        {screen ===
-          "manufacturerDashboard" && (
+        {screen === "manufacturerDashboard" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <DashboardHeader
               title="Manufacturer"
@@ -2441,11 +2550,12 @@ export default function App() {
 
         {/* CONSUMER */}
 
-        {screen ===
-          "consumerDashboard" && (
+        {screen === "consumerDashboard" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <DashboardHeader
               title="My MedAuth"
@@ -2479,11 +2589,12 @@ export default function App() {
 
         {/* ADMIN */}
 
-        {screen ===
-          "adminDashboard" && (
+        {screen === "adminDashboard" && (
           <section className="screen">
 
-            <BackButton onClick={goBack} />
+            <BackButton
+              onClick={goBack}
+            />
 
             <DashboardHeader
               title="Administration"
@@ -2506,7 +2617,9 @@ export default function App() {
   );
 }
 
-function BackButton({ onClick }) {
+function BackButton({
+  onClick,
+}) {
   return (
     <button
       type="button"
@@ -2563,31 +2676,23 @@ function PharmacistNav({
   const items = [
     {
       label: "Dashboard",
-      screen:
-        "pharmacistDashboard",
+      screen: "pharmacistDashboard",
     },
-
     {
       label: "Verify",
       screen: "scan",
     },
-
     {
       label: "Batch",
-      screen:
-        "pharmacistBatchLookup",
+      screen: "pharmacistBatchLookup",
     },
-
     {
       label: "Recalls",
-      screen:
-        "pharmacistRecalls",
+      screen: "pharmacistRecalls",
     },
-
     {
       label: "History",
-      screen:
-        "pharmacistHistory",
+      screen: "pharmacistHistory",
     },
   ];
 
@@ -2604,7 +2709,9 @@ function PharmacistNav({
               : ""
           }
           onClick={() =>
-            setScreen(item.screen)
+            setScreen(
+              item.screen
+            )
           }
         >
           {item.label}
@@ -2623,6 +2730,7 @@ function DashboardHeader({
     <div className="dashboard-head">
 
       <div>
+
         <div className="eyebrow">
           MedAuth account
         </div>
@@ -2630,6 +2738,7 @@ function DashboardHeader({
         <h1>
           {title}
         </h1>
+
       </div>
 
       <span className="role-badge">
@@ -2727,6 +2836,7 @@ function ManufacturerDashboard({
 function AdminDashboard() {
   return (
     <div className="panel">
+
       <h3>
         Report review
       </h3>
@@ -2734,6 +2844,7 @@ function AdminDashboard() {
       <p>
         Prototype administration tools.
       </p>
+
     </div>
   );
 }
@@ -2783,13 +2894,15 @@ function ScanIcon() {
 
 function BatchLookupIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <circle
         cx="10"
         cy="10"
         r="6"
       />
-
       <path d="m15 15 5 5" />
     </svg>
   );
@@ -2797,7 +2910,10 @@ function BatchLookupIcon() {
 
 function RecallIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M12 3v3" />
       <path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Z" />
       <path d="M10 20h4" />
@@ -2807,7 +2923,10 @@ function RecallIcon() {
 
 function HistoryIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M3 12a9 9 0 1 0 3-6.7" />
       <path d="M3 4v5h5" />
       <path d="M12 7v5l3 2" />
@@ -2817,7 +2936,10 @@ function HistoryIcon() {
 
 function EscalateIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M12 3 3 20h18L12 3Z" />
       <path d="M12 9v4" />
       <path d="M12 17h.01" />
@@ -2827,13 +2949,15 @@ function EscalateIcon() {
 
 function ProfileIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <circle
         cx="12"
         cy="8"
         r="4"
       />
-
       <path d="M4 21a8 8 0 0 1 16 0" />
     </svg>
   );
@@ -2841,28 +2965,31 @@ function ProfileIcon() {
 
 function SettingsIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <circle
         cx="12"
         cy="12"
         r="3"
       />
-
-      <path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
-
-      <path d="M12 2v3" />
-      <path d="M12 19v3" />
-      <path d="M2 12h3" />
-      <path d="M19 12h3" />
+      <circle
+        cx="12"
+        cy="12"
+        r="8"
+      />
     </svg>
   );
 }
 
 function EyeIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-
       <circle
         cx="12"
         cy="12"
@@ -2874,7 +3001,10 @@ function EyeIcon() {
 
 function EyeOffIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="m3 3 18 18" />
       <path d="M6 7c-2 2-3.5 5-3.5 5s3.5 6 9.5 6" />
     </svg>
@@ -2886,6 +3016,7 @@ function LockIcon() {
     <svg
       className="security-lock"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <rect
         x="5"
@@ -2894,7 +3025,6 @@ function LockIcon() {
         height="10"
         rx="2"
       />
-
       <path d="M8 10V7a4 4 0 0 1 8 0v3" />
     </svg>
   );
@@ -2902,8 +3032,10 @@ function LockIcon() {
 
 function MailIcon() {
   return (
-    <svg viewBox="0 0 24 24">
-
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <rect
         x="3"
         y="5"
@@ -2911,9 +3043,7 @@ function MailIcon() {
         height="14"
         rx="2"
       />
-
       <path d="m4 7 8 6 8-6" />
-
     </svg>
   );
 }
