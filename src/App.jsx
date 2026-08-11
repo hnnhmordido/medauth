@@ -52,8 +52,10 @@ const demoUsers = {
   "admin@medauth.com": {
     role: "admin",
     password: "demo123",
-    name: "Admin",
-    fullName: "MedAuth Administrator",
+    name: "Luna",
+    fullName: "Luna Chen",
+    title: "MedAuth Administrator",
+    organisation: "MedAuth Administration",
     email: "admin@medauth.com",
   },
 };
@@ -188,7 +190,9 @@ function formatEventTime(
   );
 }
 
-function resultLabel(result) {
+function resultLabel(
+  result
+) {
   switch (result) {
     case "MATCH":
       return "Data match found";
@@ -312,8 +316,10 @@ export default function App() {
   const [syncing, setSyncing] =
     useState(false);
 
-  const [pendingSync, setPendingSync] =
-    useState(0);
+  const [
+    pendingSync,
+    setPendingSync,
+  ] = useState(0);
 
   const [role, setRole] =
     useState("");
@@ -682,6 +688,9 @@ export default function App() {
               role ===
               "pharmacist"
                 ? "PHARMACIST"
+                : role ===
+                  "admin"
+                ? "ADMIN"
                 : "CONSUMER",
 
             offline,
@@ -935,6 +944,13 @@ export default function App() {
           setScreen(
             "pharmacistDashboard"
           );
+        } else if (
+          role ===
+          "admin"
+        ) {
+          setScreen(
+            "adminDashboard"
+          );
         } else {
           setScreen(
             "home"
@@ -982,6 +998,13 @@ export default function App() {
         );
         break;
 
+      case "adminProfile":
+      case "adminSettings":
+        setScreen(
+          "adminDashboard"
+        );
+        break;
+
       case "forgotPassword":
         setScreen(
           "home"
@@ -1023,9 +1046,7 @@ export default function App() {
     >
       <main className="phone-stage">
 
-        {/* ==================================================
-            HOME
-        ================================================== */}
+        {/* ================= HOME ================= */}
 
         {screen === "home" && (
           <section className="screen home-screen">
@@ -1070,11 +1091,9 @@ export default function App() {
             </button>
 
             <div className="home-divider">
-
               <span>
                 or
               </span>
-
             </div>
 
             <form
@@ -1098,8 +1117,7 @@ export default function App() {
                     event
                   ) => {
                     setEmail(
-                      event.target
-                        .value
+                      event.target.value
                     );
 
                     setLoginError(
@@ -1134,9 +1152,7 @@ export default function App() {
                       event
                     ) => {
                       setPassword(
-                        event
-                          .target
-                          .value
+                        event.target.value
                       );
 
                       setLoginError(
@@ -1189,9 +1205,7 @@ export default function App() {
                       event
                     ) =>
                       setRememberDevice(
-                        event
-                          .target
-                          .checked
+                        event.target.checked
                       )
                     }
                   />
@@ -1259,9 +1273,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            FORGOT PASSWORD
-        ================================================== */}
+        {/* ================= FORGOT ================= */}
 
         {screen === "forgotPassword" && (
           <section className="screen forgot-screen">
@@ -1317,9 +1329,7 @@ export default function App() {
                         event
                       ) =>
                         setResetEmail(
-                          event
-                            .target
-                            .value
+                          event.target.value
                         )
                       }
                       placeholder="e.g. pharmacist@medauth.com"
@@ -1376,9 +1386,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            SCAN
-        ================================================== */}
+        {/* ================= SCAN ================= */}
 
         {screen === "scan" && (
           <section className="screen">
@@ -1502,9 +1510,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            MANUAL
-        ================================================== */}
+        {/* ================= MANUAL ================= */}
 
         {screen === "manual" && (
           <section className="screen">
@@ -1535,8 +1541,7 @@ export default function App() {
                   event
                 ) =>
                   setCode(
-                    event.target
-                      .value
+                    event.target.value
                   )
                 }
                 placeholder="e.g. MED-001"
@@ -1556,8 +1561,7 @@ export default function App() {
                   event
                 ) =>
                   setBatch(
-                    event.target
-                      .value
+                    event.target.value
                   )
                 }
                 placeholder="e.g. B1001"
@@ -1576,9 +1580,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            CHECKING
-        ================================================== */}
+        {/* ================= CHECKING ================= */}
 
         {screen === "checking" && (
           <section className="screen center-screen">
@@ -1596,9 +1598,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            RESULT
-        ================================================== */}
+        {/* ================= RESULT ================= */}
 
         {screen === "result" &&
           result && (
@@ -1893,9 +1893,7 @@ export default function App() {
             </section>
           )}
 
-        {/* ==================================================
-            DETAILS
-        ================================================== */}
+        {/* ================= DETAILS ================= */}
 
         {screen === "details" &&
           result?.product && (
@@ -1968,18 +1966,6 @@ export default function App() {
                   }
                 />
 
-                <Row
-                  label="Last updated"
-                  value={
-                    result.product
-                      .lastUpdated
-                      ?.replace(
-                        "T",
-                        " "
-                      )
-                  }
-                />
-
               </div>
 
               <SecondaryButton
@@ -1995,9 +1981,7 @@ export default function App() {
             </section>
           )}
 
-        {/* ==================================================
-            REPORT
-        ================================================== */}
+        {/* ================= REPORT ================= */}
 
         {screen === "report" && (
           <section className="screen">
@@ -2094,8 +2078,7 @@ export default function App() {
                   event
                 ) =>
                   setReportComment(
-                    event.target
-                      .value
+                    event.target.value
                   )
                 }
                 rows="4"
@@ -2137,8 +2120,7 @@ export default function App() {
                   event
                 ) =>
                   setReportLocation(
-                    event.target
-                      .value
+                    event.target.value
                   )
                 }
                 placeholder="e.g. Adelaide SA"
@@ -2157,9 +2139,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            CONFIRMATION
-        ================================================== */}
+        {/* ================= CONFIRMATION ================= */}
 
         {screen === "confirmation" && (
           <section className="screen center-screen">
@@ -2203,9 +2183,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            PHARMACIST DASHBOARD
-        ================================================== */}
+        {/* ================= PHARMACIST ================= */}
 
         {screen === "pharmacistDashboard" && (
           <section className="screen pharmacist-screen">
@@ -2251,7 +2229,6 @@ export default function App() {
                       "pharmacistProfile"
                     )
                   }
-                  aria-label="My Profile"
                 >
                   <ProfileIcon />
                 </button>
@@ -2264,7 +2241,6 @@ export default function App() {
                       "pharmacistSettings"
                     )
                   }
-                  aria-label="Settings"
                 >
                   <SettingsIcon />
                 </button>
@@ -2281,7 +2257,6 @@ export default function App() {
               }`}
             >
               <div>
-
                 <strong>
                   {offline
                     ? "Offline Mode — Cached Data"
@@ -2296,7 +2271,6 @@ export default function App() {
                     {pendingSync}
                   </span>
                 )}
-
               </div>
 
               <NetworkBadge
@@ -2307,7 +2281,6 @@ export default function App() {
                   handleNetworkToggle
                 }
               />
-
             </div>
 
             <button
@@ -2322,7 +2295,6 @@ export default function App() {
               <ScanIcon />
 
               <div>
-
                 <strong>
                   Verify Medicine
                 </strong>
@@ -2330,13 +2302,11 @@ export default function App() {
                 <span>
                   Scan or enter a medicine code
                 </span>
-
               </div>
 
               <span>
                 →
               </span>
-
             </button>
 
             <div className="pharmacist-action-grid">
@@ -2365,7 +2335,6 @@ export default function App() {
                 <BatchLookupIcon />
 
                 <div className="pharmacist-action-copy">
-
                   <strong>
                     Batch Lookup
                   </strong>
@@ -2373,7 +2342,6 @@ export default function App() {
                   <span>
                     Check batch and recall status
                   </span>
-
                 </div>
               </button>
 
@@ -2389,7 +2357,6 @@ export default function App() {
                 <RecallIcon />
 
                 <div className="pharmacist-action-copy">
-
                   <strong>
                     Recalls & Alerts
                   </strong>
@@ -2397,7 +2364,6 @@ export default function App() {
                   <span>
                     Review active notices
                   </span>
-
                 </div>
               </button>
 
@@ -2413,7 +2379,6 @@ export default function App() {
                 <ShortagesIcon />
 
                 <div className="pharmacist-action-copy">
-
                   <strong>
                     Shortages
                   </strong>
@@ -2421,7 +2386,6 @@ export default function App() {
                   <span>
                     Current availability
                   </span>
-
                 </div>
               </button>
 
@@ -2441,7 +2405,6 @@ export default function App() {
                 <EscalateIcon />
 
                 <div className="pharmacist-action-copy">
-
                   <strong>
                     Escalate / Report
                   </strong>
@@ -2449,7 +2412,6 @@ export default function App() {
                   <span>
                     Report suspicious medicine
                   </span>
-
                 </div>
               </button>
 
@@ -2570,9 +2532,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            BATCH LOOKUP
-        ================================================== */}
+        {/* ================= BATCH ================= */}
 
         {screen === "pharmacistBatchLookup" && (
           <section className="screen">
@@ -2591,22 +2551,12 @@ export default function App() {
               Batch Lookup
             </h1>
 
-            {batchProductCode && (
-              <div className="notice">
-                Product:{" "}
-                <strong>
-                  {batchProductCode}
-                </strong>
-              </div>
-            )}
-
             <form
               onSubmit={
                 handleBatchLookup
               }
             >
               <label className="field">
-
                 Batch number
 
                 <input
@@ -2617,14 +2567,12 @@ export default function App() {
                     event
                   ) =>
                     setBatchSearch(
-                      event.target
-                        .value
+                      event.target.value
                     )
                   }
                   placeholder="e.g. B2000"
                   required
                 />
-
               </label>
 
               <PrimaryButton
@@ -2632,7 +2580,6 @@ export default function App() {
               >
                 Search Batch
               </PrimaryButton>
-
             </form>
 
             {batchResult && (
@@ -2640,14 +2587,12 @@ export default function App() {
 
                 <div
                   className={`recall-status ${
-                    batchResult
-                      .recall
+                    batchResult.recall
                       ? "active"
                       : "clear"
                   }`}
                 >
-                  {batchResult
-                    .recall
+                  {batchResult.recall
                     ? "Active Recall"
                     : "No Active Recall"}
                 </div>
@@ -2655,92 +2600,37 @@ export default function App() {
                 <Row
                   label="Scanned batch"
                   value={
-                    batchResult
-                      .batch
+                    batchResult.batch
                   }
                 />
 
                 <Row
                   label="Medicine"
                   value={
-                    batchResult
-                      .medicine
-                      ? batchResult
-                          .medicine
+                    batchResult.medicine
+                      ? batchResult.medicine
                           .medicineName
                       : "No prototype medicine found"
                   }
                 />
 
-                {batchResult
-                  .medicine && (
+                {batchResult.medicine && (
                   <Row
                     label="Registered batch"
                     value={
-                      batchResult
-                        .medicine
+                      batchResult.medicine
                         .batch
                     }
                   />
                 )}
 
-                {batchResult
-                  .recall && (
-                  <>
-                    <Row
-                      label="Recall date"
-                      value={
-                        batchResult
-                          .recall
-                          .recallDate
-                      }
-                    />
-
-                    <Row
-                      label="Severity"
-                      value={
-                        batchResult
-                          .recall
-                          .severity
-                      }
-                    />
-
-                    <div className="recall-notice">
-
-                      <strong>
-                        Safety notice
-                      </strong>
-
-                      <p>
-                        {
-                          batchResult
-                            .recall
-                            .reason
-                        }
-                      </p>
-
-                    </div>
-                  </>
-                )}
-
               </div>
             )}
-
-            <PharmacistNav
-              screen={
-                screen
-              }
-              setScreen={
-                setScreen
-              }
-            />
 
           </section>
         )}
 
-        {/* ==================================================
-            RECALLS
-        ================================================== */}
+        {/* ================= RECALLS ================= */}
 
         {screen === "pharmacistRecalls" && (
           <section className="screen">
@@ -2798,116 +2688,16 @@ export default function App() {
                       }
                     </span>
 
-                    <small>
-                      {
-                        recall.recallDate
-                      }
-                    </small>
-
                   </button>
                 )
               )}
 
             </div>
 
-            <PharmacistNav
-              screen={
-                screen
-              }
-              setScreen={
-                setScreen
-              }
-            />
-
           </section>
         )}
 
-        {/* ==================================================
-            RECALL DETAIL
-        ================================================== */}
-
-        {screen === "pharmacistRecallDetail" &&
-          selectedRecall && (
-            <section className="screen">
-
-              <BackButton
-                onClick={
-                  goBack
-                }
-              />
-
-              <div className="eyebrow">
-                Recall details
-              </div>
-
-              <h1>
-                {
-                  selectedRecall
-                    .medicineName
-                }
-              </h1>
-
-              <div className="recall-status active">
-                Active Recall
-              </div>
-
-              <div className="details-list">
-
-                <Row
-                  label="Batch"
-                  value={
-                    selectedRecall
-                      .batch
-                  }
-                />
-
-                <Row
-                  label="Recall date"
-                  value={
-                    selectedRecall
-                      .recallDate
-                  }
-                />
-
-                <Row
-                  label="Severity"
-                  value={
-                    selectedRecall
-                      .severity
-                  }
-                />
-
-                <Row
-                  label="Status"
-                  value={
-                    selectedRecall
-                      .status
-                  }
-                />
-
-              </div>
-
-              <div className="recall-notice">
-
-                <strong>
-                  Safety notice
-                </strong>
-
-                <p>
-                  {
-                    selectedRecall
-                      .reason
-                  }
-                </p>
-
-              </div>
-
-            </section>
-          )}
-
-        {/* ==================================================
-            SHORTAGES
-        ================================================== */}
+        {/* ================= SHORTAGES ================= */}
 
         {screen === "pharmacistShortages" && (
           <section className="screen">
@@ -2941,7 +2731,6 @@ export default function App() {
                     }
                   >
                     <div>
-
                       <strong>
                         {
                           item.medicineName
@@ -2953,7 +2742,6 @@ export default function App() {
                           item.note
                         }
                       </span>
-
                     </div>
 
                     <span
@@ -2963,28 +2751,16 @@ export default function App() {
                         item.availability
                       }
                     </span>
-
                   </div>
                 )
               )}
 
             </div>
 
-            <PharmacistNav
-              screen={
-                screen
-              }
-              setScreen={
-                setScreen
-              }
-            />
-
           </section>
         )}
 
-        {/* ==================================================
-            HISTORY
-        ================================================== */}
+        {/* ================= HISTORY ================= */}
 
         {screen === "pharmacistHistory" && (
           <section className="screen">
@@ -3056,31 +2832,13 @@ export default function App() {
                     />
 
                     <Row
-                      label="Channel"
-                      value={
-                        event.channel
-                      }
-                    />
-
-                    <Row
                       label="Connection"
                       value={
                         event.offline
-                          ? event.pendingSync
-                            ? "Offline · Pending Sync"
-                            : "Offline · Synced"
+                          ? "Offline"
                           : "Online"
                       }
                     />
-
-                    {event.region && (
-                      <Row
-                        label="Region"
-                        value={
-                          event.region
-                        }
-                      />
-                    )}
 
                   </div>
                 )
@@ -3088,21 +2846,10 @@ export default function App() {
 
             </div>
 
-            <PharmacistNav
-              screen={
-                screen
-              }
-              setScreen={
-                setScreen
-              }
-            />
-
           </section>
         )}
 
-        {/* ==================================================
-            PROFILE
-        ================================================== */}
+        {/* ================= PHARMACIST PROFILE ================= */}
 
         {screen === "pharmacistProfile" && (
           <section className="screen pharmacist-sub-screen">
@@ -3122,15 +2869,12 @@ export default function App() {
               />
 
               <h1>
-                {currentUser
-                  ?.fullName ||
+                {currentUser?.fullName ||
                   "Marie Nguyen"}
               </h1>
 
               <p>
-                {currentUser
-                  ?.title ||
-                  "Registered Pharmacist"}
+                Registered Pharmacist
               </p>
 
               <span className="professional-status">
@@ -3144,8 +2888,7 @@ export default function App() {
               <ProfileRow
                 label="Name"
                 value={
-                  currentUser
-                    ?.fullName ||
+                  currentUser?.fullName ||
                   "Marie Nguyen"
                 }
               />
@@ -3158,8 +2901,7 @@ export default function App() {
               <ProfileRow
                 label="Email"
                 value={
-                  currentUser
-                    ?.email ||
+                  currentUser?.email ||
                   "pharmacist@medauth.com"
                 }
               />
@@ -3167,30 +2909,17 @@ export default function App() {
               <ProfileRow
                 label="Organisation"
                 value={
-                  currentUser
-                    ?.organisation ||
+                  currentUser?.organisation ||
                   "MedAuth Pharmacy Demo"
                 }
               />
 
             </div>
 
-            <div className="profile-note">
-
-              <LockIcon />
-
-              <span>
-                Demo professional profile. No patient health information is stored.
-              </span>
-
-            </div>
-
           </section>
         )}
 
-        {/* ==================================================
-            SETTINGS
-        ================================================== */}
+        {/* ================= PHARMACIST SETTINGS ================= */}
 
         {screen === "pharmacistSettings" && (
           <section className="screen pharmacist-sub-screen">
@@ -3214,7 +2943,6 @@ export default function App() {
               <div className="settings-row">
 
                 <div>
-
                   <strong>
                     Connection mode
                   </strong>
@@ -3224,7 +2952,6 @@ export default function App() {
                       ? "Offline — cached data"
                       : "Online"}
                   </span>
-
                 </div>
 
                 <NetworkBadge
@@ -3237,108 +2964,6 @@ export default function App() {
                 />
 
               </div>
-
-              <div className="settings-row">
-
-                <div>
-
-                  <strong>
-                    Pending sync
-                  </strong>
-
-                  <span>
-                    Activity waiting to synchronise
-                  </span>
-
-                </div>
-
-                <span className="settings-value">
-                  {pendingSync}
-                </span>
-
-              </div>
-
-              <div className="settings-row">
-
-                <div>
-
-                  <strong>
-                    Remember this device
-                  </strong>
-
-                  <span>
-                    Keep demo sign-in preference
-                  </span>
-
-                </div>
-
-                <input
-                  className="settings-checkbox"
-                  type="checkbox"
-                  checked={
-                    rememberDevice
-                  }
-                  onChange={(
-                    event
-                  ) =>
-                    setRememberDevice(
-                      event.target
-                        .checked
-                    )
-                  }
-                />
-
-              </div>
-
-            </div>
-
-            <div className="settings-card">
-
-              <button
-                type="button"
-                className="settings-link-row"
-                onClick={() =>
-                  setScreen(
-                    "pharmacistProfile"
-                  )
-                }
-              >
-                <span>
-                  My Profile
-                </span>
-
-                <span>
-                  →
-                </span>
-              </button>
-
-              <button
-                type="button"
-                className="settings-link-row"
-                onClick={() => {
-                  setResetEmail(
-                    currentUser
-                      ?.email ||
-                    email
-                  );
-
-                  setResetSent(
-                    false
-                  );
-
-                  setScreen(
-                    "forgotPassword"
-                  );
-                }}
-              >
-                <span>
-                  Change Password
-                </span>
-
-                <span>
-                  →
-                </span>
-              </button>
 
             </div>
 
@@ -3353,9 +2978,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            MANUFACTURER
-        ================================================== */}
+        {/* ================= MANUFACTURER ================= */}
 
         {screen === "manufacturerDashboard" && (
           <section className="screen">
@@ -3388,9 +3011,7 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            CONSUMER
-        ================================================== */}
+        {/* ================= CONSUMER ================= */}
 
         {screen === "consumerDashboard" && (
           <section className="screen">
@@ -3435,12 +3056,98 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            ADMIN
-        ================================================== */}
+        {/* ================= ADMIN DASHBOARD ================= */}
 
         {screen === "adminDashboard" && (
-          <section className="screen">
+          <section className="screen admin-screen">
+
+            <div className="admin-profile-header">
+
+              <div className="admin-profile-main">
+
+                <img
+                  className="admin-avatar"
+                  src={`${import.meta.env.BASE_URL}admin-luna.png`}
+                  alt="Luna Chen"
+                />
+
+                <div className="admin-greeting">
+
+                  <span className="admin-welcome">
+                    Welcome back
+                  </span>
+
+                  <h1>
+                    Hi,{" "}
+                    {currentUser?.name ||
+                      "Luna"}
+                  </h1>
+
+                  <p>
+                    MedAuth Administrator
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="admin-profile-actions">
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "adminProfile"
+                    )
+                  }
+                  aria-label="My Profile"
+                >
+                  <ProfileIcon />
+                </button>
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "adminSettings"
+                    )
+                  }
+                  aria-label="Settings"
+                >
+                  <SettingsIcon />
+                </button>
+
+              </div>
+
+            </div>
+
+            <div className="admin-access-row">
+
+              <span className="admin-access-badge">
+                Admin Access
+              </span>
+
+            </div>
+
+            <AdminDashboard />
+
+            <SecondaryButton
+              onClick={
+                reset
+              }
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* ================= ADMIN PROFILE ================= */}
+
+        {screen === "adminProfile" && (
+          <section className="screen admin-sub-screen">
 
             <BackButton
               onClick={
@@ -3448,12 +3155,226 @@ export default function App() {
               }
             />
 
-            <DashboardHeader
-              title="Administration"
-              role="Admin"
+            <div className="profile-page-header">
+
+              <img
+                className="profile-page-avatar"
+                src={`${import.meta.env.BASE_URL}admin-luna.png`}
+                alt="Luna Chen"
+              />
+
+              <h1>
+                {currentUser?.fullName ||
+                  "Luna Chen"}
+              </h1>
+
+              <p>
+                {currentUser?.title ||
+                  "MedAuth Administrator"}
+              </p>
+
+              <span className="professional-status">
+                Admin Access
+              </span>
+
+            </div>
+
+            <div className="profile-information-card">
+
+              <ProfileRow
+                label="Name"
+                value={
+                  currentUser?.fullName ||
+                  "Luna Chen"
+                }
+              />
+
+              <ProfileRow
+                label="Role"
+                value="Admin / Regulator"
+              />
+
+              <ProfileRow
+                label="Email"
+                value={
+                  currentUser?.email ||
+                  "admin@medauth.com"
+                }
+              />
+
+              <ProfileRow
+                label="Organisation"
+                value={
+                  currentUser?.organisation ||
+                  "MedAuth Administration"
+                }
+              />
+
+            </div>
+
+            <div className="profile-note">
+
+              <LockIcon />
+
+              <span>
+                Authorised MedAuth prototype administrator account.
+              </span>
+
+            </div>
+
+          </section>
+        )}
+
+        {/* ================= ADMIN SETTINGS ================= */}
+
+        {screen === "adminSettings" && (
+          <section className="screen admin-sub-screen">
+
+            <BackButton
+              onClick={
+                goBack
+              }
             />
 
-            <AdminDashboard />
+            <div className="eyebrow">
+              Admin account
+            </div>
+
+            <h1>
+              Settings
+            </h1>
+
+            <div className="settings-card">
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Account
+                  </strong>
+
+                  <span>
+                    {currentUser?.fullName ||
+                      "Luna Chen"}
+                  </span>
+
+                </div>
+
+                <span className="admin-access-badge">
+                  Admin
+                </span>
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Connection mode
+                  </strong>
+
+                  <span>
+                    {offline
+                      ? "Offline — cached data"
+                      : "Online"}
+                  </span>
+
+                </div>
+
+                <NetworkBadge
+                  offline={
+                    offline
+                  }
+                  onToggle={
+                    handleNetworkToggle
+                  }
+                />
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Remember this device
+                  </strong>
+
+                  <span>
+                    Keep demo sign-in preference
+                  </span>
+
+                </div>
+
+                <input
+                  className="settings-checkbox"
+                  type="checkbox"
+                  checked={
+                    rememberDevice
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setRememberDevice(
+                      event.target.checked
+                    )
+                  }
+                />
+
+              </div>
+
+            </div>
+
+            <div className="settings-card">
+
+              <button
+                type="button"
+                className="settings-link-row"
+                onClick={() =>
+                  setScreen(
+                    "adminProfile"
+                  )
+                }
+              >
+                <span>
+                  My Profile
+                </span>
+
+                <span>
+                  →
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="settings-link-row"
+                onClick={() => {
+                  setResetEmail(
+                    currentUser?.email ||
+                    "admin@medauth.com"
+                  );
+
+                  setResetSent(
+                    false
+                  );
+
+                  setScreen(
+                    "forgotPassword"
+                  );
+                }}
+              >
+                <span>
+                  Change Password
+                </span>
+
+                <span>
+                  →
+                </span>
+              </button>
+
+            </div>
 
             <SecondaryButton
               onClick={
@@ -3470,6 +3391,7 @@ export default function App() {
     </div>
   );
 }
+
 
 /* ==================================================
    RESULT DETAILS
@@ -3537,20 +3459,10 @@ function MedicineResultDetails({
         }
       />
 
-      <Row
-        label="Last updated"
-        value={
-          product.lastUpdated
-            ?.replace(
-              "T",
-              " "
-            )
-        }
-      />
-
     </div>
   );
 }
+
 
 /* ==================================================
    SUPPLY CHAIN
@@ -3572,7 +3484,6 @@ function SupplyChainSnapshot({
         <div className="section-heading-row">
 
           <div>
-
             <h3>
               Supply Chain Snapshot
             </h3>
@@ -3580,7 +3491,6 @@ function SupplyChainSnapshot({
             <span className="prototype-label">
               Prototype information
             </span>
-
           </div>
 
         </div>
@@ -3621,10 +3531,6 @@ function SupplyChainSnapshot({
 
         </div>
 
-        <p className="supply-chain-note">
-          Supply-chain information is unavailable for this product in the current MedAuth prototype dataset.
-        </p>
-
       </div>
     );
   }
@@ -3635,7 +3541,6 @@ function SupplyChainSnapshot({
       <div className="section-heading-row">
 
         <div>
-
           <h3>
             Supply Chain Snapshot
           </h3>
@@ -3643,7 +3548,6 @@ function SupplyChainSnapshot({
           <span className="prototype-label">
             Prototype / sample information
           </span>
-
         </div>
 
       </div>
@@ -3701,9 +3605,6 @@ function SupplyChainSnapshot({
                     >
                       {mismatch
                         ? "MISMATCH"
-                        : stage.status ===
-                          "CURRENT"
-                        ? "CURRENT LOCATION"
                         : stage.status}
                     </span>
 
@@ -3725,32 +3626,6 @@ function SupplyChainSnapshot({
                     </small>
                   )}
 
-                  {stage.detail && (
-                    <small>
-                      {
-                        stage.detail
-                      }
-                    </small>
-                  )}
-
-                  {mismatch && (
-                    <p>
-                      Scanned batch{" "}
-                      <strong>
-                        {
-                          result.scannedBatch
-                        }
-                      </strong>{" "}
-                      differs from registered batch{" "}
-                      <strong>
-                        {
-                          product.batch
-                        }
-                      </strong>
-                      .
-                    </p>
-                  )}
-
                 </div>
 
               </div>
@@ -3760,20 +3635,10 @@ function SupplyChainSnapshot({
 
       </div>
 
-      {result.status ===
-        "NO_MATCH" && (
-        <p className="supply-chain-warning">
-          A difference was found between the scanned information and the registered prototype record.
-        </p>
-      )}
-
-      <p className="supply-chain-note">
-        This is prototype/sample supply-chain information and is not a real blockchain record.
-      </p>
-
     </div>
   );
 }
+
 
 /* ==================================================
    SMALL COMPONENTS
@@ -3839,32 +3704,27 @@ function PharmacistNav({
 }) {
   const items = [
     {
-      label:
-        "Dashboard",
+      label: "Dashboard",
       screen:
         "pharmacistDashboard",
     },
     {
-      label:
-        "Verify",
+      label: "Verify",
       screen:
         "scan",
     },
     {
-      label:
-        "Batch",
+      label: "Batch",
       screen:
         "pharmacistBatchLookup",
     },
     {
-      label:
-        "Recalls",
+      label: "Recalls",
       screen:
         "pharmacistRecalls",
     },
     {
-      label:
-        "History",
+      label: "History",
       screen:
         "pharmacistHistory",
     },
@@ -3942,8 +3802,7 @@ function Row({
       </span>
 
       <strong>
-        {value ||
-          "—"}
+        {value || "—"}
       </strong>
 
     </div>
@@ -4041,6 +3900,7 @@ function AdminDashboard() {
   );
 }
 
+
 /* ==================================================
    ICONS
 ================================================== */
@@ -4112,9 +3972,7 @@ function RecallIcon() {
       aria-hidden="true"
     >
       <path d="M12 3v3" />
-
       <path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Z" />
-
       <path d="M10 20h4" />
     </svg>
   );
@@ -4148,9 +4006,7 @@ function EscalateIcon() {
       aria-hidden="true"
     >
       <path d="M12 3 3 20h18L12 3Z" />
-
       <path d="M12 9v4" />
-
       <path d="M12 17h.01" />
     </svg>
   );
@@ -4218,7 +4074,6 @@ function EyeOffIcon() {
       aria-hidden="true"
     >
       <path d="m3 3 18 18" />
-
       <path d="M6 7c-2 2-3.5 5-3.5 5s3.5 6 9.5 6" />
     </svg>
   );
