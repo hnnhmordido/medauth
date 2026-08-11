@@ -1,3 +1,7 @@
+/* =========================================
+   GLOBAL
+========================================= */
+
 :root {
   font-family:
     Inter,
@@ -9,7 +13,7 @@
     sans-serif;
 
   color: #17324d;
-  background: #f4f9fc;
+  background: #eef5f9;
 
   font-synthesis: none;
 }
@@ -22,20 +26,15 @@ html,
 body,
 #root {
   width: 100%;
-  min-width: 320px;
   min-height: 100%;
   margin: 0;
 }
 
-html {
-  background: #f4f9fc;
-}
-
 body {
+  min-width: 320px;
   min-height: 100vh;
-  min-height: 100dvh;
 
-  background: #f4f9fc;
+  background: #eef5f9;
 }
 
 button,
@@ -50,123 +49,127 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ======================================
-   APP ROOT
-====================================== */
+
+/* =========================================
+   ONE MEDAUTH PHONE SIZE FOR EVERY PAGE
+   TARGET: 393 × 852 px
+========================================= */
 
 .app-shell {
   width: 100%;
-
   min-height: 100vh;
-  min-height: 100dvh;
 
   display: flex;
   justify-content: center;
+  align-items: flex-start;
 
-  background:
-    linear-gradient(
-      180deg,
-      #fbfdff 0%,
-      #f4f9fc 100%
-    );
+  padding: 18px;
+
+  background: #eef5f9;
 }
 
-/* ======================================
-   SHARED PHONE CONTAINER
-====================================== */
-
 .phone-stage {
-  width: 100%;
-  max-width: 390px;
+  width: 393px;
+  height: 852px;
 
-  margin: 0 auto;
+  max-width: 100%;
 
-  padding:
-    max(10px, env(safe-area-inset-top))
-    10px
-    max(10px, env(safe-area-inset-bottom));
+  position: relative;
 
   display: flex;
   flex-direction: column;
-}
 
-.screen {
-  width: 100%;
-
-  min-height: 560px;
-  max-height: 720px;
-
-  padding: 20px;
+  overflow: hidden;
 
   background: #ffffff;
 
-  border: 1px solid #e1ebf1;
-  border-radius: 22px;
+  border: 1px solid #dbe8f0;
+  border-radius: 28px;
 
   box-shadow:
-    0 5px 20px rgba(8, 75, 153, 0.05);
+    0 10px 32px rgba(17, 55, 85, 0.08);
+}
+
+
+/* =========================================
+   EVERY SCREEN
+========================================= */
+
+.screen {
+  width: 100%;
+  height: 100%;
+
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  padding:
+    max(20px, env(safe-area-inset-top))
+    20px
+    max(20px, env(safe-area-inset-bottom));
 
   overflow-y: auto;
   overflow-x: hidden;
+
+  background: #ffffff;
+
+  border: 0;
+  border-radius: 0;
+
+  box-shadow: none;
+
+  scrollbar-width: thin;
 }
-/* ======================================
+
+
+/* =========================================
    HOME
-====================================== */
+========================================= */
 
 .home-screen {
   display: flex;
   flex-direction: column;
 
-  /*
-    No different fixed height.
-    It uses the same .screen sizing
-    as every other page.
-  */
+  height: 100%;
 }
 
 .home-status-row {
   width: 100%;
 
-  min-height: 40px;
+  min-height: 42px;
 
   display: flex;
   justify-content: flex-end;
-  align-items: flex-start;
+  align-items: center;
 
-  margin-bottom: 4px;
+  flex: 0 0 auto;
 }
 
 .home-content {
-  width: 100%;
+  flex: 1;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
 
-  padding: 6px 0 18px;
+  width: 100%;
+
+  padding: 4px 0 44px;
 }
 
 .home-brand {
-  width: 100%;
-
   display: flex;
   justify-content: center;
   align-items: center;
 
-  margin-bottom: 30px;
+  margin-bottom: 34px;
 }
 
 .hero-logo {
   display: block;
 
-  width:
-    clamp(
-      108px,
-      34vw,
-      138px
-    );
-
-  max-width: 44%;
+  width: 185px;
+  max-width: 62%;
 
   height: auto;
 
@@ -177,13 +180,13 @@ button {
   width: 100%;
 
   display: grid;
-
   gap: 14px;
 }
 
-/* ======================================
-   WIFI / CONNECTION STATUS
-====================================== */
+
+/* =========================================
+   WIFI STATUS
+========================================= */
 
 .network-badge {
   appearance: none;
@@ -194,16 +197,13 @@ button {
 
   min-height: 36px;
 
-  padding:
-    6px 10px;
+  padding: 7px 11px;
 
   border: 0;
   border-radius: 999px;
 
   font-size: 0.78rem;
   font-weight: 750;
-
-  line-height: 1;
 
   transition:
     color 0.18s ease,
@@ -213,26 +213,16 @@ button {
 
 .network-badge.online {
   color: #147d64;
-
   background: #eaf8f3;
 }
 
 .network-badge.offline {
   color: #697886;
-
   background: #eef2f5;
 }
 
 .network-badge:active {
   transform: scale(0.97);
-}
-
-.network-badge:focus-visible {
-  outline:
-    3px solid
-    rgba(11, 99, 182, 0.18);
-
-  outline-offset: 2px;
 }
 
 .wifi-icon {
@@ -243,7 +233,6 @@ button {
   stroke: currentColor;
 
   stroke-width: 1.9;
-
   stroke-linecap: round;
 }
 
@@ -252,52 +241,84 @@ button {
   stroke: none;
 }
 
-/* ======================================
+
+/* =========================================
+   BACK BUTTON
+========================================= */
+
+.back-button {
+  width: auto;
+  height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  margin: -4px 0 10px -8px;
+  padding: 7px 9px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: var(--brand-blue);
+
+  font-size: 0.9rem;
+  font-weight: 700;
+
+  flex: 0 0 auto;
+}
+
+.back-button svg {
+  width: 20px;
+  height: 20px;
+
+  flex: 0 0 20px;
+
+  fill: none;
+  stroke: currentColor;
+
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.back-button:hover,
+.back-button:active {
+  background: #edf6fb;
+}
+
+
+/* =========================================
    BUTTONS
-====================================== */
+========================================= */
 
 .btn {
   width: 100%;
 
   min-height: 56px;
 
-  padding:
-    14px 18px;
+  padding: 14px 18px;
 
-  border:
-    1px solid
-    transparent;
-
+  border: 1px solid transparent;
   border-radius: 15px;
 
-  font-weight: 750;
   font-size: 0.98rem;
+  font-weight: 750;
 
   transition:
     transform 0.12s ease,
-    opacity 0.18s ease,
-    background-color 0.18s ease,
-    border-color 0.18s ease;
+    opacity 0.18s ease;
 }
 
 .btn:active {
   transform: scale(0.985);
 }
 
-.btn:focus-visible {
-  outline:
-    3px solid
-    rgba(11, 99, 182, 0.2);
-
-  outline-offset: 2px;
-}
-
 .btn:disabled {
   opacity: 0.5;
-
   cursor: not-allowed;
-
-  transform: none;
 }
 
 .btn-primary {
@@ -309,15 +330,10 @@ button {
       var(--brand-blue),
       var(--brand-teal)
     );
-
-  box-shadow:
-    0 4px 10px
-    rgba(11, 99, 182, 0.1);
 }
 
 .btn-secondary {
-  color:
-    var(--brand-deep);
+  color: var(--brand-deep);
 
   background: #ffffff;
 
@@ -330,54 +346,31 @@ button {
   min-height: 44px;
 
   margin-top: 2px;
-
-  padding:
-    10px 24px;
+  padding: 10px 24px;
 
   border: 0;
   border-radius: 12px;
 
   background: transparent;
 
-  color:
-    var(--brand-blue);
+  color: var(--brand-blue);
 
-  font-weight: 750;
   font-size: 0.95rem;
+  font-weight: 750;
 }
 
-.login-link:active {
-  background: #edf6fb;
-}
 
-.login-link:focus-visible {
-  outline:
-    3px solid
-    rgba(11, 99, 182, 0.18);
-
-  outline-offset: 2px;
-}
-
-/* ======================================
+/* =========================================
    TYPOGRAPHY
-====================================== */
+========================================= */
 
 h1 {
-  margin:
-    18px 0
-    10px;
+  margin: 16px 0 10px;
 
-  font-size:
-    clamp(
-      2rem,
-      7vw,
-      3rem
-    );
+  font-size: 2.15rem;
+  line-height: 1.06;
 
-  line-height: 1.04;
-
-  letter-spacing:
-    -0.04em;
+  letter-spacing: -0.04em;
 
   color: #12304b;
 }
@@ -388,41 +381,31 @@ h3 {
 }
 
 p {
-  line-height: 1.6;
+  line-height: 1.55;
 
   color: #526a7f;
 }
 
 .eyebrow {
-  color:
-    var(--brand-teal);
+  color: var(--brand-teal);
 
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
 
   text-transform: uppercase;
-
-  letter-spacing: 0.14em;
+  letter-spacing: 0.13em;
 }
 
-.hint,
-.muted {
-  font-size: 0.9rem;
 
-  color: #72879a;
-}
-
-/* ======================================
-   FORM FIELDS
-====================================== */
+/* =========================================
+   FORMS
+========================================= */
 
 .field {
   display: grid;
-
   gap: 8px;
 
-  margin:
-    18px 0;
+  margin: 16px 0;
 
   font-weight: 750;
 
@@ -434,57 +417,36 @@ p {
 .field textarea {
   width: 100%;
 
-  padding:
-    14px 15px;
+  padding: 14px 15px;
 
-  border:
-    1px solid
-    #c8dbe7;
-
+  border: 1px solid #c8dbe7;
   border-radius: 14px;
 
   outline: none;
 
   color: #17324d;
-
   background: #fbfdff;
 }
 
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color:
-    var(--brand-blue);
+  border-color: var(--brand-blue);
 
   box-shadow:
     0 0 0 4px
     rgba(11, 99, 182, 0.1);
 }
 
-/* ======================================
-   ACTION STACK
-====================================== */
 
-.action-stack {
-  width: 100%;
-
-  display: grid;
-
-  gap: 12px;
-
-  margin-top: 22px;
-}
-
-/* ======================================
-   SCANNER
-====================================== */
+/* =========================================
+   SCANNER PAGE
+========================================= */
 
 .scanner-panel {
   height: 300px;
 
-  margin:
-    28px 0
-    18px;
+  margin: 22px 0 16px;
 
   position: relative;
 
@@ -493,11 +455,8 @@ p {
   display: grid;
   place-items: center;
 
-  border:
-    2px solid
-    #b8dbe7;
-
-  border-radius: 28px;
+  border: 2px solid #b8dbe7;
+  border-radius: 24px;
 
   background:
     linear-gradient(
@@ -544,84 +503,53 @@ p {
   width: 58px;
   height: 58px;
 
-  border-color:
-    var(--brand-blue);
-
+  border-color: var(--brand-blue);
   border-style: solid;
 }
 
 .scan-corners span:nth-child(1) {
   left: 28px;
   top: 28px;
-
-  border-width:
-    5px 0 0 5px;
-
-  border-radius:
-    14px 0 0 0;
+  border-width: 5px 0 0 5px;
 }
 
 .scan-corners span:nth-child(2) {
   right: 28px;
   top: 28px;
-
-  border-width:
-    5px 5px 0 0;
-
-  border-radius:
-    0 14px 0 0;
+  border-width: 5px 5px 0 0;
 }
 
 .scan-corners span:nth-child(3) {
   left: 28px;
   bottom: 28px;
-
-  border-width:
-    0 0 5px 5px;
-
-  border-radius:
-    0 0 0 14px;
+  border-width: 0 0 5px 5px;
 }
 
 .scan-corners span:nth-child(4) {
   right: 28px;
   bottom: 28px;
-
-  border-width:
-    0 5px 5px 0;
-
-  border-radius:
-    0 0 14px 0;
+  border-width: 0 5px 5px 0;
 }
-
-/* ======================================
-   SAMPLE SCAN BUTTONS
-====================================== */
 
 .sample-box {
   display: grid;
-
   gap: 8px;
 
-  padding: 16px;
+  padding: 14px;
 
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 
-  border:
-    1px solid
-    #dcebf2;
-
-  border-radius: 18px;
+  border: 1px solid #dcebf2;
+  border-radius: 16px;
 
   background: #f6fbfd;
 }
 
 .sample-box button {
-  padding:
-    11px 12px;
+  padding: 10px 11px;
 
   border: 0;
-  border-radius: 12px;
+  border-radius: 11px;
 
   text-align: left;
 
@@ -630,178 +558,87 @@ p {
   color: #27536f;
 }
 
-/* ======================================
-   CHECKING SCREEN
-====================================== */
 
-.center-screen {
-  display: flex;
+/* =========================================
+   RESULT / DETAILS / PANELS
+========================================= */
 
-  flex-direction: column;
+.action-stack {
+  width: 100%;
 
-  justify-content: center;
+  display: grid;
+  gap: 12px;
 
-  align-items: center;
-
-  text-align: center;
+  margin-top: 20px;
 }
-
-.loader {
-  width: 70px;
-  height: 70px;
-
-  border:
-    7px solid
-    #dbeaf3;
-
-  border-top-color:
-    var(--brand-teal);
-
-  border-radius: 50%;
-
-  animation:
-    spin 0.9s
-    linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform:
-      rotate(360deg);
-  }
-}
-
-/* ======================================
-   RESULT STATUS
-====================================== */
 
 .status-card {
   display: grid;
 
-  grid-template-columns:
-    72px 1fr;
-
-  gap: 18px;
+  grid-template-columns: 60px 1fr;
+  gap: 14px;
 
   align-items: center;
 
-  padding: 20px;
+  padding: 16px;
 
-  border:
-    1px solid;
-
-  border-radius: 22px;
+  border: 1px solid;
+  border-radius: 18px;
 }
 
-.status-card h2 {
-  margin:
-    3px 0;
-
-  font-size: 2rem;
-}
-
-.status-card p {
-  margin: 0;
-}
-
-.status-icon,
-.success-badge {
-  width: 64px;
-  height: 64px;
+.status-icon {
+  width: 54px;
+  height: 54px;
 
   display: grid;
   place-items: center;
 
   border-radius: 50%;
 
-  color: #ffffff;
+  color: white;
 
-  font-size: 2.1rem;
+  font-size: 1.8rem;
   font-weight: 900;
 }
 
 .status-card.match {
   background: #eaf9f6;
-
   border-color: #9edfd7;
 }
 
-.status-card.match
-.status-icon {
-  background:
-    var(--brand-teal);
+.status-card.match .status-icon {
+  background: var(--brand-teal);
 }
 
 .status-card.no_match {
   background: #fff5e9;
-
   border-color: #f0c994;
 }
 
-.status-card.no_match
-.status-icon {
+.status-card.no_match .status-icon {
   background: #c97900;
 }
 
 .status-card.not_covered {
   background: #eef5fb;
-
   border-color: #b9d5e7;
 }
 
-.status-card.not_covered
-.status-icon {
-  background:
-    var(--brand-blue);
+.status-card.not_covered .status-icon {
+  background: var(--brand-blue);
 }
-
-/* ======================================
-   PANELS / PRODUCT DETAILS
-====================================== */
 
 .product-card,
 .panel,
 .notice {
-  margin:
-    18px 0;
+  margin: 16px 0;
 
-  padding: 16px;
+  padding: 14px;
 
-  border:
-    1px solid
-    #d9e8f0;
-
-  border-radius: 18px;
+  border: 1px solid #d9e8f0;
+  border-radius: 16px;
 
   background: #f9fcfe;
-}
-
-.product-card div {
-  display: flex;
-
-  justify-content:
-    space-between;
-
-  gap: 16px;
-
-  padding:
-    8px 0;
-
-  border-bottom:
-    1px solid
-    #e7f0f5;
-}
-
-.product-card div:last-child {
-  border-bottom: 0;
-}
-
-.product-card span {
-  color: #71879a;
-}
-
-.product-card strong {
-  text-align: right;
 }
 
 .notice {
@@ -810,55 +647,89 @@ p {
   color: #3f6177;
 }
 
-/* ======================================
-   DETAILS
-====================================== */
+.product-card div {
+  display: flex;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 8px 0;
+
+  border-bottom: 1px solid #e7f0f5;
+}
+
+.product-card div:last-child {
+  border-bottom: 0;
+}
 
 .details-list {
-  margin:
-    20px 0;
+  margin: 18px 0;
 
-  border-top:
-    1px solid
-    #dfebf2;
+  border-top: 1px solid #dfebf2;
 }
 
 .detail-row {
   display: grid;
 
-  grid-template-columns:
-    1fr 1.3fr;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 14px;
 
-  gap: 18px;
+  padding: 13px 0;
 
-  padding:
-    15px 0;
-
-  border-bottom:
-    1px solid
-    #dfebf2;
-}
-
-.detail-row span {
-  color: #6e8396;
+  border-bottom: 1px solid #dfebf2;
 }
 
 .detail-row strong {
   text-align: right;
-
-  word-break:
-    break-word;
+  word-break: break-word;
 }
 
-/* ======================================
-   SUCCESS
-====================================== */
+
+/* =========================================
+   CHECKING / CONFIRMATION
+========================================= */
+
+.center-screen {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.loader {
+  width: 64px;
+  height: 64px;
+
+  border: 6px solid #dbeaf3;
+  border-top-color: var(--brand-teal);
+
+  border-radius: 50%;
+
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .success-badge {
-  width: 84px;
-  height: 84px;
+  width: 76px;
+  height: 76px;
 
-  font-size: 2.8rem;
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: white;
+
+  font-size: 2.5rem;
+  font-weight: 900;
 
   background:
     linear-gradient(
@@ -868,42 +739,31 @@ p {
     );
 }
 
-/* ======================================
+
+/* =========================================
    DASHBOARD
-====================================== */
+========================================= */
 
 .dashboard-head {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 
-  justify-content:
-    space-between;
-
-  align-items:
-    flex-start;
-
-  gap: 18px;
-}
-
-.dashboard-head h1 {
-  margin-top: 8px;
+  gap: 12px;
 }
 
 .role-badge {
-  padding:
-    7px 10px;
+  padding: 7px 10px;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
   background: #e8f4fb;
 
-  color:
-    var(--brand-deep);
+  color: var(--brand-deep);
 
-  text-transform:
-    capitalize;
+  text-transform: capitalize;
 
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 750;
 }
 
@@ -913,20 +773,16 @@ p {
   grid-template-columns:
     repeat(2, 1fr);
 
-  gap: 12px;
+  gap: 10px;
 
-  margin:
-    18px 0;
+  margin: 16px 0;
 }
 
 .metric {
-  padding: 16px;
+  padding: 14px;
 
-  border:
-    1px solid
-    #d5e8f1;
-
-  border-radius: 18px;
+  border: 1px solid #d5e8f1;
+  border-radius: 16px;
 
   background:
     linear-gradient(
@@ -941,111 +797,47 @@ p {
 
   color: #698197;
 
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
 .metric strong {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
 
-  color:
-    var(--brand-deep);
+  color: var(--brand-deep);
 }
 
-/* ======================================
-   PHONE RESPONSIVE
-====================================== */
 
-@media (max-width: 480px) {
+/* =========================================
+   REAL PHONE RESPONSIVE BEHAVIOR
+========================================= */
+
+@media (max-width: 393px) {
+  .app-shell {
+    padding: 0;
+  }
 
   .phone-stage {
-    max-width: none;
+    width: 100vw;
+    height: 100dvh;
 
-    padding:
-      max(
-        8px,
-        env(safe-area-inset-top)
-      )
-      8px
-      max(
-        8px,
-        env(safe-area-inset-bottom)
-      );
-  }
+    max-width: 393px;
 
-  .screen {
-    padding:
-      18px;
+    border: 0;
+    border-radius: 0;
 
-    border-radius:
-      20px;
-  }
-
-  .home-status-row {
-    min-height:
-      38px;
-  }
-
-  .home-content {
-    padding-bottom:
-      22px;
-  }
-
-  .home-brand {
-    margin-bottom:
-      28px;
-  }
-
-  .hero-logo {
-  display: block;
-
-  width: 180px;
-  max-width: 62%;
-
-  height: auto;
-
-  object-fit: contain;
-}
-
-  .status-card {
-    grid-template-columns:
-      58px 1fr;
-  }
-
-  .status-icon {
-    width: 52px;
-    height: 52px;
+    box-shadow: none;
   }
 }
 
-/* ======================================
-   SHORT PHONES
-====================================== */
-
-@media (max-height: 650px) {
-
-  .screen {
-    overflow-y: auto;
+@media (max-height: 852px) {
+  .app-shell {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
-  .home-content {
-    justify-content:
-      flex-start;
+  .phone-stage {
+    height: 100dvh;
 
-    padding-top:
-      14px;
-  }
-
-  .home-brand {
-    margin-bottom:
-      22px;
-  }
-
-  .hero-logo {
-    width: 100px;
-  }
-
-  .btn {
-    min-height:
-      52px;
+    max-height: 852px;
   }
 }
