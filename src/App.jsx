@@ -90,8 +90,7 @@ export default function App() {
       ).length,
 
       covered: demoEvents.filter(
-        (event) =>
-          event.result !== "NOT_COVERED"
+        (event) => event.result !== "NOT_COVERED"
       ).length,
     }),
     []
@@ -104,14 +103,13 @@ export default function App() {
     setScreen("checking");
 
     window.setTimeout(() => {
-      const verificationResult =
+      setResult(
         verifyMedicine(
           nextCode,
           nextBatch,
           offline
-        );
-
-      setResult(verificationResult);
+        )
+      );
 
       setScreen("result");
     }, 650);
@@ -119,12 +117,9 @@ export default function App() {
 
   const reset = () => {
     setScreen("home");
-
     setCode("MED-001");
     setBatch("B1001");
-
     setResult(null);
-
     setReportRef("");
   };
 
@@ -133,7 +128,6 @@ export default function App() {
       case "scan":
       case "manual":
       case "result":
-      case "login":
         setScreen("home");
         break;
 
@@ -146,13 +140,8 @@ export default function App() {
         setScreen("home");
         break;
 
-      case "confirmation":
-        setScreen("home");
-        break;
-
       default:
         setScreen("home");
-        break;
     }
   };
 
@@ -160,11 +149,11 @@ export default function App() {
     event.preventDefault();
 
     /*
-      If you already have real authentication,
-      replace only this line with your existing
-      authentication function.
-    */
+      Keep your real authentication call here
+      if you add/connect one later.
 
+      Existing prototype navigation:
+    */
     setScreen("dashboard");
   };
 
@@ -180,14 +169,12 @@ export default function App() {
     >
       <main className="phone-stage">
 
-        {/* ======================================
+        {/* ==================================================
             HOME
-        ====================================== */}
+        ================================================== */}
 
         {screen === "home" && (
           <section className="screen home-screen">
-
-            {/* Wi-Fi / connection state */}
 
             <div className="home-status-row">
               <NetworkBadge
@@ -200,8 +187,6 @@ export default function App() {
               />
             </div>
 
-            {/* MedAuth logo */}
-
             <div className="home-brand">
               <img
                 className="hero-logo"
@@ -210,25 +195,23 @@ export default function App() {
               />
             </div>
 
-            {/* Scan Medicine stays on Home */}
-
-            <PrimaryButton
+            <button
+              type="button"
+              className="home-scan-button"
               onClick={() =>
                 setScreen("scan")
               }
             >
-              Scan Medicine
-            </PrimaryButton>
+              <ScanIcon />
 
-            {/* Divider */}
+              <span>
+                Scan Medicine
+              </span>
+            </button>
 
             <div className="home-divider">
-              <span>
-                or
-              </span>
+              <span>or</span>
             </div>
-
-            {/* Sign-in form */}
 
             <form
               className="home-login-form"
@@ -317,17 +300,15 @@ export default function App() {
                   </span>
                 </label>
 
-                <button
-                  type="button"
-                  className="forgot-password"
-                  onClick={() =>
-                    alert(
-                      "Connect this to your existing password recovery flow."
-                    )
-                  }
-                >
+                {/*
+                  Current prototype has no password
+                  recovery flow, so this remains text
+                  instead of a fake working button.
+                */}
+
+                <span className="forgot-password">
                   Forgot password?
-                </button>
+                </span>
 
               </div>
 
@@ -335,34 +316,34 @@ export default function App() {
                 type="submit"
                 className="home-signin-button"
               >
-                Sign In
-                <span aria-hidden="true">
+                <span>
+                  Sign In
+                </span>
+
+                <span
+                  className="signin-arrow"
+                  aria-hidden="true"
+                >
                   →
                 </span>
               </button>
 
             </form>
 
-            {/* Security footer */}
-
             <div className="security-footer">
               <LockIcon />
 
               <span>
-                Protected by AES-256 encryption
-                {" · "}
-                TLS 1.3
-                {" · "}
-                ISO 27001
+                Protected connection
               </span>
             </div>
 
           </section>
         )}
 
-        {/* ======================================
-            SCAN
-        ====================================== */}
+        {/* ==================================================
+            SCANNER
+        ================================================== */}
 
         {screen === "scan" && (
           <section className="screen">
@@ -463,9 +444,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ======================================
+        {/* ==================================================
             MANUAL ENTRY
-        ====================================== */}
+        ================================================== */}
 
         {screen === "manual" && (
           <section className="screen">
@@ -525,9 +506,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ======================================
+        {/* ==================================================
             CHECKING
-        ====================================== */}
+        ================================================== */}
 
         {screen === "checking" && (
           <section className="screen center-screen">
@@ -547,9 +528,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ======================================
+        {/* ==================================================
             RESULT
-        ====================================== */}
+        ================================================== */}
 
         {screen === "result" &&
           result && (
@@ -677,9 +658,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ======================================
-            MEDICINE DETAILS
-        ====================================== */}
+        {/* ==================================================
+            DETAILS
+        ================================================== */}
 
         {screen === "details" &&
           result?.product && (
@@ -760,9 +741,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ======================================
+        {/* ==================================================
             REPORT
-        ====================================== */}
+        ================================================== */}
 
         {screen === "report" && (
           <section className="screen">
@@ -839,9 +820,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ======================================
+        {/* ==================================================
             CONFIRMATION
-        ====================================== */}
+        ================================================== */}
 
         {screen === "confirmation" && (
           <section className="screen center-screen">
@@ -870,9 +851,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ======================================
+        {/* ==================================================
             DASHBOARD
-        ====================================== */}
+        ================================================== */}
 
         {screen === "dashboard" && (
           <section className="screen">
@@ -934,6 +915,10 @@ export default function App() {
   );
 }
 
+/* ==================================================
+   BACK BUTTON
+================================================== */
+
 function BackButton({ onClick }) {
   return (
     <button
@@ -955,6 +940,52 @@ function BackButton({ onClick }) {
     </button>
   );
 }
+
+/* ==================================================
+   SCAN ICON
+================================================== */
+
+function ScanIcon() {
+  return (
+    <svg
+      className="home-scan-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+      <path d="M16 3h3a2 2 0 0 1 2 2v3" />
+      <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
+      <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+
+      <rect
+        x="8"
+        y="8"
+        width="3"
+        height="3"
+      />
+
+      <rect
+        x="13"
+        y="8"
+        width="3"
+        height="3"
+      />
+
+      <rect
+        x="8"
+        y="13"
+        width="3"
+        height="3"
+      />
+
+      <path d="M14 14h2v2h-2z" />
+    </svg>
+  );
+}
+
+/* ==================================================
+   PASSWORD ICONS
+================================================== */
 
 function EyeIcon() {
   return (
@@ -988,6 +1019,10 @@ function EyeOffIcon() {
   );
 }
 
+/* ==================================================
+   SECURITY ICON
+================================================== */
+
 function LockIcon() {
   return (
     <svg
@@ -1008,6 +1043,10 @@ function LockIcon() {
   );
 }
 
+/* ==================================================
+   DETAIL ROW
+================================================== */
+
 function Row({
   label,
   value,
@@ -1026,6 +1065,10 @@ function Row({
     </div>
   );
 }
+
+/* ==================================================
+   MANUFACTURER DASHBOARD
+================================================== */
 
 function ManufacturerDashboard({
   totals,
@@ -1098,6 +1141,10 @@ function ManufacturerDashboard({
   );
 }
 
+/* ==================================================
+   PHARMACIST DASHBOARD
+================================================== */
+
 function PharmacistDashboard({
   onVerify,
 }) {
@@ -1149,6 +1196,10 @@ function PharmacistDashboard({
   );
 }
 
+/* ==================================================
+   ADMIN DASHBOARD
+================================================== */
+
 function AdminDashboard() {
   return (
     <>
@@ -1190,6 +1241,10 @@ function AdminDashboard() {
     </>
   );
 }
+
+/* ==================================================
+   METRIC
+================================================== */
 
 function Metric({
   label,
