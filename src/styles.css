@@ -4997,3 +4997,384 @@ p {
   }
 }
 
+/* =========================================================
+   CONSUMER CURRENT MEDICINE + ACTIVITY LOG
+========================================================= */
+
+.consumer-current-card {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 12px;
+  border: 1px solid #d8e7ef;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #f8fcff, #f4fbfa);
+}
+
+.consumer-current-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.consumer-current-card-head > div {
+  min-width: 0;
+}
+
+.consumer-current-label {
+  display: block;
+  margin-bottom: 3px;
+  color: #6f8392;
+  font-size: 0.55rem;
+  font-weight: 700;
+}
+
+.consumer-current-card h2 {
+  margin: 0;
+  color: #0a3458;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.consumer-current-card > p {
+  margin: 0;
+  color: #708492;
+  font-size: 0.6rem;
+}
+
+.consumer-current-status {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 0.52rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.consumer-current-status.match {
+  color: #237258;
+  background: #e8f7f1;
+}
+
+.consumer-current-status.no_match {
+  color: #9d5a20;
+  background: #fff3e4;
+}
+
+.consumer-current-status.not_covered {
+  color: #596e7d;
+  background: #edf3f6;
+}
+
+.consumer-current-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.consumer-current-details > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 8px;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.consumer-current-details span {
+  color: #80909b;
+  font-size: 0.48rem;
+}
+
+.consumer-current-details strong {
+  color: #23445c;
+  font-size: 0.61rem;
+}
+
+.consumer-current-details-button {
+  width: 100%;
+  min-height: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: #edf6fb;
+  color: var(--brand-blue);
+  font-size: 0.58rem;
+  font-weight: 750;
+  text-align: left;
+}
+
+.consumer-activity-link-card {
+  width: 100%;
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  padding: 10px 13px;
+  border: 1px solid #a7cae0;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #17324d;
+  text-align: left;
+}
+
+.consumer-activity-link-card:active {
+  transform: scale(0.985);
+}
+
+.consumer-activity-link-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #edf6fb;
+  color: var(--brand-blue);
+}
+
+.consumer-activity-link-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.consumer-activity-link-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.consumer-activity-link-copy strong {
+  color: #0c3459;
+  font-size: 0.75rem;
+}
+
+.consumer-activity-link-copy span {
+  color: #718592;
+  font-size: 0.54rem;
+}
+
+.consumer-activity-link-arrow {
+  color: var(--brand-blue);
+  font-size: 0.9rem;
+}
+
+.consumer-activity-screen {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.consumer-activity-screen h1 {
+  margin-bottom: 4px;
+}
+
+.consumer-activity-subtitle {
+  margin: 0 0 12px;
+  color: #718592;
+  font-size: 0.66rem;
+}
+
+.consumer-activity-filters {
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.consumer-activity-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.consumer-activity-filters button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid #cfdee7;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #647b8d;
+  font-size: 0.55rem;
+  font-weight: 750;
+}
+
+.consumer-activity-filters button.active {
+  border-color: #9bc9dd;
+  background: #eaf6fa;
+  color: var(--brand-blue);
+}
+
+.consumer-activity-list {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.consumer-activity-list::-webkit-scrollbar {
+  display: none;
+}
+
+.consumer-activity-card {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9e6ed;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.consumer-activity-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.consumer-activity-card-head > div {
+  min-width: 0;
+}
+
+.consumer-activity-card h2 {
+  margin: 0 0 3px;
+  color: #0b3458;
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+
+.consumer-activity-card-head > div > span {
+  color: #83939f;
+  font-size: 0.5rem;
+}
+
+.consumer-activity-status {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 7px;
+  border-radius: 999px;
+  font-size: 0.49rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.consumer-activity-status.match {
+  color: #237258;
+  background: #e8f7f1;
+}
+
+.consumer-activity-status.no_match {
+  color: #9d5a20;
+  background: #fff3e4;
+}
+
+.consumer-activity-status.not_covered {
+  color: #596e7d;
+  background: #edf3f6;
+}
+
+.consumer-activity-status-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.48rem;
+}
+
+.consumer-activity-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 9px;
+}
+
+.consumer-activity-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 8px;
+  border-radius: 9px;
+  background: #f7fafc;
+}
+
+.consumer-activity-meta span {
+  color: #82929d;
+  font-size: 0.47rem;
+}
+
+.consumer-activity-meta strong {
+  color: #29475e;
+  font-size: 0.57rem;
+}
+
+.consumer-activity-details-button {
+  width: 100%;
+  min-height: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 9px;
+  background: #edf6fb;
+  color: var(--brand-blue);
+  font-size: 0.56rem;
+  font-weight: 750;
+  text-align: left;
+}
+
+.consumer-activity-empty {
+  padding: 18px 12px;
+  border: 1px dashed #cfdee7;
+  border-radius: 12px;
+  color: #718592;
+  background: #f8fbfd;
+  font-size: 0.62rem;
+  text-align: center;
+}
+
+@media (max-height: 760px) {
+  .consumer-current-card,
+  .consumer-activity-link-card {
+    margin-bottom: 8px;
+  }
+
+  .consumer-current-card {
+    padding: 9px 10px;
+  }
+
+  .consumer-activity-link-card {
+    min-height: 56px;
+    padding: 8px 10px;
+  }
+}
+
