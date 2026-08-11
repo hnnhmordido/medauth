@@ -1509,4 +1509,87 @@ p {
     font-size: 0.58rem;
   }
 }
+  .pharmacist-mode {
+  margin-top: 6px;
+}
+
+.pharmacist-main-action {
+  width: 100%;
+  min-height: 56px;
+
+  margin-bottom: 12px;
+
+  border: 0;
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      110deg,
+      var(--brand-blue),
+      var(--brand-teal)
+    );
+
+  color: white;
+
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.pharmacist-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 10px;
+
+  margin-bottom: 18px;
+}
+
+.pharmacist-tool-card {
+  min-height: 100px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 12px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  text-align: center;
+}
+
+.pharmacist-tool-card strong {
+  font-size: 0.82rem;
+
+  color: #24384b;
+}
+
+.pharmacist-tool-card span {
+  font-size: 0.62rem;
+
+  color: #788895;
+}
+
+.pharmacist-stats {
+  padding-top: 12px;
+
+  border-top: 1px solid #e2eaef;
+}
+
+.pharmacist-stat-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  padding: 9px 0;
+
+  font-size: 0.8rem;
+}
 }
