@@ -20,33 +20,47 @@ const palette = {
 };
 
 /* =========================================================
-   DEMO USERS
+   USERS
 ========================================================= */
 
 const demoUsers = {
   "manufacturer@medauth.com": {
     role: "manufacturer",
     password: "demo123",
+    name: "Manufacturer",
+    fullName: "MedAuth Manufacturer",
+    email: "manufacturer@medauth.com",
   },
 
   "pharmacist@medauth.com": {
     role: "pharmacist",
     password: "demo123",
+    name: "Marie",
+    fullName: "Marie Nguyen",
+    title: "Registered Pharmacist",
+    organisation: "MedAuth Pharmacy Demo",
+    email: "pharmacist@medauth.com",
   },
 
   "consumer@medauth.com": {
     role: "consumer",
     password: "demo123",
+    name: "Consumer",
+    fullName: "MedAuth Consumer",
+    email: "consumer@medauth.com",
   },
 
   "admin@medauth.com": {
     role: "admin",
     password: "demo123",
+    name: "Admin",
+    fullName: "MedAuth Administrator",
+    email: "admin@medauth.com",
   },
 };
 
 /* =========================================================
-   PHARMACIST PROTOTYPE RECALL DATA
+   PROTOTYPE RECALLS
 ========================================================= */
 
 const prototypeRecalls = [
@@ -59,7 +73,7 @@ const prototypeRecalls = [
     severity: "High",
     status: "Active Recall",
     reason:
-      "Prototype recall notice for demonstration. Isolate the affected sample batch and follow normal pharmacy procedures.",
+      "Prototype recall notice. Isolate the affected sample batch and follow normal pharmacy procedures.",
   },
 ];
 
@@ -84,9 +98,7 @@ function normaliseEvent(event, index = 0) {
     new Date().toISOString();
 
   return {
-    id:
-      event.id ||
-      `EVENT-${index}-${timestamp}`,
+    id: event.id || `EVENT-${index}-${timestamp}`,
 
     code:
       event.code ||
@@ -115,7 +127,7 @@ function normaliseEvent(event, index = 0) {
 
     offline: Boolean(
       event.offline ||
-        event.cached
+      event.cached
     ),
 
     region:
@@ -161,14 +173,10 @@ function resultLabel(result) {
 }
 
 /* =========================================================
-   MEDICINE VERIFICATION
+   VERIFICATION
 ========================================================= */
 
-function verifyMedicine(
-  code,
-  batch,
-  offline
-) {
+function verifyMedicine(code, batch, offline) {
   const normalizedCode =
     code?.trim().toUpperCase();
 
@@ -179,8 +187,9 @@ function verifyMedicine(
     medicines[normalizedCode];
 
   /*
-    Prototype cached offline medicine:
-    MED-001 can still be checked offline.
+    Prototype cached offline record.
+    MED-001 is considered available
+    in local cache.
   */
 
   if (
@@ -207,8 +216,7 @@ function verifyMedicine(
 
   if (
     normalizedBatch &&
-    normalizedBatch !==
-      product.batch
+    normalizedBatch !== product.batch
   ) {
     return {
       status: "NO_MATCH",
@@ -235,17 +243,17 @@ export default function App() {
   const [offline, setOffline] =
     useState(false);
 
-  const [code, setCode] =
-    useState("MED-001");
+  const [syncing, setSyncing] =
+    useState(false);
 
-  const [batch, setBatch] =
-    useState("B1001");
-
-  const [result, setResult] =
-    useState(null);
+  const [pendingSync, setPendingSync] =
+    useState(0);
 
   const [role, setRole] =
     useState("");
+
+  const [currentUser, setCurrentUser] =
+    useState(null);
 
   /* =======================================================
      LOGIN
@@ -287,7 +295,54 @@ export default function App() {
   ] = useState(false);
 
   /* =======================================================
-     REPORTS
+     MEDICINE
+  ======================================================= */
+
+  const [code, setCode] =
+    useState("MED-001");
+
+  const [batch, setBatch] =
+    useState("B1001");
+
+  const [result, setResult] =
+    useState(null);
+
+  /* =======================================================
+     HISTORY
+  ======================================================= */
+
+  const [
+    verificationEvents,
+    setVerificationEvents,
+  ] = useState(() => [
+    ...demoEvents,
+  ]);
+
+  /* =======================================================
+     BATCH LOOKUP
+  ======================================================= */
+
+  const [
+    batchSearch,
+    setBatchSearch,
+  ] = useState("");
+
+  const [
+    batchResult,
+    setBatchResult,
+  ] = useState(null);
+
+  /* =======================================================
+     RECALLS
+  ======================================================= */
+
+  const [
+    selectedRecall,
+    setSelectedRecall,
+  ] = useState(null);
+
+  /* =======================================================
+     REPORT
   ======================================================= */
 
   const [
@@ -319,70 +374,28 @@ export default function App() {
   ] = useState("result");
 
   /* =======================================================
-     PHARMACIST
-  ======================================================= */
-
-  const [
-    verificationEvents,
-    setVerificationEvents,
-  ] = useState(() => [
-    ...demoEvents,
-  ]);
-
-  const [
-    pendingSync,
-    setPendingSync,
-  ] = useState(0);
-
-  const [
-    syncing,
-    setSyncing,
-  ] = useState(false);
-
-  const [
-    batchSearch,
-    setBatchSearch,
-  ] = useState("");
-
-  const [
-    batchResult,
-    setBatchResult,
-  ] = useState(null);
-
-  const [
-    selectedRecall,
-    setSelectedRecall,
-  ] = useState(null);
-
-  /* =======================================================
-     NORMALISED EVENTS
+     EVENTS / TOTALS
   ======================================================= */
 
   const pharmacistEvents =
-    useMemo(
-      () =>
-        verificationEvents
-          .map(
-            (
-              event,
-              index
-            ) =>
-              normaliseEvent(
-                event,
-                index
-              )
+    useMemo(() => {
+      return verificationEvents
+        .map((event, index) =>
+          normaliseEvent(
+            event,
+            index
           )
-          .sort(
-            (a, b) =>
-              new Date(
-                b.timestamp
-              ).getTime() -
-              new Date(
-                a.timestamp
-              ).getTime()
-          ),
-      [verificationEvents]
-    );
+        )
+        .sort(
+          (a, b) =>
+            new Date(
+              b.timestamp
+            ).getTime() -
+            new Date(
+              a.timestamp
+            ).getTime()
+        );
+    }, [verificationEvents]);
 
   const totals = useMemo(
     () => ({
@@ -396,8 +409,7 @@ export default function App() {
       match:
         pharmacistEvents.filter(
           (event) =>
-            event.result ===
-            "MATCH"
+            event.result === "MATCH"
         ).length,
 
       noMatch:
@@ -428,30 +440,117 @@ export default function App() {
      NETWORK
   ======================================================= */
 
-  const handleNetworkToggle =
-    () => {
-      if (!offline) {
-        setOffline(true);
+  const handleNetworkToggle = () => {
+    if (!offline) {
+      setOffline(true);
+      return;
+    }
+
+    setOffline(false);
+
+    if (pendingSync > 0) {
+      setSyncing(true);
+
+      window.setTimeout(() => {
+        setPendingSync(0);
+        setSyncing(false);
+      }, 900);
+    }
+  };
+
+  /* =======================================================
+     LOGIN
+  ======================================================= */
+
+  const handleHomeLogin = (event) => {
+    event.preventDefault();
+
+    setLoginError("");
+
+    const normalizedEmail =
+      email
+        .trim()
+        .toLowerCase();
+
+    const user =
+      demoUsers[
+        normalizedEmail
+      ];
+
+    if (!user) {
+      setLoginError(
+        "Account not found. Check your email address."
+      );
+
+      return;
+    }
+
+    if (
+      user.password !==
+      password
+    ) {
+      setLoginError(
+        "Incorrect password. Please try again."
+      );
+
+      return;
+    }
+
+    setRole(user.role);
+    setCurrentUser(user);
+
+    switch (user.role) {
+      case "manufacturer":
+        setScreen(
+          "manufacturerDashboard"
+        );
+        break;
+
+      case "pharmacist":
+        setScreen(
+          "pharmacistDashboard"
+        );
+        break;
+
+      case "consumer":
+        setScreen(
+          "consumerDashboard"
+        );
+        break;
+
+      case "admin":
+        setScreen(
+          "adminDashboard"
+        );
+        break;
+
+      default:
+        setLoginError(
+          "This account does not have a valid role."
+        );
+    }
+  };
+
+  /* =======================================================
+     PASSWORD RESET
+  ======================================================= */
+
+  const handleForgotPassword =
+    (event) => {
+      event.preventDefault();
+
+      if (
+        !resetEmail
+          .trim()
+      ) {
         return;
       }
 
-      setOffline(false);
-
-      if (pendingSync > 0) {
-        setSyncing(true);
-
-        window.setTimeout(
-          () => {
-            setPendingSync(0);
-            setSyncing(false);
-          },
-          900
-        );
-      }
+      setResetSent(true);
     };
 
   /* =======================================================
-     VERIFY
+     VERIFICATION
   ======================================================= */
 
   const runVerification = (
@@ -468,15 +567,7 @@ export default function App() {
           offline
         );
 
-      setResult(
-        verification
-      );
-
-      /*
-        Only pharmacist activity
-        is added to pharmacist
-        professional history.
-      */
+      setResult(verification);
 
       if (
         role === "pharmacist"
@@ -544,216 +635,6 @@ export default function App() {
   };
 
   /* =======================================================
-     LOGIN
-  ======================================================= */
-
-  const handleHomeLogin = (
-    event
-  ) => {
-    event.preventDefault();
-
-    setLoginError("");
-
-    const normalizedEmail =
-      email
-        .trim()
-        .toLowerCase();
-
-    const user =
-      demoUsers[
-        normalizedEmail
-      ];
-
-    if (!user) {
-      setLoginError(
-        "Account not found. Check your email address."
-      );
-
-      return;
-    }
-
-    if (
-      user.password !==
-      password
-    ) {
-      setLoginError(
-        "Incorrect password. Please try again."
-      );
-
-      return;
-    }
-
-    setRole(user.role);
-
-    switch (user.role) {
-      case "manufacturer":
-        setScreen(
-          "manufacturerDashboard"
-        );
-        break;
-
-      case "pharmacist":
-        setScreen(
-          "pharmacistDashboard"
-        );
-        break;
-
-      case "consumer":
-        setScreen(
-          "consumerDashboard"
-        );
-        break;
-
-      case "admin":
-        setScreen(
-          "adminDashboard"
-        );
-        break;
-
-      default:
-        setLoginError(
-          "This account does not have a valid role."
-        );
-    }
-  };
-
-  /* =======================================================
-     FORGOT PASSWORD
-  ======================================================= */
-
-  const handleForgotPassword =
-    (event) => {
-      event.preventDefault();
-
-      const normalizedEmail =
-        resetEmail
-          .trim()
-          .toLowerCase();
-
-      if (!normalizedEmail) {
-        return;
-      }
-
-      setResetSent(true);
-    };
-
-  /* =======================================================
-     RESET / SIGN OUT
-  ======================================================= */
-
-  const reset = () => {
-    setScreen("home");
-
-    setCode("MED-001");
-    setBatch("B1001");
-
-    setResult(null);
-
-    setRole("");
-
-    setReportRef("");
-    setReportComment("");
-    setReportLocation("");
-    setReportImageName("");
-    setReportOrigin(
-      "result"
-    );
-
-    setPassword("");
-    setLoginError("");
-
-    setResetEmail("");
-    setResetSent(false);
-
-    setBatchSearch("");
-    setBatchResult(null);
-    setSelectedRecall(null);
-  };
-
-  /* =======================================================
-     BACK
-  ======================================================= */
-
-  const goBack = () => {
-    switch (screen) {
-      case "scan":
-      case "manual":
-        if (
-          role ===
-          "pharmacist"
-        ) {
-          setScreen(
-            "pharmacistDashboard"
-          );
-        } else {
-          setScreen("home");
-        }
-        break;
-
-      case "result":
-        if (
-          role ===
-          "pharmacist"
-        ) {
-          setScreen(
-            "pharmacistDashboard"
-          );
-        } else {
-          setScreen("home");
-        }
-        break;
-
-      case "details":
-        setScreen("result");
-        break;
-
-      case "report":
-        if (
-          reportOrigin ===
-            "pharmacistDashboard" &&
-          role ===
-            "pharmacist"
-        ) {
-          setScreen(
-            "pharmacistDashboard"
-          );
-        } else {
-          setScreen("result");
-        }
-        break;
-
-      case "pharmacistBatchLookup":
-      case "pharmacistRecalls":
-      case "pharmacistHistory":
-        setScreen(
-          "pharmacistDashboard"
-        );
-        break;
-
-      case "pharmacistRecallDetail":
-        setScreen(
-          "pharmacistRecalls"
-        );
-        break;
-
-      case "forgotPassword":
-        setScreen("home");
-        break;
-
-      case "manufacturerDashboard":
-      case "consumerDashboard":
-      case "adminDashboard":
-      case "pharmacistDashboard":
-        setScreen("home");
-        break;
-
-      default:
-        setScreen("home");
-        break;
-    }
-  };
-
-  /* =======================================================
      BATCH LOOKUP
   ======================================================= */
 
@@ -813,7 +694,7 @@ export default function App() {
         role ===
         "pharmacist"
       ) {
-        const eventRecord = {
+        const newEvent = {
           id:
             `BATCH-${Date.now()}`,
 
@@ -838,13 +719,12 @@ export default function App() {
 
           region: "",
 
-          type:
-            "recall",
+          type: "recall",
         };
 
         setVerificationEvents(
           (current) => [
-            eventRecord,
+            newEvent,
             ...current,
           ]
         );
@@ -859,7 +739,7 @@ export default function App() {
     };
 
   /* =======================================================
-     REPORT SUBMISSION
+     REPORT
   ======================================================= */
 
   const submitReport = () => {
@@ -872,9 +752,7 @@ export default function App() {
 
     const newReport = {
       id: reference,
-
       code,
-
       batch,
 
       comment:
@@ -896,9 +774,7 @@ export default function App() {
         role || "guest",
     };
 
-    setReportRef(
-      reference
-    );
+    setReportRef(reference);
 
     setReports(
       (current) => [
@@ -924,8 +800,108 @@ export default function App() {
   };
 
   /* =======================================================
-     RENDER
+     RESET
   ======================================================= */
+
+  const reset = () => {
+    setScreen("home");
+
+    setRole("");
+    setCurrentUser(null);
+
+    setPassword("");
+    setLoginError("");
+
+    setCode("MED-001");
+    setBatch("B1001");
+    setResult(null);
+
+    setReportRef("");
+    setReportComment("");
+    setReportLocation("");
+    setReportImageName("");
+    setReportOrigin("result");
+
+    setResetEmail("");
+    setResetSent(false);
+
+    setBatchSearch("");
+    setBatchResult(null);
+    setSelectedRecall(null);
+  };
+
+  /* =======================================================
+     BACK
+  ======================================================= */
+
+  const goBack = () => {
+    switch (screen) {
+      case "scan":
+      case "manual":
+      case "result":
+        if (
+          role ===
+          "pharmacist"
+        ) {
+          setScreen(
+            "pharmacistDashboard"
+          );
+        } else {
+          setScreen("home");
+        }
+        break;
+
+      case "details":
+        setScreen("result");
+        break;
+
+      case "report":
+        if (
+          role ===
+            "pharmacist" &&
+          reportOrigin ===
+            "pharmacistDashboard"
+        ) {
+          setScreen(
+            "pharmacistDashboard"
+          );
+        } else {
+          setScreen("result");
+        }
+        break;
+
+      case "pharmacistBatchLookup":
+      case "pharmacistRecalls":
+      case "pharmacistHistory":
+      case "pharmacistProfile":
+      case "pharmacistSettings":
+        setScreen(
+          "pharmacistDashboard"
+        );
+        break;
+
+      case "pharmacistRecallDetail":
+        setScreen(
+          "pharmacistRecalls"
+        );
+        break;
+
+      case "forgotPassword":
+        setScreen("home");
+        break;
+
+      case "manufacturerDashboard":
+      case "consumerDashboard":
+      case "adminDashboard":
+      case "pharmacistDashboard":
+        setScreen("home");
+        break;
+
+      default:
+        setScreen("home");
+        break;
+    }
+  };
 
   return (
     <div
@@ -954,20 +930,24 @@ export default function App() {
           <section className="screen home-screen">
 
             <div className="home-status-row">
+
               <NetworkBadge
                 offline={offline}
                 onToggle={
                   handleNetworkToggle
                 }
               />
+
             </div>
 
             <div className="home-brand">
+
               <img
                 className="hero-logo"
                 src={`${import.meta.env.BASE_URL}medauth-logo.png`}
                 alt="MedAuth"
               />
+
             </div>
 
             <button
@@ -1149,21 +1129,13 @@ export default function App() {
                 type="submit"
                 className="home-signin-button"
               >
-                <span>
-                  Sign In
-                </span>
-
-                <span
-                  className="signin-arrow"
-                  aria-hidden="true"
-                >
-                  →
-                </span>
+                Sign In →
               </button>
 
             </form>
 
             <div className="security-footer">
+
               <LockIcon />
 
               <span>
@@ -1173,6 +1145,7 @@ export default function App() {
                 {" · "}
                 ISO 27001
               </span>
+
             </div>
 
           </section>
@@ -1191,11 +1164,13 @@ export default function App() {
             />
 
             <div className="forgot-brand">
+
               <img
                 className="forgot-logo"
                 src={`${import.meta.env.BASE_URL}medauth-logo.png`}
                 alt="MedAuth"
               />
+
             </div>
 
             {!resetSent ? (
@@ -1241,7 +1216,6 @@ export default function App() {
                         )
                       }
                       placeholder="e.g. pharmacist@medauth.com"
-                      autoComplete="email"
                       required
                     />
 
@@ -1294,18 +1268,6 @@ export default function App() {
               </div>
             )}
 
-            <div className="security-footer forgot-security">
-              <LockIcon />
-
-              <span>
-                Protected by AES-256 encryption
-                {" · "}
-                TLS 1.3
-                {" · "}
-                ISO 27001
-              </span>
-            </div>
-
           </section>
         )}
 
@@ -1321,10 +1283,12 @@ export default function App() {
             />
 
             <div className="eyebrow">
+
               {role ===
               "pharmacist"
                 ? "Pharmacist verification"
                 : "Guest verification"}
+
             </div>
 
             <h1>
@@ -1378,8 +1342,8 @@ export default function App() {
                   );
                 }}
               >
-                MED-001 / B1001
-                — Match
+                MED-001 / B1001 —
+                Match
               </button>
 
               <button
@@ -1399,8 +1363,8 @@ export default function App() {
                   );
                 }}
               >
-                MED-002 / B2045
-                — No Match
+                MED-002 / B2045 —
+                No Match
               </button>
 
               <button
@@ -1459,6 +1423,7 @@ export default function App() {
             </h1>
 
             <label className="field">
+
               Product code
 
               <input
@@ -1472,11 +1437,12 @@ export default function App() {
                       .value
                   )
                 }
-                placeholder="e.g. MED-001"
               />
+
             </label>
 
             <label className="field">
+
               Batch (optional)
 
               <input
@@ -1490,8 +1456,8 @@ export default function App() {
                       .value
                   )
                 }
-                placeholder="e.g. B1001"
               />
+
             </label>
 
             <PrimaryButton
@@ -1518,12 +1484,6 @@ export default function App() {
             <h1>
               Checking medicine…
             </h1>
-
-            <p>
-              Reading identifier →
-              checking record →
-              checking batch
-            </p>
 
           </section>
         )}
@@ -1570,8 +1530,8 @@ export default function App() {
               {result.offline && (
                 <div className="notice">
                   Offline Mode —
-                  result used cached
-                  prototype data.
+                  cached prototype
+                  data was used.
                 </div>
               )}
 
@@ -1605,12 +1565,11 @@ export default function App() {
 
                   <div>
                     <span>
-                      Scanned batch
+                      Batch
                     </span>
 
                     <strong>
-                      {batch ||
-                        "—"}
+                      {batch}
                     </strong>
                   </div>
 
@@ -1665,9 +1624,7 @@ export default function App() {
                   </SecondaryButton>
                 ) : (
                   <SecondaryButton
-                    onClick={
-                      reset
-                    }
+                    onClick={reset}
                   >
                     Done
                   </SecondaryButton>
@@ -1682,7 +1639,8 @@ export default function App() {
             DETAILS
         ================================================= */}
 
-        {screen === "details" &&
+        {screen ===
+          "details" &&
           result?.product && (
             <section className="screen">
 
@@ -1745,30 +1703,7 @@ export default function App() {
                   }
                 />
 
-                <Row
-                  label="Last updated"
-                  value={
-                    result.product
-                      .lastUpdated
-                      ? result.product.lastUpdated.replace(
-                          "T",
-                          " "
-                        )
-                      : "—"
-                  }
-                />
-
               </div>
-
-              <SecondaryButton
-                onClick={() =>
-                  setScreen(
-                    "result"
-                  )
-                }
-              >
-                Back to Result
-              </SecondaryButton>
 
             </section>
           )}
@@ -1785,10 +1720,7 @@ export default function App() {
             />
 
             <div className="eyebrow">
-              {role ===
-              "pharmacist"
-                ? "Pharmacist escalation"
-                : "Suspicious medicine report"}
+              Pharmacist escalation
             </div>
 
             <h1>
@@ -1797,30 +1729,33 @@ export default function App() {
 
             <p>
               Prototype only. This
-              report is stored locally
-              and is not sent to any
-              external organisation.
+              report is stored locally.
             </p>
 
             <label className="field">
+
               Product code
 
               <input
                 value={code}
                 readOnly
               />
+
             </label>
 
             <label className="field">
+
               Batch
 
               <input
                 value={batch}
                 readOnly
               />
+
             </label>
 
             <label className="field">
+
               Comment
 
               <textarea
@@ -1836,12 +1771,13 @@ export default function App() {
                       .value
                   )
                 }
-                placeholder="Example: Packaging looks different."
                 rows="4"
               />
+
             </label>
 
             <label className="field">
+
               Image (optional)
 
               <input
@@ -1858,9 +1794,11 @@ export default function App() {
                   )
                 }
               />
+
             </label>
 
             <label className="field">
+
               Coarse location
               (optional)
 
@@ -1877,8 +1815,8 @@ export default function App() {
                       .value
                   )
                 }
-                placeholder="e.g. Adelaide SA"
               />
+
             </label>
 
             <PrimaryButton
@@ -1893,7 +1831,7 @@ export default function App() {
         )}
 
         {/* =================================================
-            CONFIRMATION
+            REPORT CONFIRMATION
         ================================================= */}
 
         {screen ===
@@ -1909,7 +1847,7 @@ export default function App() {
             </h1>
 
             <p>
-              Prototype reference:{" "}
+              Reference{" "}
               <strong>
                 {reportRef}
               </strong>
@@ -1928,43 +1866,11 @@ export default function App() {
               </PrimaryButton>
             ) : (
               <PrimaryButton
-                onClick={
-                  reset
-                }
+                onClick={reset}
               >
                 Return Home
               </PrimaryButton>
             )}
-
-          </section>
-        )}
-
-        {/* =================================================
-            MANUFACTURER
-        ================================================= */}
-
-        {screen ===
-          "manufacturerDashboard" && (
-          <section className="screen">
-
-            <BackButton
-              onClick={goBack}
-            />
-
-            <DashboardHeader
-              title="Manufacturer"
-              role="Manufacturer"
-            />
-
-            <ManufacturerDashboard
-              totals={totals}
-            />
-
-            <SecondaryButton
-              onClick={reset}
-            >
-              Sign Out
-            </SecondaryButton>
 
           </section>
         )}
@@ -1977,14 +1883,67 @@ export default function App() {
           "pharmacistDashboard" && (
           <section className="screen pharmacist-screen">
 
-            <BackButton
-              onClick={goBack}
-            />
+            <div className="pharmacist-profile-header">
 
-            <DashboardHeader
-              title="Pharmacist"
-              role="Pharmacist"
-            />
+              <div className="pharmacist-profile-main">
+
+                <img
+                  className="pharmacist-avatar"
+                  src={`${import.meta.env.BASE_URL}pharmacist-marie.png`}
+                  alt="Marie Nguyen"
+                />
+
+                <div className="pharmacist-greeting">
+
+                  <span className="pharmacist-welcome">
+                    Welcome back
+                  </span>
+
+                  <h1>
+                    Hi,{" "}
+                    {currentUser?.name ||
+                      "Marie"}
+                  </h1>
+
+                  <p>
+                    Pharmacist
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="pharmacist-profile-actions">
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "pharmacistProfile"
+                    )
+                  }
+                  aria-label="My Profile"
+                >
+                  <ProfileIcon />
+                </button>
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "pharmacistSettings"
+                    )
+                  }
+                  aria-label="Settings"
+                >
+                  <SettingsIcon />
+                </button>
+
+              </div>
+
+            </div>
 
             <div
               className={`pharmacist-system-status ${
@@ -2024,8 +1983,6 @@ export default function App() {
 
             </div>
 
-            {/* PRIMARY */}
-
             <button
               type="button"
               className="pharmacist-primary-action"
@@ -2036,6 +1993,7 @@ export default function App() {
               <ScanIcon />
 
               <div>
+
                 <strong>
                   Verify Medicine
                 </strong>
@@ -2044,16 +2002,14 @@ export default function App() {
                   Scan or enter a
                   medicine code
                 </span>
+
               </div>
 
-              <span
-                aria-hidden="true"
-              >
+              <span>
                 →
               </span>
-            </button>
 
-            {/* ACTIONS */}
+            </button>
 
             <div className="pharmacist-action-grid">
 
@@ -2080,6 +2036,7 @@ export default function App() {
                   Check batch and
                   recall status
                 </span>
+
               </button>
 
               <button
@@ -2101,6 +2058,7 @@ export default function App() {
                   Review active
                   notices
                 </span>
+
               </button>
 
               <button
@@ -2122,6 +2080,7 @@ export default function App() {
                   Review recent
                   checks
                 </span>
+
               </button>
 
               <button
@@ -2147,11 +2106,10 @@ export default function App() {
                   Report suspicious
                   medicine
                 </span>
+
               </button>
 
             </div>
-
-            {/* STATS */}
 
             <div className="pharmacist-summary">
 
@@ -2177,15 +2135,13 @@ export default function App() {
               />
 
               <PharmacistMetric
-                label="No Match Results"
+                label="No Match"
                 value={
                   totals.noMatch
                 }
               />
 
             </div>
-
-            {/* RECENT */}
 
             <div className="pharmacist-recent">
 
@@ -2204,7 +2160,7 @@ export default function App() {
                     )
                   }
                 >
-                  View All History
+                  View All
                 </button>
 
               </div>
@@ -2212,9 +2168,7 @@ export default function App() {
               {pharmacistEvents
                 .slice(0, 4)
                 .map(
-                  (
-                    event
-                  ) => (
+                  (event) => (
                     <div
                       className="recent-event-row"
                       key={
@@ -2230,7 +2184,6 @@ export default function App() {
                         </strong>
 
                         <span>
-                          Batch{" "}
                           {
                             event.batch
                           }
@@ -2271,7 +2224,260 @@ export default function App() {
         )}
 
         {/* =================================================
-            PHARMACIST BATCH LOOKUP
+            PROFILE
+        ================================================= */}
+
+        {screen ===
+          "pharmacistProfile" && (
+          <section className="screen pharmacist-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="profile-page-header">
+
+              <img
+                className="profile-page-avatar"
+                src={`${import.meta.env.BASE_URL}pharmacist-marie.png`}
+                alt="Marie Nguyen"
+              />
+
+              <h1>
+                {currentUser?.fullName ||
+                  "Marie Nguyen"}
+              </h1>
+
+              <p>
+                {currentUser?.title ||
+                  "Registered Pharmacist"}
+              </p>
+
+              <span className="professional-status">
+                Professional Account
+              </span>
+
+            </div>
+
+            <div className="profile-information-card">
+
+              <ProfileRow
+                label="Name"
+                value={
+                  currentUser
+                    ?.fullName ||
+                  "Marie Nguyen"
+                }
+              />
+
+              <ProfileRow
+                label="Role"
+                value="Pharmacist"
+              />
+
+              <ProfileRow
+                label="Email"
+                value={
+                  currentUser
+                    ?.email ||
+                  "pharmacist@medauth.com"
+                }
+              />
+
+              <ProfileRow
+                label="Organisation"
+                value={
+                  currentUser
+                    ?.organisation ||
+                  "MedAuth Pharmacy Demo"
+                }
+              />
+
+            </div>
+
+            <div className="profile-note">
+
+              <LockIcon />
+
+              <span>
+                Demo professional
+                profile. No patient
+                health information is
+                stored.
+              </span>
+
+            </div>
+
+          </section>
+        )}
+
+        {/* =================================================
+            SETTINGS
+        ================================================= */}
+
+        {screen ===
+          "pharmacistSettings" && (
+          <section className="screen pharmacist-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Pharmacist account
+            </div>
+
+            <h1>
+              Settings
+            </h1>
+
+            <div className="settings-card">
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Connection mode
+                  </strong>
+
+                  <span>
+                    {offline
+                      ? "Offline — cached data"
+                      : "Online"}
+                  </span>
+
+                </div>
+
+                <NetworkBadge
+                  offline={
+                    offline
+                  }
+                  onToggle={
+                    handleNetworkToggle
+                  }
+                />
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Pending sync
+                  </strong>
+
+                  <span>
+                    Activity waiting
+                    to synchronise
+                  </span>
+
+                </div>
+
+                <span className="settings-value">
+                  {pendingSync}
+                </span>
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Remember this device
+                  </strong>
+
+                  <span>
+                    Keep demo sign-in
+                    preference
+                  </span>
+
+                </div>
+
+                <input
+                  className="settings-checkbox"
+                  type="checkbox"
+                  checked={
+                    rememberDevice
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setRememberDevice(
+                      event
+                        .target
+                        .checked
+                    )
+                  }
+                />
+
+              </div>
+
+            </div>
+
+            <div className="settings-card">
+
+              <button
+                type="button"
+                className="settings-link-row"
+                onClick={() =>
+                  setScreen(
+                    "pharmacistProfile"
+                  )
+                }
+              >
+                <span>
+                  My Profile
+                </span>
+
+                <span>
+                  →
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="settings-link-row"
+                onClick={() => {
+                  setResetEmail(
+                    currentUser
+                      ?.email ||
+                    email
+                  );
+
+                  setResetSent(
+                    false
+                  );
+
+                  setScreen(
+                    "forgotPassword"
+                  );
+                }}
+              >
+                <span>
+                  Change Password
+                </span>
+
+                <span>
+                  →
+                </span>
+              </button>
+
+            </div>
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* =================================================
+            BATCH LOOKUP
         ================================================= */}
 
         {screen ===
@@ -2290,18 +2496,13 @@ export default function App() {
               Batch Lookup
             </h1>
 
-            <p>
-              Search the local
-              prototype dataset by
-              batch number.
-            </p>
-
             <form
               onSubmit={
                 handleBatchLookup
               }
             >
               <label className="field">
+
                 Batch number
 
                 <input
@@ -2320,6 +2521,7 @@ export default function App() {
                   placeholder="e.g. B2020"
                   required
                 />
+
               </label>
 
               <PrimaryButton
@@ -2358,7 +2560,8 @@ export default function App() {
                     batchResult
                       .medicine
                       ? getMedicineName(
-                          batchResult.medicine
+                          batchResult
+                            .medicine
                         )
                       : "No matching prototype medicine"
                   }
@@ -2381,15 +2584,6 @@ export default function App() {
                         batchResult
                           .recall
                           .severity
-                      }
-                    />
-
-                    <Row
-                      label="Status"
-                      value={
-                        batchResult
-                          .recall
-                          .status
                       }
                     />
 
@@ -2444,18 +2638,10 @@ export default function App() {
               Recalls & Alerts
             </h1>
 
-            <p>
-              Active prototype
-              medicine safety
-              notices.
-            </p>
-
             <div className="recall-list">
 
               {prototypeRecalls.map(
-                (
-                  recall
-                ) => (
+                (recall) => (
                   <button
                     key={
                       recall.id
@@ -2472,22 +2658,18 @@ export default function App() {
                       );
                     }}
                   >
-                    <div>
+                    <strong>
+                      {
+                        recall.medicineName
+                      }
+                    </strong>
 
-                      <strong>
-                        {
-                          recall.medicineName
-                        }
-                      </strong>
-
-                      <span>
-                        Batch{" "}
-                        {
-                          recall.batch
-                        }
-                      </span>
-
-                    </div>
+                    <span>
+                      Batch{" "}
+                      {
+                        recall.batch
+                      }
+                    </span>
 
                     <span className="recall-pill">
                       {
@@ -2500,12 +2682,6 @@ export default function App() {
                         recall.recallDate
                       }
                     </small>
-
-                    <p>
-                      {
-                        recall.reason
-                      }
-                    </p>
 
                   </button>
                 )
@@ -2622,9 +2798,7 @@ export default function App() {
             <div className="history-list">
 
               {pharmacistEvents.map(
-                (
-                  event
-                ) => (
+                (event) => (
                   <div
                     className="history-card"
                     key={
@@ -2674,15 +2848,6 @@ export default function App() {
                       }
                     />
 
-                    {event.region && (
-                      <Row
-                        label="Region"
-                        value={
-                          event.region
-                        }
-                      />
-                    )}
-
                   </div>
                 )
               )}
@@ -2695,6 +2860,36 @@ export default function App() {
                 setScreen
               }
             />
+
+          </section>
+        )}
+
+        {/* =================================================
+            MANUFACTURER
+        ================================================= */}
+
+        {screen ===
+          "manufacturerDashboard" && (
+          <section className="screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <DashboardHeader
+              title="Manufacturer"
+              role="Manufacturer"
+            />
+
+            <ManufacturerDashboard
+              totals={totals}
+            />
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
 
           </section>
         )}
@@ -2722,11 +2917,6 @@ export default function App() {
                 Verify a medicine
               </h3>
 
-              <p>
-                Scan a medicine
-                package to verify it.
-              </p>
-
               <PrimaryButton
                 onClick={() =>
                   setScreen(
@@ -2736,42 +2926,6 @@ export default function App() {
               >
                 Scan Medicine
               </PrimaryButton>
-
-            </div>
-
-            <div className="panel">
-
-              <h3>
-                Enter code manually
-              </h3>
-
-              <SecondaryButton
-                onClick={() =>
-                  setScreen(
-                    "manual"
-                  )
-                }
-              >
-                Enter Medicine Code
-              </SecondaryButton>
-
-            </div>
-
-            <div className="panel">
-
-              <h3>
-                Recent activity
-              </h3>
-
-              <p>
-                MED-001 / B1001 —
-                Match
-              </p>
-
-              <p>
-                MED-002 / B2045 —
-                No Match
-              </p>
 
             </div>
 
@@ -2818,7 +2972,7 @@ export default function App() {
 }
 
 /* =========================================================
-   BACK BUTTON
+   COMPONENTS
 ========================================================= */
 
 function BackButton({
@@ -2829,208 +2983,30 @@ function BackButton({
       type="button"
       className="back-button"
       onClick={onClick}
-      aria-label="Go back"
     >
-      <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path d="M15 18l-6-6 6-6" />
-      </svg>
-
-      <span>
-        Back
-      </span>
+      ← Back
     </button>
   );
 }
 
-/* =========================================================
-   ICONS
-========================================================= */
-
-function ScanIcon() {
+function ProfileRow({
+  label,
+  value,
+}) {
   return (
-    <svg
-      className="home-scan-icon"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+    <div className="profile-row">
 
-      <path d="M16 3h3a2 2 0 0 1 2 2v3" />
+      <span>
+        {label}
+      </span>
 
-      <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
+      <strong>
+        {value}
+      </strong>
 
-      <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-
-      <rect
-        x="8"
-        y="8"
-        width="3"
-        height="3"
-      />
-
-      <rect
-        x="13"
-        y="8"
-        width="3"
-        height="3"
-      />
-
-      <rect
-        x="8"
-        y="13"
-        width="3"
-        height="3"
-      />
-
-      <rect
-        x="13"
-        y="13"
-        width="3"
-        height="3"
-      />
-    </svg>
+    </div>
   );
 }
-
-function BatchLookupIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle
-        cx="10"
-        cy="10"
-        r="6"
-      />
-
-      <path d="m15 15 5 5" />
-    </svg>
-  );
-}
-
-function RecallIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M12 3v3" />
-
-      <path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Z" />
-
-      <path d="M10 20h4" />
-    </svg>
-  );
-}
-
-function HistoryIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M3 12a9 9 0 1 0 3-6.7" />
-
-      <path d="M3 4v5h5" />
-
-      <path d="M12 7v5l3 2" />
-    </svg>
-  );
-}
-
-function EscalateIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M12 3 3 20h18L12 3Z" />
-
-      <path d="M12 9v4" />
-
-      <path d="M12 17h.01" />
-    </svg>
-  );
-}
-
-function EyeIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-
-      <circle
-        cx="12"
-        cy="12"
-        r="2.5"
-      />
-    </svg>
-  );
-}
-
-function EyeOffIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="m3 3 18 18" />
-
-      <path d="M10.6 6.2A10 10 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-2.1 2.8" />
-
-      <path d="M6.6 6.7C4 8.3 2.5 12 2.5 12s3.5 6 9.5 6a9.8 9.8 0 0 0 3.1-.5" />
-    </svg>
-  );
-}
-
-function LockIcon() {
-  return (
-    <svg
-      className="security-lock"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <rect
-        x="5"
-        y="10"
-        width="14"
-        height="10"
-        rx="2"
-      />
-
-      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="14"
-        rx="2"
-      />
-
-      <path d="m4 7 8 6 8-6" />
-    </svg>
-  );
-}
-
-/* =========================================================
-   PHARMACIST COMPONENTS
-========================================================= */
 
 function PharmacistMetric({
   label,
@@ -3087,10 +3063,8 @@ function PharmacistNav({
   ];
 
   return (
-    <nav
-      className="pharmacist-nav"
-      aria-label="Pharmacist navigation"
-    >
+    <nav className="pharmacist-nav">
+
       {items.map(
         (item) => (
           <button
@@ -3114,13 +3088,10 @@ function PharmacistNav({
           </button>
         )
       )}
+
     </nav>
   );
 }
-
-/* =========================================================
-   SHARED
-========================================================= */
 
 function DashboardHeader({
   title,
@@ -3168,8 +3139,27 @@ function Row({
   );
 }
 
+function Metric({
+  label,
+  value,
+}) {
+  return (
+    <div className="metric">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
 /* =========================================================
-   MANUFACTURER
+   OTHER DASHBOARDS
 ========================================================= */
 
 function ManufacturerDashboard({
@@ -3212,26 +3202,6 @@ function ManufacturerDashboard({
       <div className="panel">
 
         <h3>
-          Brand alerts
-        </h3>
-
-        <p>
-          <strong>
-            HealthMed 20mg /
-            B2045
-          </strong>
-        </p>
-
-        <p className="muted">
-          No Match • Adelaide
-          SA • Under review
-        </p>
-
-      </div>
-
-      <div className="panel">
-
-        <h3>
           Products
         </h3>
 
@@ -3245,82 +3215,208 @@ function ManufacturerDashboard({
           enrolled
         </p>
 
-        <p>
-          TestMed 5mg — not
-          yet covered
-        </p>
-
       </div>
     </>
   );
 }
-
-/* =========================================================
-   ADMIN
-========================================================= */
 
 function AdminDashboard() {
   return (
-    <>
-      <div className="metric-grid">
+    <div className="panel">
 
-        <Metric
-          label="New reports"
-          value="1"
-        />
+      <h3>
+        Report review
+      </h3>
 
-        <Metric
-          label="Under review"
-          value="1"
-        />
+      <p>
+        Prototype administration
+        tools.
+      </p>
 
-        <Metric
-          label="Resolved"
-          value="0"
-        />
-
-      </div>
-
-      <div className="panel">
-
-        <h3>
-          Report review
-        </h3>
-
-        <p>
-          MA-2026-00125 —
-          Packaging looks
-          different.
-        </p>
-
-        <p className="muted">
-          Status: New
-        </p>
-
-      </div>
-    </>
+    </div>
   );
 }
 
 /* =========================================================
-   METRIC
+   ICONS
 ========================================================= */
 
-function Metric({
-  label,
-  value,
-}) {
+function ScanIcon() {
   return (
-    <div className="metric">
+    <svg
+      className="home-scan-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+      <path d="M16 3h3a2 2 0 0 1 2 2v3" />
+      <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
+      <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
 
-      <span>
-        {label}
-      </span>
+      <rect
+        x="8"
+        y="8"
+        width="3"
+        height="3"
+      />
 
-      <strong>
-        {value}
-      </strong>
+      <rect
+        x="13"
+        y="8"
+        width="3"
+        height="3"
+      />
 
-    </div>
+      <rect
+        x="8"
+        y="13"
+        width="3"
+        height="3"
+      />
+
+      <rect
+        x="13"
+        y="13"
+        width="3"
+        height="3"
+      />
+    </svg>
+  );
+}
+
+function BatchLookupIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <circle
+        cx="10"
+        cy="10"
+        r="6"
+      />
+
+      <path d="m15 15 5 5" />
+    </svg>
+  );
+}
+
+function RecallIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <path d="M12 3v3" />
+      <path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Z" />
+      <path d="M10 20h4" />
+    </svg>
+  );
+}
+
+function HistoryIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <path d="M3 4v5h5" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+function EscalateIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <path d="M12 3 3 20h18L12 3Z" />
+      <path d="M12 9v4" />
+      <path d="M12 17h.01" />
+    </svg>
+  );
+}
+
+function ProfileIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <circle
+        cx="12"
+        cy="8"
+        r="4"
+      />
+
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <circle
+        cx="12"
+        cy="12"
+        r="3"
+      />
+
+      <path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+
+      <path d="M12 2v3" />
+      <path d="M12 19v3" />
+      <path d="M2 12h3" />
+      <path d="M19 12h3" />
+    </svg>
+  );
+}
+
+function EyeIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="2.5"
+      />
+    </svg>
+  );
+}
+
+function EyeOffIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <path d="m3 3 18 18" />
+      <path d="M6 7c-2 2-3.5 5-3.5 5s3.5 6 9.5 6" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg
+      className="security-lock"
+      viewBox="0 0 24 24"
+    >
+      <rect
+        x="5"
+        y="10"
+        width="14"
+        height="10"
+        rx="2"
+      />
+
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="2"
+      />
+
+      <path d="m4 7 8 6 8-6" />
+
+    </svg>
   );
 }
