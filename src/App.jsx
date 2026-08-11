@@ -1,11 +1,5 @@
 import { useMemo, useState } from "react";
-
-import {
-  demoEvents,
-  findMedicine,
-  findMedicineByBatch,
-  getActiveRecalls,
-} from "./data/medicines";
+import { medicines, demoEvents } from "./data/medicines";
 
 import {
   NetworkBadge,
@@ -94,7 +88,8 @@ const initialAdminReports = [
     verificationResult: "NO_MATCH",
     region: "Adelaide SA",
     reporterType: "Pharmacist",
-    comment: "Batch information does not match the prototype record.",
+    comment:
+      "Batch information does not match the prototype record.",
     createdAt: "2026-08-11T10:10:00",
     status: "NEW",
     escalated: false,
@@ -125,6 +120,71 @@ const initialAuditEvents = [
   },
 ];
 
+function findMedicine(identifier) {
+  const value = identifier?.trim().toUpperCase();
+
+  if (!value) {
+    return null;
+  }
+
+  if (medicines[value]) {
+    return medicines[value];
+  }
+
+  return (
+    Object.values(medicines).find(
+      (item) =>
+        item.code?.toUpperCase() === value ||
+        item.productId?.toUpperCase() === value
+    ) || null
+  );
+}
+
+function findMedicineByBatch(batch) {
+  const value = batch?.trim().toUpperCase();
+
+  if (!value) {
+    return null;
+  }
+
+  return (
+    Object.values(medicines).find(
+      (item) =>
+        item.batch?.toUpperCase() === value
+    ) || null
+  );
+}
+
+function getActiveRecalls() {
+  return Object.values(medicines)
+    .filter((item) => item.recall?.active)
+    .map((item, index) => ({
+      id:
+        item.recall.id ||
+        `RECALL-${index + 1}`,
+
+      medicineName: item.medicineName,
+      productId: item.productId,
+      batch: item.batch,
+
+      recallDate:
+        item.recall.recallDate ||
+        "2026-08-01",
+
+      severity:
+        item.recall.severity ||
+        "Moderate",
+
+      status:
+        item.recall.status ||
+        "Active Recall",
+
+      reason:
+        item.recall.reason ||
+        "Prototype recall notice for demonstration purposes.",
+    }));
+}
+
 function normaliseEvent(event, index = 0) {
   const timestamp =
     event.timestamp ||
@@ -132,23 +192,66 @@ function normaliseEvent(event, index = 0) {
     event.date ||
     new Date().toISOString();
 
+  const product = findMedicine(
+    event.code || event.productId
+  );
+
   return {
-    id: event.id || `EVENT-${index}-${timestamp}`,
-    code: event.code || event.productCode || "",
-    productId: event.productId || "",
+    id:
+      event.id ||
+      `EVENT-${index}-${timestamp}`,
+
+    code:
+      event.code ||
+      event.productCode ||
+      product?.code ||
+      "",
+
+    productId:
+      event.productId ||
+      product?.productId ||
+      "",
+
     medicine:
       event.medicine ||
       event.medicineName ||
       event.productName ||
+      product?.medicineName ||
       "Medicine",
-    batch: event.batch || event.batchNumber || "—",
-    result: event.result || event.status || "NOT_COVERED",
+
+    batch:
+      event.batch ||
+      event.batchNumber ||
+      product?.batch ||
+      "—",
+
+    result:
+      event.result ||
+      event.status ||
+      "NOT_COVERED",
+
     timestamp,
-    offline: Boolean(event.offline || event.cached),
-    pendingSync: Boolean(event.pendingSync),
-    region: event.region || event.location || "",
-    type: event.type || "verification",
-    channel: event.channel || "PHARMACIST",
+
+    offline: Boolean(
+      event.offline || event.cached
+    ),
+
+    pendingSync: Boolean(
+      event.pendingSync
+    ),
+
+    region:
+      event.region ||
+      event.location ||
+      "",
+
+    type:
+      event.type ||
+      "verification",
+
+    channel:
+      event.channel ||
+      "PHARMACIST",
   };
 }
 
@@ -170,7 +273,7 @@ function formatEventTime(timestamp) {
 function resultLabel(result) {
   switch (result) {
     case "MATCH":
-      return "Match";
+      return "Data match found";
 
     case "NO_MATCH":
       return "No Match";
@@ -183,15 +286,20 @@ function resultLabel(result) {
   }
 }
 
-function verifyMedicine(identifier, batch, offline) {
+function verifyMedicine(
+  identifier,
+  batch,
+  offline
+) {
   const normalizedIdentifier =
     identifier?.trim().toUpperCase();
 
   const normalizedBatch =
     batch?.trim().toUpperCase();
 
-  const product =
-    findMedicine(normalizedIdentifier);
+  const product = findMedicine(
+    normalizedIdentifier
+  );
 
   if (!product) {
     return {
@@ -204,7 +312,10 @@ function verifyMedicine(identifier, batch, offline) {
     };
   }
 
-  if (offline && !product.cached) {
+  if (
+    offline &&
+    product.cached === false
+  ) {
     return {
       status: "NOT_COVERED",
       product,
@@ -215,7 +326,10 @@ function verifyMedicine(identifier, batch, offline) {
     };
   }
 
-  if (product.coverageStatus !== "ENROLLED") {
+  if (
+    product.coverageStatus !==
+    "ENROLLED"
+  ) {
     return {
       status: "NOT_COVERED",
       product,
@@ -228,7 +342,8 @@ function verifyMedicine(identifier, batch, offline) {
 
   if (
     normalizedBatch &&
-    normalizedBatch !== product.batch.toUpperCase()
+    normalizedBatch !==
+      product.batch?.toUpperCase()
   ) {
     return {
       status: "NO_MATCH",
@@ -246,7 +361,8 @@ function verifyMedicine(identifier, batch, offline) {
     product,
     scannedCode: normalizedIdentifier,
     scannedBatch:
-      normalizedBatch || product.batch,
+      normalizedBatch ||
+      product.batch,
     offline,
     mismatchField: null,
   };
@@ -257,23 +373,33 @@ function downloadCsv(filename, rows) {
     return;
   }
 
-  const headers = Object.keys(rows[0]);
+  const headers =
+    Object.keys(rows[0]);
 
   const escapeValue = (value) => {
     const text =
-      value === null || value === undefined
+      value === null ||
+      value === undefined
         ? ""
         : String(value);
 
-    return `"${text.replaceAll('"', '""')}"`;
+    return `"${text.replaceAll(
+      '"',
+      '""'
+    )}"`;
   };
 
   const csv = [
-    headers.map(escapeValue).join(","),
+    headers
+      .map(escapeValue)
+      .join(","),
+
     ...rows.map((row) =>
       headers
         .map((header) =>
-          escapeValue(row[header])
+          escapeValue(
+            row[header]
+          )
         )
         .join(",")
     ),
@@ -283,7 +409,8 @@ function downloadCsv(filename, rows) {
     type: "text/csv;charset=utf-8;",
   });
 
-  const url = URL.createObjectURL(blob);
+  const url =
+    URL.createObjectURL(blob);
 
   const anchor =
     document.createElement("a");
@@ -315,8 +442,10 @@ export default function App() {
   const [role, setRole] =
     useState("");
 
-  const [currentUser, setCurrentUser] =
-    useState(null);
+  const [
+    currentUser,
+    setCurrentUser,
+  ] = useState(null);
 
   const [email, setEmail] =
     useState("");
@@ -344,8 +473,10 @@ export default function App() {
     setResetEmail,
   ] = useState("");
 
-  const [resetSent, setResetSent] =
-    useState(false);
+  const [
+    resetSent,
+    setResetSent,
+  ] = useState(false);
 
   const [code, setCode] =
     useState("MED-001");
@@ -383,8 +514,10 @@ export default function App() {
     setSelectedRecall,
   ] = useState(null);
 
-  const [reportRef, setReportRef] =
-    useState("");
+  const [
+    reportRef,
+    setReportRef,
+  ] = useState("");
 
   const [
     reportComment,
@@ -401,13 +534,20 @@ export default function App() {
     setReportImageName,
   ] = useState("");
 
-  const [reports, setReports] =
-    useState(initialAdminReports);
-
   const [
     reportOrigin,
     setReportOrigin,
   ] = useState("result");
+
+  const [reports, setReports] =
+    useState(
+      initialAdminReports
+    );
+
+  const [
+    adminMode,
+    setAdminMode,
+  ] = useState("");
 
   const [
     selectedAdminReport,
@@ -518,48 +658,45 @@ export default function App() {
     );
 
   const adminSummary =
-    useMemo(() => {
-      const openReports =
-        reports.filter(
-          (report) =>
-            report.status ===
-            "NEW"
-        ).length;
+    useMemo(
+      () => ({
+        openReports:
+          reports.filter(
+            (report) =>
+              report.status ===
+              "NEW"
+          ).length,
 
-      const underReview =
-        reports.filter(
-          (report) =>
-            report.status ===
-            "UNDER_REVIEW"
-        ).length;
+        underReview:
+          reports.filter(
+            (report) =>
+              report.status ===
+              "UNDER_REVIEW"
+          ).length,
 
-      const noMatch =
-        pharmacistEvents.filter(
-          (event) =>
-            event.result ===
-            "NO_MATCH"
-        ).length;
+        noMatch:
+          pharmacistEvents.filter(
+            (event) =>
+              event.result ===
+              "NO_MATCH"
+          ).length,
 
-      const unable =
-        pharmacistEvents.filter(
-          (event) =>
-            event.result ===
-            "NOT_COVERED"
-        ).length;
+        unable:
+          pharmacistEvents.filter(
+            (event) =>
+              event.result ===
+              "NOT_COVERED"
+          ).length,
 
-      return {
-        openReports,
-        underReview,
-        noMatch,
-        unable,
         recalls:
           activeRecalls.length,
-      };
-    }, [
-      reports,
-      pharmacistEvents,
-      activeRecalls,
-    ]);
+      }),
+      [
+        reports,
+        pharmacistEvents,
+        activeRecalls,
+      ]
+    );
 
   const filteredReports =
     useMemo(() => {
@@ -740,9 +877,7 @@ export default function App() {
           if (
             mapFilter === "MATCH"
           ) {
-            return (
-              region.match > 0
-            );
+            return region.match > 0;
           }
 
           if (
@@ -786,7 +921,9 @@ export default function App() {
 
       pharmacistEvents.forEach(
         (event) => {
-          if (!batches[event.batch]) {
+          if (
+            !batches[event.batch]
+          ) {
             batches[
               event.batch
             ] = {
@@ -818,14 +955,27 @@ export default function App() {
       reports.forEach(
         (report) => {
           if (
-            batches[
+            !batches[
               report.batch
             ]
           ) {
             batches[
               report.batch
-            ].reports += 1;
+            ] = {
+              batch:
+                report.batch,
+              region:
+                report.region ||
+                "Unknown",
+              scans: 0,
+              noMatch: 0,
+              reports: 0,
+            };
           }
+
+          batches[
+            report.batch
+          ].reports += 1;
         }
       );
 
@@ -908,23 +1058,31 @@ export default function App() {
                 {
                   id:
                     `AUD-${Date.now()}`,
+
                   timestamp:
                     new Date().toISOString(),
+
                   actor:
                     currentUser
                       ?.fullName ||
                     "System",
+
                   action:
                     "Offline event synced",
+
                   recordType:
                     "Verification Event",
+
                   recordId:
                     "SYNC",
+
                   previousState:
                     "PENDING",
+
                   newState:
                     "SYNCED",
                 },
+
                 ...current,
               ]
             );
@@ -957,6 +1115,7 @@ export default function App() {
         setLoginError(
           "Account not found. Check your email address."
         );
+
         return;
       }
 
@@ -967,6 +1126,7 @@ export default function App() {
         setLoginError(
           "Incorrect password. Please try again."
         );
+
         return;
       }
 
@@ -993,8 +1153,9 @@ export default function App() {
           break;
 
         case "admin":
+          setAdminMode("");
           setScreen(
-            "adminOverview"
+            "adminModeChoice"
           );
           break;
 
@@ -1042,7 +1203,7 @@ export default function App() {
           const eventId =
             `VE-${Date.now()}`;
 
-          const event = {
+          const newEvent = {
             id: eventId,
 
             timestamp:
@@ -1077,6 +1238,9 @@ export default function App() {
               role ===
               "pharmacist"
                 ? "PHARMACIST"
+                : role ===
+                  "admin"
+                ? "ADMIN"
                 : "CONSUMER",
 
             offline,
@@ -1087,7 +1251,10 @@ export default function App() {
             region:
               product
                 ?.coarseRegion ||
-              "",
+              (role ===
+              "pharmacist"
+                ? "Adelaide SA"
+                : ""),
 
             type:
               "verification",
@@ -1095,7 +1262,7 @@ export default function App() {
 
           setVerificationEvents(
             (current) => [
-              event,
+              newEvent,
               ...current,
             ]
           );
@@ -1105,24 +1272,35 @@ export default function App() {
               {
                 id:
                   `AUD-${Date.now()}`,
+
                 timestamp:
                   new Date().toISOString(),
+
                 actor:
                   role ===
                   "pharmacist"
                     ? "Pharmacist"
+                    : role ===
+                      "admin"
+                    ? "Admin"
                     : "Consumer",
+
                 action:
                   "Verification completed",
+
                 recordType:
                   "Verification Event",
+
                 recordId:
                   eventId,
+
                 previousState:
                   "—",
+
                 newState:
                   verification.status,
               },
+
               ...current,
             ]
           );
@@ -1175,24 +1353,30 @@ export default function App() {
           ?.recall?.active
           ? {
               active: true,
+
               medicineName:
                 registeredProduct
                   .medicineName,
+
               batch:
                 registeredProduct
                   .batch,
+
               recallDate:
                 registeredProduct
                   .recall
                   .recallDate,
+
               severity:
                 registeredProduct
                   .recall
                   .severity,
+
               status:
                 registeredProduct
                   .recall
                   .status,
+
               reason:
                 registeredProduct
                   .recall
@@ -1203,8 +1387,10 @@ export default function App() {
       setBatchResult({
         batch:
           normalizedBatch,
+
         medicine:
           registeredProduct,
+
         recall,
       });
     };
@@ -1254,12 +1440,15 @@ export default function App() {
         reportLocation ||
         result?.product
           ?.coarseRegion ||
-        "",
+        "Adelaide SA",
 
       reporterType:
         role ===
         "pharmacist"
           ? "Pharmacist"
+          : role ===
+            "admin"
+          ? "Admin"
           : "Consumer",
 
       imageName:
@@ -1287,27 +1476,45 @@ export default function App() {
         {
           id:
             `AUD-${Date.now()}`,
+
           timestamp:
             new Date().toISOString(),
+
           actor:
             role ===
             "pharmacist"
               ? "Pharmacist"
+              : role ===
+                "admin"
+              ? "Admin"
               : "Consumer",
+
           action:
             "Report created",
+
           recordType:
             "Suspicious Report",
+
           recordId:
             reference,
+
           previousState:
             "—",
+
           newState:
             "NEW",
         },
+
         ...current,
       ]
     );
+
+    if (offline) {
+      setPendingSync(
+        (current) =>
+          current + 1
+      );
+    }
 
     setScreen(
       "confirmation"
@@ -1364,23 +1571,31 @@ export default function App() {
           {
             id:
               `AUD-${Date.now()}`,
+
             timestamp:
               new Date().toISOString(),
+
             actor:
               currentUser
                 ?.fullName ||
               "Admin",
+
             action:
               "Report status changed",
+
             recordType:
               "Suspicious Report",
+
             recordId:
               reportId,
+
             previousState:
               previous,
+
             newState:
               nextStatus,
           },
+
           ...current,
         ]
       );
@@ -1433,27 +1648,35 @@ export default function App() {
           {
             id:
               `AUD-${Date.now()}`,
+
             timestamp:
               new Date().toISOString(),
+
             actor:
               currentUser
                 ?.fullName ||
               "Admin",
+
             action:
               next
                 ? "Report escalated"
                 : "Escalation removed",
+
             recordType:
               "Suspicious Report",
+
             recordId:
               reportId,
+
             previousState:
               String(
                 report.escalated
               ),
+
             newState:
               String(next),
           },
+
           ...current,
         ]
       );
@@ -1464,6 +1687,7 @@ export default function App() {
 
     setRole("");
     setCurrentUser(null);
+    setAdminMode("");
 
     setPassword("");
     setLoginError("");
@@ -1476,6 +1700,7 @@ export default function App() {
     setReportComment("");
     setReportLocation("");
     setReportImageName("");
+    setReportOrigin("result");
 
     setResetEmail("");
     setResetSent(false);
@@ -1489,25 +1714,148 @@ export default function App() {
     setSelectedInvestigation(null);
   };
 
-  const isAdminScreen =
+  const goBack = () => {
+    switch (screen) {
+      case "scan":
+      case "manual":
+      case "result":
+        if (
+          role ===
+          "pharmacist"
+        ) {
+          setScreen(
+            "pharmacistDashboard"
+          );
+        } else if (
+          role === "admin"
+        ) {
+          setScreen(
+            adminMode ===
+            "mobile"
+              ? "adminMobileDashboard"
+              : "adminModeChoice"
+          );
+        } else {
+          setScreen("home");
+        }
+
+        break;
+
+      case "details":
+        setScreen("result");
+        break;
+
+      case "report":
+        if (
+          role ===
+            "pharmacist" &&
+          reportOrigin ===
+            "pharmacistDashboard"
+        ) {
+          setScreen(
+            "pharmacistDashboard"
+          );
+        } else {
+          setScreen("result");
+        }
+
+        break;
+
+      case "pharmacistBatchLookup":
+      case "pharmacistRecalls":
+      case "pharmacistHistory":
+      case "pharmacistShortages":
+      case "pharmacistProfile":
+      case "pharmacistSettings":
+        setScreen(
+          "pharmacistDashboard"
+        );
+        break;
+
+      case "pharmacistRecallDetail":
+        setScreen(
+          "pharmacistRecalls"
+        );
+        break;
+
+      case "adminMobileReports":
+      case "adminMobileScanMonitor":
+      case "adminMobileInvestigation":
+      case "adminMobileAudit":
+      case "adminMobileProfile":
+      case "adminMobileSettings":
+        setScreen(
+          "adminMobileDashboard"
+        );
+        break;
+
+      case "adminMobileReportDetail":
+        setScreen(
+          "adminMobileReports"
+        );
+        break;
+
+      case "forgotPassword":
+        if (
+          role === "admin"
+        ) {
+          setScreen(
+            adminMode ===
+            "mobile"
+              ? "adminMobileSettings"
+              : "adminModeChoice"
+          );
+        } else if (
+          role ===
+          "pharmacist"
+        ) {
+          setScreen(
+            "pharmacistSettings"
+          );
+        } else {
+          setScreen("home");
+        }
+
+        break;
+
+      case "manufacturerDashboard":
+      case "consumerDashboard":
+      case "pharmacistDashboard":
+        setScreen("home");
+        break;
+
+      default:
+        setScreen("home");
+        break;
+    }
+  };
+
+  const isAdminWebScreen =
+    role === "admin" &&
+    adminMode === "web" &&
     screen.startsWith(
       "admin"
-    );
+    ) &&
+    !screen.startsWith(
+      "adminMobile"
+    ) &&
+    screen !==
+      "adminModeChoice";
 
-  if (
-    role === "admin" &&
-    isAdminScreen
-  ) {
+  if (isAdminWebScreen) {
     return (
       <div
         className="admin-app-shell"
         style={{
           "--brand-blue":
             palette.blue,
+
           "--brand-deep":
             palette.deepBlue,
+
           "--brand-teal":
             palette.teal,
+
           "--brand-aqua":
             palette.aqua,
         }}
@@ -1515,9 +1863,13 @@ export default function App() {
         <AdminWorkspace
           screen={screen}
           setScreen={setScreen}
-          currentUser={currentUser}
+          currentUser={
+            currentUser
+          }
           search={adminSearch}
-          setSearch={setAdminSearch}
+          setSearch={
+            setAdminSearch
+          }
           reports={reports}
           filteredReports={
             filteredReports
@@ -1549,7 +1901,9 @@ export default function App() {
           setScanResultFilter={
             setScanResultFilter
           }
-          summary={adminSummary}
+          summary={
+            adminSummary
+          }
           regions={
             filteredRegions
           }
@@ -1578,16 +1932,10 @@ export default function App() {
             setAuditSearch
           }
           offline={offline}
-          syncing={syncing}
           handleNetworkToggle={
             handleNetworkToggle
           }
-          activeRecalls={
-            activeRecalls
-          }
-          onExport={(
-            type
-          ) => {
+          onExport={(type) => {
             if (
               type ===
               "events"
@@ -1628,6 +1976,15 @@ export default function App() {
               );
             }
           }}
+          onSwitchMobile={() => {
+            setAdminMode(
+              "mobile"
+            );
+
+            setScreen(
+              "adminMobileDashboard"
+            );
+          }}
           onSignOut={reset}
         />
       </div>
@@ -1640,15 +1997,20 @@ export default function App() {
       style={{
         "--brand-blue":
           palette.blue,
+
         "--brand-deep":
           palette.deepBlue,
+
         "--brand-teal":
           palette.teal,
+
         "--brand-aqua":
           palette.aqua,
       }}
     >
       <main className="phone-stage">
+
+        {/* HOME */}
 
         {screen === "home" && (
           <section className="screen home-screen">
@@ -1674,7 +2036,9 @@ export default function App() {
               type="button"
               className="home-scan-button"
               onClick={() =>
-                setScreen("scan")
+                setScreen(
+                  "scan"
+                )
               }
             >
               <ScanIcon />
@@ -1702,25 +2066,32 @@ export default function App() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(event) => {
+                  onChange={(
+                    event
+                  ) => {
                     setEmail(
                       event.target
                         .value
                     );
 
-                    setLoginError("");
+                    setLoginError(
+                      ""
+                    );
                   }}
                   placeholder="e.g. pharmacist@medauth.com"
+                  autoComplete="email"
                   required
                 />
               </label>
 
               <label className="home-login-field">
+
                 <span>
                   PASSWORD
                 </span>
 
                 <div className="password-input-wrap">
+
                   <input
                     type={
                       showPassword
@@ -1728,15 +2099,20 @@ export default function App() {
                         : "password"
                     }
                     value={password}
-                    onChange={(event) => {
+                    onChange={(
+                      event
+                    ) => {
                       setPassword(
                         event.target
                           .value
                       );
 
-                      setLoginError("");
+                      setLoginError(
+                        ""
+                      );
                     }}
                     placeholder="••••••••"
+                    autoComplete="current-password"
                     required
                   />
 
@@ -1745,9 +2121,16 @@ export default function App() {
                     className="password-toggle"
                     onClick={() =>
                       setShowPassword(
-                        (current) =>
+                        (
+                          current
+                        ) =>
                           !current
                       )
+                    }
+                    aria-label={
+                      showPassword
+                        ? "Hide password"
+                        : "Show password"
                     }
                   >
                     {showPassword ? (
@@ -1756,11 +2139,15 @@ export default function App() {
                       <EyeIcon />
                     )}
                   </button>
+
                 </div>
+
               </label>
 
               <div className="login-options">
+
                 <label className="remember-device">
+
                   <input
                     type="checkbox"
                     checked={
@@ -1779,14 +2166,21 @@ export default function App() {
                   <span>
                     Remember this device
                   </span>
+
                 </label>
 
                 <button
                   type="button"
                   className="forgot-password"
                   onClick={() => {
-                    setResetEmail(email);
-                    setResetSent(false);
+                    setResetEmail(
+                      email
+                    );
+
+                    setResetSent(
+                      false
+                    );
+
                     setScreen(
                       "forgotPassword"
                     );
@@ -1794,10 +2188,14 @@ export default function App() {
                 >
                   Forgot password?
                 </button>
+
               </div>
 
               {loginError && (
-                <div className="login-error">
+                <div
+                  className="login-error"
+                  role="alert"
+                >
                   {loginError}
                 </div>
               )}
@@ -1808,97 +2206,141 @@ export default function App() {
               >
                 Sign In →
               </button>
+
             </form>
 
             <div className="security-footer">
+
               <LockIcon />
 
               <span>
                 Protected by AES-256 encryption · TLS 1.3 · ISO 27001
               </span>
+
             </div>
 
           </section>
         )}
 
-        {screen === "forgotPassword" && (
-          <section className="screen">
+        {/* FORGOT PASSWORD */}
+
+        {screen ===
+          "forgotPassword" && (
+          <section className="screen forgot-screen">
 
             <BackButton
-              onClick={() =>
-                setScreen("home")
-              }
+              onClick={goBack}
             />
 
-            <div className="eyebrow">
-              Account recovery
+            <div className="forgot-brand">
+
+              <img
+                className="forgot-logo"
+                src={`${import.meta.env.BASE_URL}medauth-logo.png`}
+                alt="MedAuth"
+              />
+
             </div>
 
-            <h1>
-              Forgot password?
-            </h1>
-
             {!resetSent ? (
-              <form
-                onSubmit={
-                  handleForgotPassword
-                }
-              >
-                <label className="field">
-                  Email address
+              <>
+                <div className="eyebrow">
+                  Account recovery
+                </div>
 
-                  <input
-                    type="email"
-                    value={
-                      resetEmail
-                    }
-                    onChange={(
-                      event
-                    ) =>
-                      setResetEmail(
-                        event.target
-                          .value
-                      )
-                    }
-                    required
-                  />
-                </label>
+                <h1>
+                  Forgot password?
+                </h1>
 
-                <PrimaryButton type="submit">
-                  Send Reset Instructions
-                </PrimaryButton>
-              </form>
+                <p className="forgot-description">
+                  Enter the email address linked to your MedAuth account.
+                </p>
+
+                <form
+                  className="forgot-form"
+                  onSubmit={
+                    handleForgotPassword
+                  }
+                >
+                  <label className="home-login-field">
+
+                    <span>
+                      EMAIL ADDRESS
+                    </span>
+
+                    <input
+                      type="email"
+                      value={
+                        resetEmail
+                      }
+                      onChange={(
+                        event
+                      ) =>
+                        setResetEmail(
+                          event.target
+                            .value
+                        )
+                      }
+                      placeholder="e.g. pharmacist@medauth.com"
+                      required
+                    />
+
+                  </label>
+
+                  <button
+                    type="submit"
+                    className="home-signin-button"
+                  >
+                    Send Reset Instructions
+                  </button>
+
+                </form>
+              </>
             ) : (
-              <div className="panel">
-                <h3>
+              <div className="reset-success">
+
+                <div className="reset-success-icon">
+                  <MailIcon />
+                </div>
+
+                <h1>
                   Check your email
-                </h3>
+                </h1>
 
                 <p>
-                  Reset instructions have been requested for {resetEmail}.
+                  If an account exists for{" "}
+                  <strong>
+                    {resetEmail}
+                  </strong>
+                  , reset instructions have been requested.
                 </p>
+
+                <PrimaryButton
+                  onClick={goBack}
+                >
+                  Return
+                </PrimaryButton>
+
               </div>
             )}
 
           </section>
         )}
 
+        {/* SCAN */}
+
         {screen === "scan" && (
           <section className="screen">
 
             <BackButton
-              onClick={() =>
-                setScreen(
-                  role ===
-                    "pharmacist"
-                    ? "pharmacistDashboard"
-                    : "home"
-                )
-              }
+              onClick={goBack}
             />
 
             <div className="eyebrow">
-              Pharmacist verification
+              {role ===
+              "pharmacist"
+                ? "Pharmacist verification"
+                : "Guest verification"}
             </div>
 
             <h1>
@@ -1910,6 +2352,7 @@ export default function App() {
             </p>
 
             <div className="scanner-panel">
+
               <div className="scan-corners">
                 <span />
                 <span />
@@ -1922,49 +2365,82 @@ export default function App() {
               <small>
                 Camera simulation
               </small>
+
             </div>
 
             <div className="sample-box">
+
+              <strong>
+                Simulate scan
+              </strong>
+
               <button
                 type="button"
-                onClick={() =>
+                onClick={() => {
+                  setCode(
+                    "MED-001"
+                  );
+
+                  setBatch(
+                    "B1001"
+                  );
+
                   runVerification(
                     "MED-001",
                     "B1001"
-                  )
-                }
+                  );
+                }}
               >
-                MED-001 / B1001 — Match
+                MED-001 / B1001 — Data match found
               </button>
 
               <button
                 type="button"
-                onClick={() =>
+                onClick={() => {
+                  setCode(
+                    "MED-002"
+                  );
+
+                  setBatch(
+                    "B2045"
+                  );
+
                   runVerification(
                     "MED-002",
                     "B2045"
-                  )
-                }
+                  );
+                }}
               >
                 MED-002 / B2045 — No Match
               </button>
 
               <button
                 type="button"
-                onClick={() =>
+                onClick={() => {
+                  setCode(
+                    "MED-003"
+                  );
+
+                  setBatch(
+                    "B9912"
+                  );
+
                   runVerification(
                     "MED-003",
                     "B9912"
-                  )
-                }
+                  );
+                }}
               >
-                MED-003 — Unable to Verify
+                MED-003 — Not Yet Covered
               </button>
+
             </div>
 
             <SecondaryButton
               onClick={() =>
-                setScreen("manual")
+                setScreen(
+                  "manual"
+                )
               }
             >
               Enter Code Instead
@@ -1973,20 +2449,25 @@ export default function App() {
           </section>
         )}
 
+        {/* MANUAL */}
+
         {screen === "manual" && (
           <section className="screen">
 
             <BackButton
-              onClick={() =>
-                setScreen("scan")
-              }
+              onClick={goBack}
             />
+
+            <div className="eyebrow">
+              Manual verification
+            </div>
 
             <h1>
               Enter medicine code
             </h1>
 
             <label className="field">
+
               Product identifier
 
               <input
@@ -1999,11 +2480,14 @@ export default function App() {
                       .value
                   )
                 }
+                placeholder="e.g. MED-001"
               />
+
             </label>
 
             <label className="field">
-              Batch
+
+              Batch (optional)
 
               <input
                 value={batch}
@@ -2015,7 +2499,9 @@ export default function App() {
                       .value
                   )
                 }
+                placeholder="e.g. B1001"
               />
+
             </label>
 
             <PrimaryButton
@@ -2029,85 +2515,176 @@ export default function App() {
           </section>
         )}
 
-        {screen === "checking" && (
+        {/* CHECKING */}
+
+        {screen ===
+          "checking" && (
           <section className="screen center-screen">
+
             <div className="loader" />
 
             <h1>
               Checking medicine…
             </h1>
+
+            <p>
+              Comparing product and batch information with the MedAuth prototype dataset.
+            </p>
+
           </section>
         )}
 
-        {screen === "result" &&
+        {/* RESULT */}
+
+        {screen ===
+          "result" &&
           result && (
-            <section className="screen">
+          <section className="screen">
 
-              <BackButton
-                onClick={() =>
-                  setScreen(
-                    role ===
-                      "pharmacist"
-                      ? "pharmacistDashboard"
-                      : "home"
-                  )
-                }
-              />
+            <BackButton
+              onClick={goBack}
+            />
 
-              <StatusCard
-                status={
-                  result.status
-                }
-                title={
-                  result.status ===
-                  "MATCH"
-                    ? "Data match found"
-                    : result.status ===
-                      "NO_MATCH"
-                    ? "No Match"
-                    : "Unable to Verify"
-                }
-                text={
-                  result.status ===
-                  "MATCH"
-                    ? "The scanned code and batch match information registered in MedAuth."
-                    : result.status ===
-                      "NO_MATCH"
-                    ? "The scanned information does not fully match the registered prototype record."
-                    : "MedAuth does not currently have enough prototype information to verify this medicine."
-                }
-              />
+            <StatusCard
+              status={
+                result.status
+              }
+              title={
+                result.status ===
+                "MATCH"
+                  ? result.offline
+                    ? "Data match found — Offline"
+                    : "Data match found"
+                  : result.status ===
+                    "NO_MATCH"
+                  ? "No Match"
+                  : "Unable to Verify"
+              }
+              text={
+                result.status ===
+                "MATCH"
+                  ? "The scanned code and batch match information registered in MedAuth."
+                  : result.status ===
+                    "NO_MATCH"
+                  ? "The scanned information does not fully match the product or batch information registered in MedAuth."
+                  : "MedAuth does not currently have enough prototype information to verify this medicine."
+              }
+            />
 
-              {result.status ===
-                "NO_MATCH" && (
-                <div className="verification-warning-box">
-                  A No Match result does not confirm that this medicine is counterfeit.
-                </div>
-              )}
-
-              <SupplyChainSnapshot
+            {result.product && (
+              <MedicineResultDetails
                 product={
                   result.product
                 }
-                result={result}
+                scannedBatch={
+                  result.scannedBatch
+                }
               />
+            )}
 
-              <div className="action-stack">
+            {result.status ===
+              "MATCH" && (
+              <div className="verification-info-box">
 
-                {result.status ===
-                  "NO_MATCH" && (
-                  <>
+                <strong>
+                  What this means
+                </strong>
+
+                <p>
+                  This result confirms that the scanned information matches the registered prototype record. It does not guarantee that the medicine is authentic or safe to use.
+                </p>
+
+              </div>
+            )}
+
+            {result.status ===
+              "NO_MATCH" && (
+              <div className="verification-warning-box">
+
+                <strong>
+                  Important
+                </strong>
+
+                <p>
+                  A No Match result does not confirm that this medicine is counterfeit.
+                </p>
+
+              </div>
+            )}
+
+            {result.status ===
+              "NOT_COVERED" && (
+              <div className="verification-info-box">
+
+                <strong>
+                  What this means
+                </strong>
+
+                <p>
+                  This does not mean the medicine is counterfeit.
+                </p>
+
+              </div>
+            )}
+
+            <SupplyChainSnapshot
+              product={
+                result.product
+              }
+              result={result}
+            />
+
+            {result.offline && (
+              <div className="offline-result-notice">
+
+                <strong>
+                  Offline Mode — Cached Data
+                </strong>
+
+                <span>
+                  Pending Sync. This verification will synchronise when the prototype returns online.
+                </span>
+
+              </div>
+            )}
+
+            <div className="action-stack">
+
+              {result.status ===
+                "MATCH" && (
+                <PrimaryButton
+                  onClick={() =>
+                    setScreen(
+                      "details"
+                    )
+                  }
+                >
+                  View Medicine Details
+                </PrimaryButton>
+              )}
+
+              {result.status ===
+                "NO_MATCH" && (
+                <>
+                  {role ===
+                    "pharmacist" && (
                     <PrimaryButton
                       onClick={() => {
                         setBatchSearch(
                           result.scannedBatch ||
                             ""
                         );
+
                         setBatchProductCode(
                           result.product
                             ?.code ||
                             ""
                         );
+
+                        setBatchResult(
+                          null
+                        );
+
                         setScreen(
                           "pharmacistBatchLookup"
                         );
@@ -2115,55 +2692,268 @@ export default function App() {
                     >
                       Check Batch / Recall
                     </PrimaryButton>
+                  )}
 
-                    <SecondaryButton
-                      onClick={() =>
-                        setScreen(
-                          "report"
-                        )
-                      }
-                    >
-                      Report Concern
-                    </SecondaryButton>
-                  </>
-                )}
-
-                {role ===
-                  "pharmacist" && (
                   <SecondaryButton
+                    onClick={() => {
+                      setReportOrigin(
+                        "result"
+                      );
+
+                      setScreen(
+                        "report"
+                      );
+                    }}
+                  >
+                    Report Concern
+                  </SecondaryButton>
+                </>
+              )}
+
+              {result.status ===
+                "NOT_COVERED" && (
+                <>
+                  <PrimaryButton
                     onClick={() =>
                       setScreen(
-                        "pharmacistDashboard"
+                        "scan"
                       )
                     }
                   >
-                    Back to Pharmacist Dashboard
+                    Try Another Scan
+                  </PrimaryButton>
+
+                  <SecondaryButton
+                    onClick={() =>
+                      setScreen(
+                        "manual"
+                      )
+                    }
+                  >
+                    Enter Code Manually
                   </SecondaryButton>
-                )}
 
-              </div>
+                  <SecondaryButton
+                    onClick={() => {
+                      setReportOrigin(
+                        "result"
+                      );
 
-            </section>
-          )}
+                      setScreen(
+                        "report"
+                      );
+                    }}
+                  >
+                    Report Concern
+                  </SecondaryButton>
+                </>
+              )}
+
+              {role ===
+                "pharmacist" && (
+                <SecondaryButton
+                  onClick={() =>
+                    setScreen(
+                      "pharmacistDashboard"
+                    )
+                  }
+                >
+                  Back to Pharmacist Dashboard
+                </SecondaryButton>
+              )}
+
+            </div>
+
+          </section>
+        )}
+
+        {/* DETAILS */}
+
+        {screen ===
+          "details" &&
+          result?.product && (
+          <section className="screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Medicine details
+            </div>
+
+            <h1>
+              {
+                result.product
+                  .medicineName
+              }
+            </h1>
+
+            <div className="details-list">
+
+              <Row
+                label="Manufacturer"
+                value={
+                  result.product
+                    .manufacturer
+                }
+              />
+
+              <Row
+                label="Product identifier"
+                value={
+                  result.product
+                    .productId
+                }
+              />
+
+              <Row
+                label="Batch"
+                value={
+                  result.product
+                    .batch
+                }
+              />
+
+              <Row
+                label="Expiry"
+                value={
+                  result.product
+                    .expiry
+                }
+              />
+
+              <Row
+                label="Country"
+                value={
+                  result.product
+                    .countryOfOrigin
+                }
+              />
+
+              <Row
+                label="Source"
+                value={
+                  result.product
+                    .source ||
+                  "MedAuth prototype dataset"
+                }
+              />
+
+              <Row
+                label="Last updated"
+                value={
+                  result.product
+                    .lastUpdated
+                    ?.replace(
+                      "T",
+                      " "
+                    )
+                }
+              />
+
+            </div>
+
+            <SecondaryButton
+              onClick={() =>
+                setScreen(
+                  "result"
+                )
+              }
+            >
+              Back to Result
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* REPORT */}
 
         {screen === "report" && (
           <section className="screen">
 
             <BackButton
-              onClick={() =>
-                setScreen("result")
-              }
+              onClick={goBack}
             />
+
+            <div className="eyebrow">
+              Suspicious medicine report
+            </div>
 
             <h1>
               Report a concern
             </h1>
 
+            <p>
+              Prototype only. This report is saved locally in the MedAuth demo.
+            </p>
+
             <label className="field">
+
+              Medicine
+
+              <input
+                value={
+                  result?.product
+                    ?.medicineName ||
+                  "Unknown medicine"
+                }
+                readOnly
+              />
+
+            </label>
+
+            <label className="field">
+
+              Product ID
+
+              <input
+                value={
+                  result?.product
+                    ?.productId ||
+                  code
+                }
+                readOnly
+              />
+
+            </label>
+
+            <label className="field">
+
+              Batch
+
+              <input
+                value={
+                  result?.scannedBatch ||
+                  batch
+                }
+                readOnly
+              />
+
+            </label>
+
+            <label className="field">
+
+              Verification result
+
+              <input
+                value={
+                  result
+                    ? resultLabel(
+                        result.status
+                      )
+                    : ""
+                }
+                readOnly
+              />
+
+            </label>
+
+            <label className="field">
+
               Comment
 
               <textarea
-                rows="4"
                 value={
                   reportComment
                 }
@@ -2175,11 +2965,36 @@ export default function App() {
                       .value
                   )
                 }
+                rows="4"
+                placeholder="Example: Packaging or batch information looks different."
               />
+
             </label>
 
             <label className="field">
-              Coarse location
+
+              Image (optional)
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(
+                  event
+                ) =>
+                  setReportImageName(
+                    event.target
+                      .files?.[0]
+                      ?.name ||
+                      ""
+                  )
+                }
+              />
+
+            </label>
+
+            <label className="field">
+
+              Coarse location (optional)
 
               <input
                 value={
@@ -2195,6 +3010,7 @@ export default function App() {
                 }
                 placeholder="e.g. Adelaide SA"
               />
+
             </label>
 
             <PrimaryButton
@@ -2207,6 +3023,8 @@ export default function App() {
 
           </section>
         )}
+
+        {/* CONFIRMATION */}
 
         {screen ===
           "confirmation" && (
@@ -2221,27 +3039,137 @@ export default function App() {
             </h1>
 
             <p>
-              Reference:{" "}
+              Prototype reference:{" "}
               <strong>
                 {reportRef}
               </strong>
             </p>
 
-            <PrimaryButton
-              onClick={() =>
-                setScreen(
-                  role ===
-                    "pharmacist"
-                    ? "pharmacistDashboard"
-                    : "home"
-                )
-              }
-            >
-              Continue
-            </PrimaryButton>
+            {role ===
+            "pharmacist" ? (
+              <PrimaryButton
+                onClick={() =>
+                  setScreen(
+                    "pharmacistDashboard"
+                  )
+                }
+              >
+                Back to Pharmacist Dashboard
+              </PrimaryButton>
+            ) : role ===
+              "admin" ? (
+              <PrimaryButton
+                onClick={() =>
+                  setScreen(
+                    adminMode ===
+                    "mobile"
+                      ? "adminMobileDashboard"
+                      : "adminModeChoice"
+                  )
+                }
+              >
+                Back to Admin
+              </PrimaryButton>
+            ) : (
+              <PrimaryButton
+                onClick={reset}
+              >
+                Return Home
+              </PrimaryButton>
+            )}
 
           </section>
         )}
+
+        {/* MANUFACTURER */}
+
+        {screen ===
+          "manufacturerDashboard" && (
+          <section className="screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <DashboardHeader
+              title="Manufacturer"
+              role="Manufacturer"
+            />
+
+            <ManufacturerDashboard
+              totals={totals}
+            />
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* CONSUMER */}
+
+        {screen ===
+          "consumerDashboard" && (
+          <section className="screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <DashboardHeader
+              title="My MedAuth"
+              role="Consumer"
+            />
+
+            <div className="panel">
+
+              <h3>
+                Verify a medicine
+              </h3>
+
+              <PrimaryButton
+                onClick={() =>
+                  setScreen(
+                    "scan"
+                  )
+                }
+              >
+                Scan Medicine
+              </PrimaryButton>
+
+            </div>
+
+            <div className="panel">
+
+              <h3>
+                Enter code manually
+              </h3>
+
+              <SecondaryButton
+                onClick={() =>
+                  setScreen(
+                    "manual"
+                  )
+                }
+              >
+                Enter Medicine Code
+              </SecondaryButton>
+
+            </div>
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* PHARMACIST DASHBOARD */}
 
         {screen ===
           "pharmacistDashboard" && (
@@ -2258,43 +3186,56 @@ export default function App() {
                 />
 
                 <div className="pharmacist-greeting">
+
                   <span className="pharmacist-welcome">
                     Welcome back
                   </span>
 
                   <h1>
-                    Hi, Marie
+                    Hi,{" "}
+                    {currentUser
+                      ?.name ||
+                      "Marie"}
                   </h1>
 
                   <p>
                     Registered Pharmacist
                   </p>
+
                 </div>
+
               </div>
 
               <div className="pharmacist-profile-actions">
+
                 <button
+                  type="button"
                   className="profile-icon-button"
                   onClick={() =>
                     setScreen(
                       "pharmacistProfile"
                     )
                   }
+                  aria-label="My Profile"
                 >
                   <ProfileIcon />
                 </button>
 
                 <button
+                  type="button"
                   className="profile-icon-button"
                   onClick={() =>
                     setScreen(
                       "pharmacistSettings"
                     )
                   }
+                  aria-label="Settings"
                 >
                   <SettingsIcon />
                 </button>
+
               </div>
+
             </div>
 
             <div
@@ -2304,11 +3245,25 @@ export default function App() {
                   : "is-online"
               }`}
             >
-              <strong>
-                {offline
-                  ? "Offline Mode — Cached Data"
-                  : "System Online"}
-              </strong>
+
+              <div>
+
+                <strong>
+                  {offline
+                    ? "Offline Mode — Cached Data"
+                    : syncing
+                    ? "Synchronising…"
+                    : "System Online"}
+                </strong>
+
+                {pendingSync > 0 && (
+                  <span>
+                    Pending Sync:{" "}
+                    {pendingSync}
+                  </span>
+                )}
+
+              </div>
 
               <NetworkBadge
                 offline={offline}
@@ -2316,14 +3271,19 @@ export default function App() {
                   handleNetworkToggle
                 }
               />
+
             </div>
 
             <button
+              type="button"
               className="pharmacist-primary-action"
               onClick={() =>
-                setScreen("scan")
+                setScreen(
+                  "scan"
+                )
               }
             >
+
               <ScanIcon />
 
               <div>
@@ -2337,17 +3297,31 @@ export default function App() {
               </div>
 
               <span>→</span>
+
             </button>
 
             <div className="pharmacist-action-grid">
 
               <button
+                type="button"
                 className="pharmacist-action-card"
-                onClick={() =>
+                onClick={() => {
+                  setBatchSearch(
+                    ""
+                  );
+
+                  setBatchProductCode(
+                    ""
+                  );
+
+                  setBatchResult(
+                    null
+                  );
+
                   setScreen(
                     "pharmacistBatchLookup"
-                  )
-                }
+                  );
+                }}
               >
                 <BatchLookupIcon />
 
@@ -2363,6 +3337,7 @@ export default function App() {
               </button>
 
               <button
+                type="button"
                 className="pharmacist-action-card"
                 onClick={() =>
                   setScreen(
@@ -2384,6 +3359,7 @@ export default function App() {
               </button>
 
               <button
+                type="button"
                 className="pharmacist-action-card"
                 onClick={() =>
                   setScreen(
@@ -2405,10 +3381,17 @@ export default function App() {
               </button>
 
               <button
+                type="button"
                 className="pharmacist-action-card"
-                onClick={() =>
-                  setScreen("report")
-                }
+                onClick={() => {
+                  setReportOrigin(
+                    "pharmacistDashboard"
+                  );
+
+                  setScreen(
+                    "report"
+                  );
+                }}
               >
                 <EscalateIcon />
 
@@ -2426,6 +3409,7 @@ export default function App() {
             </div>
 
             <div className="pharmacist-summary">
+
               <PharmacistMetric
                 label="Scans Today"
                 value={
@@ -2453,16 +3437,19 @@ export default function App() {
                   totals.noMatch
                 }
               />
+
             </div>
 
             <div className="pharmacist-recent">
 
               <div className="section-heading-row">
+
                 <h3>
                   Recent Activity
                 </h3>
 
                 <button
+                  type="button"
                   className="text-action"
                   onClick={() =>
                     setScreen(
@@ -2472,6 +3459,7 @@ export default function App() {
                 >
                   View All
                 </button>
+
               </div>
 
               {pharmacistEvents
@@ -2479,11 +3467,12 @@ export default function App() {
                 .map(
                   (event) => (
                     <div
+                      className="recent-event-row"
                       key={
                         event.id
                       }
-                      className="recent-event-row"
                     >
+
                       <div>
                         <strong>
                           {
@@ -2512,36 +3501,60 @@ export default function App() {
                           )}
                         </span>
                       </div>
+
                     </div>
                   )
                 )}
+
             </div>
+
+            <PharmacistNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
 
           </section>
         )}
+
+        {/* BATCH LOOKUP */}
 
         {screen ===
           "pharmacistBatchLookup" && (
           <section className="screen">
 
             <BackButton
-              onClick={() =>
-                setScreen(
-                  "pharmacistDashboard"
-                )
-              }
+              onClick={goBack}
             />
+
+            <div className="eyebrow">
+              Pharmacist workflow
+            </div>
 
             <h1>
               Batch Lookup
             </h1>
+
+            {batchProductCode && (
+              <div className="notice">
+                Product:{" "}
+                <strong>
+                  {
+                    batchProductCode
+                  }
+                </strong>
+              </div>
+            )}
 
             <form
               onSubmit={
                 handleBatchLookup
               }
             >
+
               <label className="field">
+
                 Batch number
 
                 <input
@@ -2556,151 +3569,1987 @@ export default function App() {
                         .value
                     )
                   }
+                  placeholder="e.g. B2000"
+                  required
                 />
+
               </label>
 
-              <PrimaryButton type="submit">
+              <PrimaryButton
+                type="submit"
+              >
                 Search Batch
               </PrimaryButton>
+
             </form>
 
             {batchResult && (
               <div className="batch-result-card">
-                <strong>
+
+                <div
+                  className={`recall-status ${
+                    batchResult.recall
+                      ? "active"
+                      : "clear"
+                  }`}
+                >
                   {batchResult.recall
                     ? "Active Recall"
                     : "No Active Recall"}
-                </strong>
+                </div>
+
+                <Row
+                  label="Scanned batch"
+                  value={
+                    batchResult.batch
+                  }
+                />
+
+                <Row
+                  label="Medicine"
+                  value={
+                    batchResult.medicine
+                      ? batchResult
+                          .medicine
+                          .medicineName
+                      : "No prototype medicine found"
+                  }
+                />
+
+                {batchResult.medicine && (
+                  <Row
+                    label="Registered batch"
+                    value={
+                      batchResult
+                        .medicine
+                        .batch
+                    }
+                  />
+                )}
+
+                {batchResult.recall && (
+                  <>
+                    <Row
+                      label="Recall date"
+                      value={
+                        batchResult
+                          .recall
+                          .recallDate
+                      }
+                    />
+
+                    <Row
+                      label="Severity"
+                      value={
+                        batchResult
+                          .recall
+                          .severity
+                      }
+                    />
+
+                    <div className="recall-notice">
+
+                      <strong>
+                        Safety notice
+                      </strong>
+
+                      <p>
+                        {
+                          batchResult
+                            .recall
+                            .reason
+                        }
+                      </p>
+
+                    </div>
+                  </>
+                )}
+
               </div>
             )}
 
+            <PharmacistNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
+
           </section>
         )}
+
+        {/* RECALLS */}
 
         {screen ===
           "pharmacistRecalls" && (
           <section className="screen">
 
             <BackButton
-              onClick={() =>
-                setScreen(
-                  "pharmacistDashboard"
-                )
-              }
+              onClick={goBack}
             />
+
+            <div className="eyebrow">
+              Pharmacist workflow
+            </div>
 
             <h1>
               Recalls & Alerts
             </h1>
 
-            {activeRecalls.map(
-              (recall) => (
-                <button
-                  key={recall.id}
-                  className="recall-list-card"
-                  onClick={() => {
-                    setSelectedRecall(
-                      recall
-                    );
-                    setScreen(
-                      "pharmacistRecallDetail"
-                    );
-                  }}
-                >
-                  {
-                    recall.medicineName
-                  }
-                </button>
-              )
-            )}
+            <div className="recall-list">
+
+              {activeRecalls.length ===
+              0 ? (
+                <div className="panel">
+
+                  <h3>
+                    No active prototype recalls
+                  </h3>
+
+                  <p>
+                    Add recall data to a medicine record to display it here.
+                  </p>
+
+                </div>
+              ) : (
+                activeRecalls.map(
+                  (recall) => (
+                    <button
+                      key={
+                        recall.id
+                      }
+                      type="button"
+                      className="recall-list-card"
+                      onClick={() => {
+                        setSelectedRecall(
+                          recall
+                        );
+
+                        setScreen(
+                          "pharmacistRecallDetail"
+                        );
+                      }}
+                    >
+
+                      <strong>
+                        {
+                          recall.medicineName
+                        }
+                      </strong>
+
+                      <span>
+                        Batch{" "}
+                        {
+                          recall.batch
+                        }
+                      </span>
+
+                      <span className="recall-pill">
+                        {
+                          recall.status
+                        }
+                      </span>
+
+                      <small>
+                        {
+                          recall.recallDate
+                        }
+                      </small>
+
+                    </button>
+                  )
+                )
+              )}
+
+            </div>
+
+            <PharmacistNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
 
           </section>
         )}
+
+        {screen ===
+          "pharmacistRecallDetail" &&
+          selectedRecall && (
+          <section className="screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Recall details
+            </div>
+
+            <h1>
+              {
+                selectedRecall
+                  .medicineName
+              }
+            </h1>
+
+            <div className="recall-status active">
+              Active Recall
+            </div>
+
+            <div className="details-list">
+
+              <Row
+                label="Batch"
+                value={
+                  selectedRecall
+                    .batch
+                }
+              />
+
+              <Row
+                label="Recall date"
+                value={
+                  selectedRecall
+                    .recallDate
+                }
+              />
+
+              <Row
+                label="Severity"
+                value={
+                  selectedRecall
+                    .severity
+                }
+              />
+
+              <Row
+                label="Status"
+                value={
+                  selectedRecall
+                    .status
+                }
+              />
+
+            </div>
+
+            <div className="recall-notice">
+
+              <strong>
+                Safety notice
+              </strong>
+
+              <p>
+                {
+                  selectedRecall
+                    .reason
+                }
+              </p>
+
+            </div>
+
+          </section>
+        )}
+
+        {/* SHORTAGES */}
 
         {screen ===
           "pharmacistShortages" && (
           <section className="screen">
 
             <BackButton
-              onClick={() =>
-                setScreen(
-                  "pharmacistDashboard"
-                )
-              }
+              onClick={goBack}
             />
+
+            <div className="eyebrow">
+              Pharmacist workflow
+            </div>
 
             <h1>
               Shortages
             </h1>
 
-            {shortageData.map(
-              (item) => (
-                <div
-                  className="shortage-card"
-                  key={item.id}
-                >
-                  <strong>
-                    {
-                      item.medicineName
-                    }
-                  </strong>
+            <p>
+              Current medicine availability from the MedAuth prototype data.
+            </p>
 
-                  <span>
-                    {
-                      item.availability
+            <div className="shortage-list">
+
+              {shortageData.map(
+                (item) => (
+                  <div
+                    className="shortage-card"
+                    key={
+                      item.id
                     }
-                  </span>
-                </div>
-              )
-            )}
+                  >
+
+                    <div>
+
+                      <strong>
+                        {
+                          item.medicineName
+                        }
+                      </strong>
+
+                      <span>
+                        {
+                          item.note
+                        }
+                      </span>
+
+                    </div>
+
+                    <span
+                      className={`availability-badge ${item.status}`}
+                    >
+                      {
+                        item.availability
+                      }
+                    </span>
+
+                  </div>
+                )
+              )}
+
+            </div>
+
+            <PharmacistNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
 
           </section>
         )}
+
+        {/* HISTORY */}
 
         {screen ===
           "pharmacistHistory" && (
           <section className="screen">
 
             <BackButton
-              onClick={() =>
-                setScreen(
-                  "pharmacistDashboard"
-                )
-              }
+              onClick={goBack}
             />
+
+            <div className="eyebrow">
+              Pharmacist workflow
+            </div>
 
             <h1>
               Verification History
             </h1>
 
-            {pharmacistEvents.map(
-              (event) => (
-                <div
-                  className="history-card"
-                  key={event.id}
-                >
-                  <strong>
-                    {
-                      event.medicine
+            <div className="history-list">
+
+              {pharmacistEvents.map(
+                (event) => (
+                  <div
+                    className="history-card"
+                    key={
+                      event.id
                     }
+                  >
+
+                    <div className="history-card-head">
+
+                      <strong>
+                        {
+                          event.medicine
+                        }
+                      </strong>
+
+                      <span
+                        className={`history-status history-${event.result.toLowerCase()}`}
+                      >
+                        {resultLabel(
+                          event.result
+                        )}
+                      </span>
+
+                    </div>
+
+                    <Row
+                      label="Product"
+                      value={
+                        event.productId ||
+                        event.code
+                      }
+                    />
+
+                    <Row
+                      label="Batch"
+                      value={
+                        event.batch
+                      }
+                    />
+
+                    <Row
+                      label="Time"
+                      value={formatEventTime(
+                        event.timestamp
+                      )}
+                    />
+
+                    <Row
+                      label="Channel"
+                      value={
+                        event.channel
+                      }
+                    />
+
+                    <Row
+                      label="Connection"
+                      value={
+                        event.offline
+                          ? event.pendingSync
+                            ? "Offline · Pending Sync"
+                            : "Offline · Synced"
+                          : "Online"
+                      }
+                    />
+
+                    {event.region && (
+                      <Row
+                        label="Region"
+                        value={
+                          event.region
+                        }
+                      />
+                    )}
+
+                  </div>
+                )
+              )}
+
+            </div>
+
+            <PharmacistNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
+
+          </section>
+        )}
+
+        {/* PHARMACIST PROFILE */}
+
+        {screen ===
+          "pharmacistProfile" && (
+          <section className="screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="profile-page-header">
+
+              <img
+                className="profile-page-avatar"
+                src={`${import.meta.env.BASE_URL}pharmacist-marie.png`}
+                alt="Marie Nguyen"
+              />
+
+              <h1>
+                {currentUser
+                  ?.fullName ||
+                  "Marie Nguyen"}
+              </h1>
+
+              <p>
+                {currentUser
+                  ?.title ||
+                  "Registered Pharmacist"}
+              </p>
+
+              <span className="professional-status">
+                Professional Account
+              </span>
+
+            </div>
+
+            <div className="profile-information-card">
+
+              <ProfileRow
+                label="Name"
+                value={
+                  currentUser
+                    ?.fullName ||
+                  "Marie Nguyen"
+                }
+              />
+
+              <ProfileRow
+                label="Role"
+                value="Pharmacist"
+              />
+
+              <ProfileRow
+                label="Email"
+                value={
+                  currentUser
+                    ?.email ||
+                  "pharmacist@medauth.com"
+                }
+              />
+
+              <ProfileRow
+                label="Organisation"
+                value={
+                  currentUser
+                    ?.organisation ||
+                  "MedAuth Pharmacy Demo"
+                }
+              />
+
+            </div>
+
+            <div className="profile-note">
+
+              <LockIcon />
+
+              <span>
+                Demo professional profile. No patient health information is stored.
+              </span>
+
+            </div>
+
+          </section>
+        )}
+
+        {/* PHARMACIST SETTINGS */}
+
+        {screen ===
+          "pharmacistSettings" && (
+          <section className="screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Pharmacist account
+            </div>
+
+            <h1>
+              Settings
+            </h1>
+
+            <div className="settings-card">
+
+              <div className="settings-row">
+
+                <div>
+                  <strong>
+                    Connection mode
                   </strong>
 
-                  <Row
-                    label="Result"
-                    value={resultLabel(
-                      event.result
-                    )}
-                  />
-
-                  <Row
-                    label="Batch"
-                    value={
-                      event.batch
-                    }
-                  />
+                  <span>
+                    {offline
+                      ? "Offline — cached data"
+                      : "Online"}
+                  </span>
                 </div>
-              )
+
+                <NetworkBadge
+                  offline={
+                    offline
+                  }
+                  onToggle={
+                    handleNetworkToggle
+                  }
+                />
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+                  <strong>
+                    Pending sync
+                  </strong>
+
+                  <span>
+                    Activity waiting to synchronise
+                  </span>
+                </div>
+
+                <span className="settings-value">
+                  {
+                    pendingSync
+                  }
+                </span>
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+                  <strong>
+                    Remember this device
+                  </strong>
+
+                  <span>
+                    Keep demo sign-in preference
+                  </span>
+                </div>
+
+                <input
+                  className="settings-checkbox"
+                  type="checkbox"
+                  checked={
+                    rememberDevice
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setRememberDevice(
+                      event.target
+                        .checked
+                    )
+                  }
+                />
+
+              </div>
+
+            </div>
+
+            <div className="settings-card">
+
+              <button
+                type="button"
+                className="settings-link-row"
+                onClick={() =>
+                  setScreen(
+                    "pharmacistProfile"
+                  )
+                }
+              >
+                <span>
+                  My Profile
+                </span>
+
+                <span>→</span>
+              </button>
+
+              <button
+                type="button"
+                className="settings-link-row"
+                onClick={() => {
+                  setResetEmail(
+                    currentUser
+                      ?.email ||
+                      email
+                  );
+
+                  setResetSent(
+                    false
+                  );
+
+                  setScreen(
+                    "forgotPassword"
+                  );
+                }}
+              >
+                <span>
+                  Change Password
+                </span>
+
+                <span>→</span>
+              </button>
+
+            </div>
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* ADMIN CHOICE */}
+
+        {screen ===
+          "adminModeChoice" && (
+          <section className="screen admin-mode-choice-screen">
+
+            <div className="admin-mobile-choice-profile">
+
+              <img
+                className="admin-mobile-choice-avatar"
+                src={`${import.meta.env.BASE_URL}admin-luna.png`}
+                alt="Luna"
+              />
+
+              <span className="admin-mobile-choice-welcome">
+                Welcome back
+              </span>
+
+              <h1>
+                Hi, Luna
+              </h1>
+
+              <p>
+                MedAuth Administrator
+              </p>
+
+            </div>
+
+            <div className="admin-choice-copy">
+
+              <h2>
+                Choose Admin Experience
+              </h2>
+
+              <p>
+                Select the layout you want to use. Both versions use the same MedAuth prototype data.
+              </p>
+
+            </div>
+
+            <div className="admin-mode-choice-grid">
+
+              <button
+                type="button"
+                className="admin-mode-choice-card"
+                onClick={() => {
+                  setAdminMode(
+                    "mobile"
+                  );
+
+                  setScreen(
+                    "adminMobileDashboard"
+                  );
+                }}
+              >
+
+                <div className="admin-mode-choice-icon">
+                  <MobileAdminIcon />
+                </div>
+
+                <div>
+                  <strong>
+                    Mobile Admin
+                  </strong>
+
+                  <span>
+                    Compact administration dashboard designed for a phone.
+                  </span>
+                </div>
+
+                <span className="admin-mode-arrow">
+                  →
+                </span>
+
+              </button>
+
+              <button
+                type="button"
+                className="admin-mode-choice-card web"
+                onClick={() => {
+                  setAdminMode(
+                    "web"
+                  );
+
+                  setScreen(
+                    "adminOverview"
+                  );
+                }}
+              >
+
+                <div className="admin-mode-choice-icon">
+                  <DesktopAdminIcon />
+                </div>
+
+                <div>
+                  <strong>
+                    Web Dashboard
+                  </strong>
+
+                  <span>
+                    Full investigation workspace designed for desktop.
+                  </span>
+                </div>
+
+                <span className="admin-mode-arrow">
+                  →
+                </span>
+
+              </button>
+
+            </div>
+
+            <div className="admin-choice-note">
+              You can change between Mobile and Web later from Settings.
+            </div>
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* ADMIN MOBILE DASHBOARD */}
+
+        {screen ===
+          "adminMobileDashboard" && (
+          <section className="screen admin-mobile-screen">
+
+            <div className="admin-mobile-profile-header">
+
+              <div className="admin-mobile-profile-main">
+
+                <img
+                  className="admin-mobile-avatar"
+                  src={`${import.meta.env.BASE_URL}admin-luna.png`}
+                  alt="Luna"
+                />
+
+                <div className="admin-mobile-greeting">
+
+                  <span>
+                    Welcome back
+                  </span>
+
+                  <h1>
+                    Hi, Luna
+                  </h1>
+
+                  <p>
+                    MedAuth Administrator
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="admin-mobile-profile-actions">
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "adminMobileProfile"
+                    )
+                  }
+                  aria-label="My Profile"
+                >
+                  <ProfileIcon />
+                </button>
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "adminMobileSettings"
+                    )
+                  }
+                  aria-label="Settings"
+                >
+                  <SettingsIcon />
+                </button>
+
+              </div>
+
+            </div>
+
+            <div className="admin-mobile-access-row">
+
+              <span className="admin-access-badge">
+                Admin Access
+              </span>
+
+              <NetworkBadge
+                offline={offline}
+                onToggle={
+                  handleNetworkToggle
+                }
+              />
+
+            </div>
+
+            <div className="admin-mobile-summary">
+
+              <AdminMobileMetric
+                label="Open Reports"
+                value={
+                  adminSummary
+                    .openReports
+                }
+              />
+
+              <AdminMobileMetric
+                label="Under Review"
+                value={
+                  adminSummary
+                    .underReview
+                }
+              />
+
+              <AdminMobileMetric
+                label="No Match"
+                value={
+                  adminSummary
+                    .noMatch
+                }
+              />
+
+              <AdminMobileMetric
+                label="Unable"
+                value={
+                  adminSummary
+                    .unable
+                }
+              />
+
+            </div>
+
+            <div className="admin-mobile-action-grid">
+
+              <button
+                type="button"
+                className="admin-mobile-action-card primary"
+                onClick={() =>
+                  setScreen(
+                    "adminMobileReports"
+                  )
+                }
+              >
+                <AdminReportIcon />
+
+                <div>
+                  <strong>
+                    Reports
+                  </strong>
+
+                  <span>
+                    Review suspicious medicine reports
+                  </span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                className="admin-mobile-action-card"
+                onClick={() =>
+                  setScreen(
+                    "adminMobileScanMonitor"
+                  )
+                }
+              >
+                <ScanIcon />
+
+                <div>
+                  <strong>
+                    Scan Monitor
+                  </strong>
+
+                  <span>
+                    Review verification activity
+                  </span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                className="admin-mobile-action-card"
+                onClick={() =>
+                  setScreen(
+                    "adminMobileInvestigation"
+                  )
+                }
+              >
+                <InvestigationIcon />
+
+                <div>
+                  <strong>
+                    Investigation
+                  </strong>
+
+                  <span>
+                    Review suspect activity
+                  </span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                className="admin-mobile-action-card"
+                onClick={() =>
+                  setScreen(
+                    "adminMobileAudit"
+                  )
+                }
+              >
+                <AuditIcon />
+
+                <div>
+                  <strong>
+                    Audit Trail
+                  </strong>
+
+                  <span>
+                    Review administrative actions
+                  </span>
+                </div>
+              </button>
+
+            </div>
+
+            <div className="admin-mobile-recent">
+
+              <div className="section-heading-row">
+
+                <h3>
+                  Recent Reports
+                </h3>
+
+                <button
+                  type="button"
+                  className="text-action"
+                  onClick={() =>
+                    setScreen(
+                      "adminMobileReports"
+                    )
+                  }
+                >
+                  View All
+                </button>
+
+              </div>
+
+              {reports
+                .slice(0, 3)
+                .map(
+                  (report) => (
+                    <button
+                      type="button"
+                      className="admin-mobile-report-row"
+                      key={
+                        report.id
+                      }
+                      onClick={() => {
+                        setSelectedAdminReport(
+                          report
+                        );
+
+                        setScreen(
+                          "adminMobileReportDetail"
+                        );
+                      }}
+                    >
+
+                      <div>
+
+                        <strong>
+                          {
+                            report.medicine
+                          }
+                        </strong>
+
+                        <span>
+                          {report.id} · Batch{" "}
+                          {
+                            report.batch
+                          }
+                        </span>
+
+                      </div>
+
+                      <span
+                        className={`admin-mobile-status ${
+                          report.status ===
+                          "NEW"
+                            ? "warning"
+                            : report.status ===
+                              "UNDER_REVIEW"
+                            ? "info"
+                            : "success"
+                        }`}
+                      >
+                        {report.status.replaceAll(
+                          "_",
+                          " "
+                        )}
+                      </span>
+
+                    </button>
+                  )
+                )}
+
+            </div>
+
+            <AdminMobileNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
+
+          </section>
+        )}
+
+        {/* ADMIN MOBILE REPORTS */}
+
+        {screen ===
+          "adminMobileReports" && (
+          <section className="screen admin-mobile-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Admin
+            </div>
+
+            <h1>
+              Reports
+            </h1>
+
+            <div className="admin-mobile-filter-row">
+
+              <select
+                value={
+                  reportStatusFilter
+                }
+                onChange={(
+                  event
+                ) =>
+                  setReportStatusFilter(
+                    event.target
+                      .value
+                  )
+                }
+              >
+                <option value="ALL">
+                  All statuses
+                </option>
+
+                <option value="NEW">
+                  New
+                </option>
+
+                <option value="UNDER_REVIEW">
+                  Under Review
+                </option>
+
+                <option value="RESOLVED">
+                  Resolved
+                </option>
+              </select>
+
+            </div>
+
+            <div className="admin-mobile-list">
+
+              {filteredReports.map(
+                (report) => (
+                  <button
+                    type="button"
+                    className="admin-mobile-list-card"
+                    key={
+                      report.id
+                    }
+                    onClick={() => {
+                      setSelectedAdminReport(
+                        report
+                      );
+
+                      setScreen(
+                        "adminMobileReportDetail"
+                      );
+                    }}
+                  >
+
+                    <div className="admin-mobile-list-card-head">
+
+                      <strong>
+                        {
+                          report.medicine
+                        }
+                      </strong>
+
+                      <span
+                        className={`admin-mobile-status ${
+                          report.status ===
+                          "NEW"
+                            ? "warning"
+                            : report.status ===
+                              "UNDER_REVIEW"
+                            ? "info"
+                            : "success"
+                        }`}
+                      >
+                        {report.status.replaceAll(
+                          "_",
+                          " "
+                        )}
+                      </span>
+
+                    </div>
+
+                    <span>
+                      {report.id}
+                    </span>
+
+                    <span>
+                      Batch{" "}
+                      {report.batch}
+                    </span>
+
+                    <span>
+                      {resultLabel(
+                        report.verificationResult
+                      )}{" "}
+                      ·{" "}
+                      {report.region ||
+                        "No region"}
+                    </span>
+
+                  </button>
+                )
+              )}
+
+            </div>
+
+            <AdminMobileNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
+
+          </section>
+        )}
+
+        {/* ADMIN MOBILE REPORT DETAIL */}
+
+        {screen ===
+          "adminMobileReportDetail" &&
+          selectedAdminReport && (
+          <section className="screen admin-mobile-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Report review
+            </div>
+
+            <h1>
+              {
+                selectedAdminReport.id
+              }
+            </h1>
+
+            <div className="admin-mobile-detail-card">
+
+              <Row
+                label="Medicine"
+                value={
+                  selectedAdminReport
+                    .medicine
+                }
+              />
+
+              <Row
+                label="Product"
+                value={
+                  selectedAdminReport
+                    .productId
+                }
+              />
+
+              <Row
+                label="Batch"
+                value={
+                  selectedAdminReport
+                    .batch
+                }
+              />
+
+              <Row
+                label="Result"
+                value={resultLabel(
+                  selectedAdminReport
+                    .verificationResult
+                )}
+              />
+
+              <Row
+                label="Reporter"
+                value={
+                  selectedAdminReport
+                    .reporterType
+                }
+              />
+
+              <Row
+                label="Region"
+                value={
+                  selectedAdminReport
+                    .region ||
+                  "—"
+                }
+              />
+
+            </div>
+
+            <div className="admin-mobile-comment">
+
+              <strong>
+                Report comment
+              </strong>
+
+              <p>
+                {selectedAdminReport
+                  .comment ||
+                  "No comment supplied."}
+              </p>
+
+            </div>
+
+            <div className="admin-mobile-status-actions">
+
+              <button
+                type="button"
+                onClick={() =>
+                  updateReportStatus(
+                    selectedAdminReport
+                      .id,
+                    "NEW"
+                  )
+                }
+              >
+                New
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  updateReportStatus(
+                    selectedAdminReport
+                      .id,
+                    "UNDER_REVIEW"
+                  )
+                }
+              >
+                Under Review
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  updateReportStatus(
+                    selectedAdminReport
+                      .id,
+                    "RESOLVED"
+                  )
+                }
+              >
+                Resolved
+              </button>
+
+            </div>
+
+            <label className="admin-mobile-escalate">
+
+              <input
+                type="checkbox"
+                checked={
+                  selectedAdminReport
+                    .escalated
+                }
+                onChange={() =>
+                  toggleEscalation(
+                    selectedAdminReport
+                      .id
+                  )
+                }
+              />
+
+              <span>
+                Escalate for Investigation
+              </span>
+
+            </label>
+
+          </section>
+        )}
+
+        {/* ADMIN MOBILE SCANS */}
+
+        {screen ===
+          "adminMobileScanMonitor" && (
+          <section className="screen admin-mobile-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Admin monitoring
+            </div>
+
+            <h1>
+              Scan Monitor
+            </h1>
+
+            <div className="admin-mobile-filter-row">
+
+              <select
+                value={
+                  scanResultFilter
+                }
+                onChange={(
+                  event
+                ) =>
+                  setScanResultFilter(
+                    event.target
+                      .value
+                  )
+                }
+              >
+                <option value="ALL">
+                  All results
+                </option>
+
+                <option value="MATCH">
+                  Match
+                </option>
+
+                <option value="NO_MATCH">
+                  No Match
+                </option>
+
+                <option value="NOT_COVERED">
+                  Unable to Verify
+                </option>
+              </select>
+
+            </div>
+
+            <div className="admin-mobile-list">
+
+              {filteredScanEvents.map(
+                (event) => (
+                  <div
+                    className="admin-mobile-list-card"
+                    key={
+                      event.id
+                    }
+                  >
+
+                    <div className="admin-mobile-list-card-head">
+
+                      <strong>
+                        {
+                          event.medicine
+                        }
+                      </strong>
+
+                      <span
+                        className={`admin-mobile-result ${event.result.toLowerCase()}`}
+                      >
+                        {resultLabel(
+                          event.result
+                        )}
+                      </span>
+
+                    </div>
+
+                    <span>
+                      {event.id}
+                    </span>
+
+                    <span>
+                      Batch{" "}
+                      {
+                        event.batch
+                      }
+                    </span>
+
+                    <span>
+                      {
+                        event.channel
+                      }{" "}
+                      ·{" "}
+                      {event.region ||
+                        "Unknown region"}
+                    </span>
+
+                    <span>
+                      {event.offline
+                        ? "Offline"
+                        : "Online"}{" "}
+                      ·{" "}
+                      {formatEventTime(
+                        event.timestamp
+                      )}
+                    </span>
+
+                  </div>
+                )
+              )}
+
+            </div>
+
+            <AdminMobileNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
+
+          </section>
+        )}
+
+        {/* ADMIN MOBILE INVESTIGATION */}
+
+        {screen ===
+          "adminMobileInvestigation" && (
+          <section className="screen admin-mobile-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Admin investigation
+            </div>
+
+            <h1>
+              Investigation
+            </h1>
+
+            <div className="admin-mobile-list">
+
+              {suspectClusters.map(
+                (cluster) => (
+                  <button
+                    type="button"
+                    className="admin-mobile-list-card"
+                    key={
+                      cluster.batch
+                    }
+                    onClick={() =>
+                      setSelectedInvestigation(
+                        cluster
+                      )
+                    }
+                  >
+
+                    <div className="admin-mobile-list-card-head">
+
+                      <strong>
+                        Batch{" "}
+                        {
+                          cluster.batch
+                        }
+                      </strong>
+
+                      <span className="admin-mobile-status warning">
+                        Review
+                      </span>
+
+                    </div>
+
+                    <span>
+                      {
+                        cluster.region
+                      }
+                    </span>
+
+                    <span>
+                      {cluster.scans} scans ·{" "}
+                      {cluster.noMatch} No Match
+                    </span>
+
+                    <span>
+                      {cluster.reports} linked reports
+                    </span>
+
+                  </button>
+                )
+              )}
+
+            </div>
+
+            {selectedInvestigation && (
+              <div className="admin-mobile-investigation-selected">
+
+                <h3>
+                  Selected Investigation
+                </h3>
+
+                <Row
+                  label="Batch"
+                  value={
+                    selectedInvestigation
+                      .batch
+                  }
+                />
+
+                <Row
+                  label="Region"
+                  value={
+                    selectedInvestigation
+                      .region
+                  }
+                />
+
+                <Row
+                  label="No Match"
+                  value={
+                    selectedInvestigation
+                      .noMatch
+                  }
+                />
+
+                <Row
+                  label="Reports"
+                  value={
+                    selectedInvestigation
+                      .reports
+                  }
+                />
+
+              </div>
             )}
+
+            <AdminMobileNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
+
+          </section>
+        )}
+
+        {/* ADMIN MOBILE AUDIT */}
+
+        {screen ===
+          "adminMobileAudit" && (
+          <section className="screen admin-mobile-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Administration
+            </div>
+
+            <h1>
+              Audit Trail
+            </h1>
+
+            <div className="admin-mobile-list">
+
+              {filteredAudit.map(
+                (event) => (
+                  <div
+                    className="admin-mobile-list-card"
+                    key={
+                      event.id
+                    }
+                  >
+
+                    <strong>
+                      {
+                        event.action
+                      }
+                    </strong>
+
+                    <span>
+                      {event.id}
+                    </span>
+
+                    <span>
+                      {
+                        event.actor
+                      }{" "}
+                      ·{" "}
+                      {
+                        event.recordType
+                      }
+                    </span>
+
+                    <span>
+                      {
+                        event.previousState
+                      }{" "}
+                      →{" "}
+                      {
+                        event.newState
+                      }
+                    </span>
+
+                    <span>
+                      {formatEventTime(
+                        event.timestamp
+                      )}
+                    </span>
+
+                  </div>
+                )
+              )}
+
+            </div>
+
+            <AdminMobileNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
+
+          </section>
+        )}
+
+        {/* ADMIN MOBILE PROFILE */}
+
+        {screen ===
+          "adminMobileProfile" && (
+          <section className="screen admin-mobile-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="profile-page-header">
+
+              <img
+                className="profile-page-avatar"
+                src={`${import.meta.env.BASE_URL}admin-luna.png`}
+                alt="Luna"
+              />
+
+              <h1>
+                {currentUser
+                  ?.fullName ||
+                  "Luna Chen"}
+              </h1>
+
+              <p>
+                {currentUser
+                  ?.title ||
+                  "MedAuth Administrator"}
+              </p>
+
+              <span className="admin-access-badge">
+                Admin / Regulator
+              </span>
+
+            </div>
+
+            <div className="profile-information-card">
+
+              <ProfileRow
+                label="Name"
+                value={
+                  currentUser
+                    ?.fullName ||
+                  "Luna Chen"
+                }
+              />
+
+              <ProfileRow
+                label="Role"
+                value="Admin / Regulator"
+              />
+
+              <ProfileRow
+                label="Email"
+                value={
+                  currentUser
+                    ?.email ||
+                  "admin@medauth.com"
+                }
+              />
+
+              <ProfileRow
+                label="Organisation"
+                value={
+                  currentUser
+                    ?.organisation ||
+                  "MedAuth Administration"
+                }
+              />
+
+            </div>
+
+            <div className="profile-note">
+
+              <LockIcon />
+
+              <span>
+                Authorised MedAuth prototype administrator account.
+              </span>
+
+            </div>
+
+          </section>
+        )}
+
+        {/* ADMIN MOBILE SETTINGS */}
+
+        {screen ===
+          "adminMobileSettings" && (
+          <section className="screen admin-mobile-sub-screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Admin account
+            </div>
+
+            <h1>
+              Settings
+            </h1>
+
+            <div className="settings-card">
+
+              <div className="settings-row">
+
+                <div>
+                  <strong>
+                    Admin experience
+                  </strong>
+
+                  <span>
+                    Currently using Mobile Admin
+                  </span>
+                </div>
+
+                <span className="settings-value">
+                  Mobile
+                </span>
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+                  <strong>
+                    Connection
+                  </strong>
+
+                  <span>
+                    {offline
+                      ? "Offline"
+                      : "Online"}
+                  </span>
+                </div>
+
+                <NetworkBadge
+                  offline={
+                    offline
+                  }
+                  onToggle={
+                    handleNetworkToggle
+                  }
+                />
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+                  <strong>
+                    Remember this device
+                  </strong>
+
+                  <span>
+                    Keep demo sign-in preference
+                  </span>
+                </div>
+
+                <input
+                  className="settings-checkbox"
+                  type="checkbox"
+                  checked={
+                    rememberDevice
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setRememberDevice(
+                      event.target
+                        .checked
+                    )
+                  }
+                />
+
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              className="admin-switch-web-button"
+              onClick={() => {
+                setAdminMode(
+                  "web"
+                );
+
+                setScreen(
+                  "adminOverview"
+                );
+              }}
+            >
+
+              <DesktopAdminIcon />
+
+              <div>
+                <strong>
+                  Switch to Web Dashboard
+                </strong>
+
+                <span>
+                  Open the full desktop investigation workspace.
+                </span>
+              </div>
+
+              <span>→</span>
+
+            </button>
+
+            <SecondaryButton
+              onClick={() => {
+                setAdminMode(
+                  ""
+                );
+
+                setScreen(
+                  "adminModeChoice"
+                );
+              }}
+            >
+              Choose Admin Experience
+            </SecondaryButton>
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
 
           </section>
         )}
@@ -2709,6 +5558,10 @@ export default function App() {
     </div>
   );
 }
+
+/* =========================================================
+   ADMIN WEB
+========================================================= */
 
 function AdminWorkspace({
   screen,
@@ -2738,14 +5591,15 @@ function AdminWorkspace({
   auditSearch,
   setAuditSearch,
   offline,
-  syncing,
   handleNetworkToggle,
-  activeRecalls,
   onExport,
+  onSwitchMobile,
   onSignOut,
 }) {
-  const [exportOpen, setExportOpen] =
-    useState(false);
+  const [
+    exportOpen,
+    setExportOpen,
+  ] = useState(false);
 
   return (
     <div className="admin-desktop">
@@ -2753,6 +5607,7 @@ function AdminWorkspace({
       <aside className="admin-sidebar">
 
         <div className="admin-sidebar-brand">
+
           <img
             src={`${import.meta.env.BASE_URL}medauth-logo.png`}
             alt="MedAuth"
@@ -2767,6 +5622,7 @@ function AdminWorkspace({
               Admin
             </span>
           </div>
+
         </div>
 
         <nav className="admin-nav">
@@ -2854,6 +5710,7 @@ function AdminWorkspace({
         <div className="admin-sidebar-footer">
 
           <div className="admin-profile-mini">
+
             <img
               src={`${import.meta.env.BASE_URL}admin-luna.png`}
               alt="Luna"
@@ -2870,7 +5727,18 @@ function AdminWorkspace({
                 Admin / Regulator
               </span>
             </div>
+
           </div>
+
+          <button
+            type="button"
+            className="admin-switch-mobile-button"
+            onClick={
+              onSwitchMobile
+            }
+          >
+            Switch to Mobile Admin
+          </button>
 
           <button
             type="button"
@@ -2891,6 +5759,7 @@ function AdminWorkspace({
         <header className="admin-toolbar">
 
           <div className="admin-search-box">
+
             <SearchIcon />
 
             <input
@@ -2905,6 +5774,7 @@ function AdminWorkspace({
               }
               placeholder="Search product, barcode, batch, report ID..."
             />
+
           </div>
 
           <div className="admin-toolbar-actions">
@@ -2923,7 +5793,9 @@ function AdminWorkspace({
                 className="admin-export-button"
                 onClick={() =>
                   setExportOpen(
-                    (current) =>
+                    (
+                      current
+                    ) =>
                       !current
                   )
                 }
@@ -2935,6 +5807,7 @@ function AdminWorkspace({
                 <div className="admin-export-menu">
 
                   <button
+                    type="button"
                     onClick={() =>
                       onExport(
                         "events"
@@ -2945,6 +5818,7 @@ function AdminWorkspace({
                   </button>
 
                   <button
+                    type="button"
                     onClick={() =>
                       onExport(
                         "reports"
@@ -2955,6 +5829,7 @@ function AdminWorkspace({
                   </button>
 
                   <button
+                    type="button"
                     onClick={() =>
                       onExport(
                         "audit"
@@ -2965,13 +5840,14 @@ function AdminWorkspace({
                   </button>
 
                   <button
+                    type="button"
                     onClick={() =>
                       onExport(
                         "investigation"
                       )
                     }
                   >
-                    Filtered Investigation CSV
+                    Investigation CSV
                   </button>
 
                 </div>
@@ -3010,6 +5886,7 @@ function AdminWorkspace({
               />
 
               <div className="admin-summary-strip">
+
                 <AdminSummary
                   label="Open Reports"
                   value={
@@ -3039,18 +5916,20 @@ function AdminWorkspace({
                 />
 
                 <AdminSummary
-                  label="Active Recall Matches"
+                  label="Recall Matches"
                   value={
                     summary.recalls
                   }
                 />
+
               </div>
 
               <div className="admin-overview-grid">
 
-                <section className="admin-panel admin-panel-large">
+                <section className="admin-panel">
 
                   <div className="admin-section-head">
+
                     <div>
                       <h2>
                         Suspicious Reports
@@ -3071,6 +5950,7 @@ function AdminWorkspace({
                     >
                       View all
                     </button>
+
                   </div>
 
                   <ReportsTable
@@ -3098,6 +5978,7 @@ function AdminWorkspace({
                 <aside className="admin-panel">
 
                   <div className="admin-section-head">
+
                     <div>
                       <h2>
                         Suspect Activity
@@ -3107,6 +5988,7 @@ function AdminWorkspace({
                         Prototype clusters requiring review.
                       </p>
                     </div>
+
                   </div>
 
                   <div className="suspect-list">
@@ -3114,7 +5996,9 @@ function AdminWorkspace({
                     {clusters
                       .slice(0, 5)
                       .map(
-                        (cluster) => (
+                        (
+                          cluster
+                        ) => (
                           <button
                             key={
                               cluster.batch
@@ -3130,6 +6014,7 @@ function AdminWorkspace({
                               );
                             }}
                           >
+
                             <div>
                               <strong>
                                 Batch{" "}
@@ -3157,6 +6042,7 @@ function AdminWorkspace({
                                 Review recommended
                               </span>
                             </div>
+
                           </button>
                         )
                       )}
@@ -3170,6 +6056,7 @@ function AdminWorkspace({
               <section className="admin-panel">
 
                 <div className="admin-section-head">
+
                   <div>
                     <h2>
                       Verification Activity Map
@@ -3188,6 +6075,7 @@ function AdminWorkspace({
                       setMapFilter
                     }
                   />
+
                 </div>
 
                 <RegionMap
@@ -3239,6 +6127,7 @@ function AdminWorkspace({
                   <option value="RESOLVED">
                     Resolved
                   </option>
+
                 </select>
 
               </div>
@@ -3335,10 +6224,8 @@ function AdminWorkspace({
                   />
 
                   <div className="admin-comment-box">
-                    {
-                      selectedReport.comment ||
-                      "No comment supplied."
-                    }
+                    {selectedReport.comment ||
+                      "No comment supplied."}
                   </div>
 
                 </section>
@@ -3473,6 +6360,7 @@ function AdminWorkspace({
                   <option value="NOT_COVERED">
                     Unable to Verify
                   </option>
+
                 </select>
 
               </div>
@@ -3490,14 +6378,13 @@ function AdminWorkspace({
 
               </section>
 
-              <section className="admin-panel">
+              <section className="admin-panel admin-map-panel">
 
                 <div className="admin-section-head">
-                  <div>
-                    <h2>
-                      Verification Activity Map
-                    </h2>
-                  </div>
+
+                  <h2>
+                    Verification Activity Map
+                  </h2>
 
                   <MapFilters
                     value={
@@ -3507,6 +6394,7 @@ function AdminWorkspace({
                       setMapFilter
                     }
                   />
+
                 </div>
 
                 <RegionMap
@@ -3543,23 +6431,29 @@ function AdminWorkspace({
                   <div className="admin-table-wrap">
 
                     <table className="admin-table">
+
                       <thead>
                         <tr>
                           <th>
                             Batch
                           </th>
+
                           <th>
                             Region
                           </th>
+
                           <th>
                             Scans
                           </th>
+
                           <th>
                             No Match
                           </th>
+
                           <th>
                             Reports
                           </th>
+
                           <th>
                             Status
                           </th>
@@ -3569,7 +6463,9 @@ function AdminWorkspace({
                       <tbody>
 
                         {clusters.map(
-                          (cluster) => (
+                          (
+                            cluster
+                          ) => (
                             <tr
                               key={
                                 cluster.batch
@@ -3580,6 +6476,7 @@ function AdminWorkspace({
                                 )
                               }
                             >
+
                               <td>
                                 {
                                   cluster.batch
@@ -3615,11 +6512,13 @@ function AdminWorkspace({
                                   Review Recommended
                                 </span>
                               </td>
+
                             </tr>
                           )
                         )}
 
                       </tbody>
+
                     </table>
 
                   </div>
@@ -3633,7 +6532,7 @@ function AdminWorkspace({
                   </h2>
 
                   {!selectedInvestigation ? (
-                    <p className="admin-muted">
+                    <p>
                       Select a suspect batch to view its timeline.
                     </p>
                   ) : (
@@ -3719,23 +6618,25 @@ function AdminWorkspace({
                         <th>
                           Name
                         </th>
+
                         <th>
                           Email
                         </th>
+
                         <th>
                           Role
                         </th>
+
                         <th>
                           MFA
                         </th>
+
                         <th>
                           Last Active
                         </th>
+
                         <th>
                           Status
-                        </th>
-                        <th>
-                          Action
                         </th>
                       </tr>
                     </thead>
@@ -3751,6 +6652,7 @@ function AdminWorkspace({
                               user.email
                             }
                           >
+
                             <td>
                               {
                                 user.fullName
@@ -3783,11 +6685,6 @@ function AdminWorkspace({
                               </span>
                             </td>
 
-                            <td>
-                              <button className="admin-table-action">
-                                View
-                              </button>
-                            </td>
                           </tr>
                         )
                       )}
@@ -3810,6 +6707,10 @@ function AdminWorkspace({
   );
 }
 
+/* =========================================================
+   HELPERS
+========================================================= */
+
 function ReportsTable({
   reports,
   onOpen,
@@ -3824,30 +6725,39 @@ function ReportsTable({
             <th>
               Report ID
             </th>
+
             <th>
               Medicine
             </th>
+
             <th>
               Product ID
             </th>
+
             <th>
               Batch
             </th>
+
             <th>
               Result
             </th>
+
             <th>
               Region
             </th>
+
             <th>
               Reporter
             </th>
+
             <th>
               Submitted
             </th>
+
             <th>
               Status
             </th>
+
             <th>
               Action
             </th>
@@ -3859,10 +6769,9 @@ function ReportsTable({
           {reports.map(
             (report) => (
               <tr key={report.id}>
+
                 <td>
-                  {
-                    report.id
-                  }
+                  {report.id}
                 </td>
 
                 <td>
@@ -3890,10 +6799,8 @@ function ReportsTable({
                 </td>
 
                 <td>
-                  {
-                    report.region ||
-                    "—"
-                  }
+                  {report.region ||
+                    "—"}
                 </td>
 
                 <td>
@@ -3920,12 +6827,10 @@ function ReportsTable({
                         : "success"
                     }`}
                   >
-                    {
-                      report.status.replaceAll(
-                        "_",
-                        " "
-                      )
-                    }
+                    {report.status.replaceAll(
+                      "_",
+                      " "
+                    )}
                   </span>
                 </td>
 
@@ -3941,6 +6846,7 @@ function ReportsTable({
                     View
                   </button>
                 </td>
+
               </tr>
             )
           )}
@@ -3967,30 +6873,39 @@ function ScanTable({
             <th>
               Event ID
             </th>
+
             <th>
               Timestamp
             </th>
+
             <th>
               Medicine
             </th>
+
             <th>
               Product ID
             </th>
+
             <th>
               Batch
             </th>
+
             <th>
               Result
             </th>
+
             <th>
               Channel
             </th>
+
             <th>
               Region
             </th>
+
             <th>
               Connection
             </th>
+
             <th>
               Report Linked?
             </th>
@@ -4022,10 +6937,8 @@ function ScanTable({
                 </td>
 
                 <td>
-                  {
-                    event.productId ||
-                    event.code
-                  }
+                  {event.productId ||
+                    event.code}
                 </td>
 
                 <td>
@@ -4047,10 +6960,8 @@ function ScanTable({
                 </td>
 
                 <td>
-                  {
-                    event.region ||
-                    "—"
-                  }
+                  {event.region ||
+                    "—"}
                 </td>
 
                 <td>
@@ -4096,24 +7007,31 @@ function AuditTable({
             <th>
               Audit ID
             </th>
+
             <th>
               Timestamp
             </th>
+
             <th>
               Actor / Role
             </th>
+
             <th>
               Action
             </th>
+
             <th>
               Record Type
             </th>
+
             <th>
               Record ID
             </th>
+
             <th>
               Previous State
             </th>
+
             <th>
               New State
             </th>
@@ -4195,24 +7113,31 @@ function RegionMap({
       <div className="australia-map-shape">
 
         {regions.map(
-          (region, index) => {
+          (
+            region,
+            index
+          ) => {
             const positions = [
               {
                 left: "72%",
                 top: "56%",
               },
+
               {
                 left: "65%",
                 top: "73%",
               },
+
               {
                 left: "48%",
                 top: "68%",
               },
+
               {
                 left: "76%",
                 top: "40%",
               },
+
               {
                 left: "22%",
                 top: "65%",
@@ -4236,6 +7161,7 @@ function RegionMap({
                   position
                 }
               >
+
                 <span className="map-marker-dot">
                   {
                     region.total
@@ -4251,6 +7177,7 @@ function RegionMap({
                 <small>
                   {region.noMatch} No Match · {region.reports} reports
                 </small>
+
               </button>
             );
           }
@@ -4267,16 +7194,26 @@ function MapFilters({
   onChange,
 }) {
   const options = [
-    ["ALL", "All"],
-    ["MATCH", "Match"],
+    [
+      "ALL",
+      "All",
+    ],
+
+    [
+      "MATCH",
+      "Match",
+    ],
+
     [
       "NO_MATCH",
       "No Match",
     ],
+
     [
       "NOT_COVERED",
       "Unable to Verify",
     ],
+
     [
       "REPORTED",
       "Reported",
@@ -4287,7 +7224,10 @@ function MapFilters({
     <div className="admin-filter-pills">
 
       {options.map(
-        ([key, label]) => (
+        ([
+          key,
+          label,
+        ]) => (
           <button
             type="button"
             key={key}
@@ -4322,16 +7262,25 @@ function InvestigationTimeline({
           event.batch ===
           batch
       )
-      .map((event) => ({
-        id: event.id,
-        timestamp:
-          event.timestamp,
-        title:
-          resultLabel(
-            event.result
-          ),
-        text: `${event.channel} verification · ${event.region || "Unknown region"}`,
-      })),
+      .map(
+        (event) => ({
+          id: event.id,
+
+          timestamp:
+            event.timestamp,
+
+          title:
+            resultLabel(
+              event.result
+            ),
+
+          text:
+            `${event.channel} verification · ${
+              event.region ||
+              "Unknown region"
+            }`,
+        })
+      ),
 
     ...reports
       .filter(
@@ -4339,14 +7288,21 @@ function InvestigationTimeline({
           report.batch ===
           batch
       )
-      .map((report) => ({
-        id: report.id,
-        timestamp:
-          report.createdAt,
-        title:
-          "Suspicious report submitted",
-        text: report.id,
-      })),
+      .map(
+        (report) => ({
+          id:
+            report.id,
+
+          timestamp:
+            report.createdAt,
+
+          title:
+            "Suspicious report submitted",
+
+          text:
+            report.id,
+        })
+      ),
 
     ...audits
       .filter(
@@ -4359,14 +7315,21 @@ function InvestigationTimeline({
                 audit.recordId
           )
       )
-      .map((audit) => ({
-        id: audit.id,
-        timestamp:
-          audit.timestamp,
-        title:
-          audit.action,
-        text: `${audit.previousState} → ${audit.newState}`,
-      })),
+      .map(
+        (audit) => ({
+          id:
+            audit.id,
+
+          timestamp:
+            audit.timestamp,
+
+          title:
+            audit.action,
+
+          text:
+            `${audit.previousState} → ${audit.newState}`,
+        })
+      ),
   ].sort(
     (a, b) =>
       new Date(
@@ -4386,9 +7349,11 @@ function InvestigationTimeline({
             className="timeline-item"
             key={item.id}
           >
+
             <div className="timeline-dot" />
 
             <div>
+
               <span>
                 {formatEventTime(
                   item.timestamp
@@ -4396,22 +7361,664 @@ function InvestigationTimeline({
               </span>
 
               <strong>
-                {
-                  item.title
-                }
+                {item.title}
               </strong>
 
               <p>
-                {
-                  item.text
-                }
+                {item.text}
               </p>
+
             </div>
+
           </div>
         )
       )}
 
     </div>
+  );
+}
+
+function MedicineResultDetails({
+  product,
+  scannedBatch,
+}) {
+  if (!product) {
+    return null;
+  }
+
+  return (
+    <div className="verification-details-card">
+
+      <Row
+        label="Medicine"
+        value={
+          product.medicineName
+        }
+      />
+
+      <Row
+        label="Manufacturer"
+        value={
+          product.manufacturer
+        }
+      />
+
+      <Row
+        label="Product identifier"
+        value={
+          product.productId
+        }
+      />
+
+      <Row
+        label="Batch"
+        value={
+          scannedBatch ||
+          product.batch
+        }
+      />
+
+      <Row
+        label="Expiry"
+        value={
+          product.expiry
+        }
+      />
+
+      <Row
+        label="Country"
+        value={
+          product.countryOfOrigin
+        }
+      />
+
+      <Row
+        label="Source"
+        value={
+          product.source ||
+          "MedAuth prototype dataset"
+        }
+      />
+
+      <Row
+        label="Last updated"
+        value={
+          product.lastUpdated?.replace(
+            "T",
+            " "
+          )
+        }
+      />
+
+    </div>
+  );
+}
+
+function SupplyChainSnapshot({
+  product,
+  result,
+}) {
+  if (
+    !product ||
+    result.status ===
+      "NOT_COVERED" ||
+    !product.supplyChain
+  ) {
+    return (
+      <div className="supply-chain-card">
+
+        <div className="section-heading-row">
+
+          <div>
+            <h3>
+              Supply Chain Snapshot
+            </h3>
+
+            <span className="prototype-label">
+              Prototype information
+            </span>
+          </div>
+
+        </div>
+
+        <div className="supply-unavailable-row">
+
+          <span>
+            Product record
+          </span>
+
+          <strong>
+            Not available
+          </strong>
+
+        </div>
+
+        <div className="supply-unavailable-row">
+
+          <span>
+            Batch record
+          </span>
+
+          <strong>
+            Not available
+          </strong>
+
+        </div>
+
+        <div className="supply-unavailable-row">
+
+          <span>
+            Supply-chain history
+          </span>
+
+          <strong>
+            Not Yet Covered
+          </strong>
+
+        </div>
+
+        <p className="supply-chain-note">
+          Supply-chain information is unavailable for this product in the current MedAuth prototype dataset.
+        </p>
+
+      </div>
+    );
+  }
+
+  return (
+    <div className="supply-chain-card">
+
+      <div className="section-heading-row">
+
+        <div>
+
+          <h3>
+            Supply Chain Snapshot
+          </h3>
+
+          <span className="prototype-label">
+            Prototype / sample information
+          </span>
+
+        </div>
+
+      </div>
+
+      <div className="supply-chain-timeline">
+
+        {product.supplyChain.map(
+          (stage) => {
+            const mismatch =
+              result.status ===
+                "NO_MATCH" &&
+              result.mismatchField ===
+                "batch" &&
+              stage.stage ===
+                "At Pharmacy";
+
+            return (
+              <div
+                key={stage.id}
+                className={`supply-chain-stage ${
+                  mismatch
+                    ? "mismatch"
+                    : ""
+                }`}
+              >
+
+                <div className="supply-stage-marker">
+                  {mismatch
+                    ? "!"
+                    : stage.status ===
+                      "PENDING"
+                    ? "○"
+                    : "✓"}
+                </div>
+
+                <div className="supply-stage-content">
+
+                  <div className="supply-stage-heading">
+
+                    <strong>
+                      {mismatch
+                        ? "Batch / Pharmacy Record"
+                        : stage.stage}
+                    </strong>
+
+                    <span
+                      className={`supply-stage-status ${
+                        mismatch
+                          ? "mismatch"
+                          : stage.status?.toLowerCase()
+                      }`}
+                    >
+                      {mismatch
+                        ? "MISMATCH"
+                        : stage.status ===
+                          "CURRENT"
+                        ? "CURRENT LOCATION"
+                        : stage.status}
+                    </span>
+
+                  </div>
+
+                  {stage.organisation && (
+                    <span>
+                      {
+                        stage.organisation
+                      }
+                    </span>
+                  )}
+
+                  {stage.date && (
+                    <small>
+                      {
+                        stage.date
+                      }
+                    </small>
+                  )}
+
+                  {stage.detail && (
+                    <small>
+                      {
+                        stage.detail
+                      }
+                    </small>
+                  )}
+
+                  {mismatch && (
+                    <p>
+                      Scanned batch{" "}
+                      <strong>
+                        {
+                          result.scannedBatch
+                        }
+                      </strong>{" "}
+                      differs from registered batch{" "}
+                      <strong>
+                        {
+                          product.batch
+                        }
+                      </strong>
+                      .
+                    </p>
+                  )}
+
+                </div>
+
+              </div>
+            );
+          }
+        )}
+
+      </div>
+
+      {result.status ===
+        "NO_MATCH" && (
+        <p className="supply-chain-warning">
+          A difference was found between the scanned information and the registered prototype record.
+        </p>
+      )}
+
+      <p className="supply-chain-note">
+        This is prototype/sample supply-chain information and is not a real blockchain record.
+      </p>
+
+    </div>
+  );
+}
+
+function BackButton({
+  onClick,
+}) {
+  return (
+    <button
+      type="button"
+      className="back-button"
+      onClick={onClick}
+    >
+      ← Back
+    </button>
+  );
+}
+
+function ProfileRow({
+  label,
+  value,
+}) {
+  return (
+    <div className="profile-row">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
+function PharmacistMetric({
+  label,
+  value,
+}) {
+  return (
+    <div className="pharmacist-metric">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
+function AdminMobileMetric({
+  label,
+  value,
+}) {
+  return (
+    <div className="admin-mobile-metric">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
+function PharmacistNav({
+  screen,
+  setScreen,
+}) {
+  const items = [
+    {
+      label:
+        "Dashboard",
+
+      screen:
+        "pharmacistDashboard",
+    },
+
+    {
+      label:
+        "Verify",
+
+      screen:
+        "scan",
+    },
+
+    {
+      label:
+        "Batch",
+
+      screen:
+        "pharmacistBatchLookup",
+    },
+
+    {
+      label:
+        "Recalls",
+
+      screen:
+        "pharmacistRecalls",
+    },
+
+    {
+      label:
+        "History",
+
+      screen:
+        "pharmacistHistory",
+    },
+  ];
+
+  return (
+    <nav className="pharmacist-nav">
+
+      {items.map(
+        (item) => (
+          <button
+            key={
+              item.screen
+            }
+            type="button"
+            className={
+              screen ===
+              item.screen
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setScreen(
+                item.screen
+              )
+            }
+          >
+            {
+              item.label
+            }
+          </button>
+        )
+      )}
+
+    </nav>
+  );
+}
+
+function AdminMobileNav({
+  screen,
+  setScreen,
+}) {
+  const items = [
+    {
+      label:
+        "Home",
+
+      screen:
+        "adminMobileDashboard",
+    },
+
+    {
+      label:
+        "Reports",
+
+      screen:
+        "adminMobileReports",
+    },
+
+    {
+      label:
+        "Scans",
+
+      screen:
+        "adminMobileScanMonitor",
+    },
+
+    {
+      label:
+        "Investigate",
+
+      screen:
+        "adminMobileInvestigation",
+    },
+
+    {
+      label:
+        "Audit",
+
+      screen:
+        "adminMobileAudit",
+    },
+  ];
+
+  return (
+    <nav className="admin-mobile-nav">
+
+      {items.map(
+        (item) => (
+          <button
+            key={
+              item.screen
+            }
+            type="button"
+            className={
+              screen ===
+              item.screen
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setScreen(
+                item.screen
+              )
+            }
+          >
+            {
+              item.label
+            }
+          </button>
+        )
+      )}
+
+    </nav>
+  );
+}
+
+function DashboardHeader({
+  title,
+  role,
+}) {
+  return (
+    <div className="dashboard-head">
+
+      <div>
+
+        <div className="eyebrow">
+          MedAuth account
+        </div>
+
+        <h1>
+          {title}
+        </h1>
+
+      </div>
+
+      <span className="role-badge">
+        {role}
+      </span>
+
+    </div>
+  );
+}
+
+function Row({
+  label,
+  value,
+}) {
+  return (
+    <div className="detail-row">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value || "—"}
+      </strong>
+
+    </div>
+  );
+}
+
+function Metric({
+  label,
+  value,
+}) {
+  return (
+    <div className="metric">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
+function ManufacturerDashboard({
+  totals,
+}) {
+  return (
+    <>
+      <div className="metric-grid">
+
+        <Metric
+          label="Demo scans"
+          value={
+            totals.scans
+          }
+        />
+
+        <Metric
+          label="Matches"
+          value={
+            totals.match
+          }
+        />
+
+        <Metric
+          label="No matches"
+          value={
+            totals.noMatch
+          }
+        />
+
+        <Metric
+          label="Covered"
+          value={
+            totals.covered
+          }
+        />
+
+      </div>
+
+      <div className="panel">
+
+        <h3>
+          Products
+        </h3>
+
+        <p>
+          SampleMed 10mg — enrolled
+        </p>
+
+        <p>
+          HealthMed 20mg — enrolled
+        </p>
+
+        <p>
+          TestMed 5mg — not yet covered
+        </p>
+
+      </div>
+    </>
   );
 }
 
@@ -4425,6 +8032,7 @@ function AdminPageHeader({
     <div className="admin-page-header">
 
       <div>
+
         {backAction && (
           <button
             className="admin-back-link"
@@ -4447,6 +8055,7 @@ function AdminPageHeader({
         <p>
           {subtitle}
         </p>
+
       </div>
 
       <span className="admin-access-badge">
@@ -4463,6 +8072,7 @@ function AdminSummary({
 }) {
   return (
     <div className="admin-summary-card">
+
       <span>
         {label}
       </span>
@@ -4470,6 +8080,7 @@ function AdminSummary({
       <strong>
         {value}
       </strong>
+
     </div>
   );
 }
@@ -4513,175 +8124,89 @@ function AdminNavButton({
   );
 }
 
-function SupplyChainSnapshot({
-  product,
-  result,
-}) {
-  if (
-    !product ||
-    result.status ===
-      "NOT_COVERED" ||
-    !product.supplyChain
-  ) {
-    return (
-      <div className="supply-chain-card">
-
-        <h3>
-          Supply Chain Snapshot
-        </h3>
-
-        <div className="supply-unavailable-row">
-          <span>
-            Product record
-          </span>
-
-          <strong>
-            Not available
-          </strong>
-        </div>
-
-        <div className="supply-unavailable-row">
-          <span>
-            Supply-chain history
-          </span>
-
-          <strong>
-            Not Yet Covered
-          </strong>
-        </div>
-
-      </div>
-    );
-  }
-
-  return (
-    <div className="supply-chain-card">
-
-      <h3>
-        Supply Chain Snapshot
-      </h3>
-
-      {product.supplyChain.map(
-        (stage) => (
-          <div
-            key={stage.id}
-            className="supply-chain-stage"
-          >
-            <div className="supply-stage-marker">
-              ✓
-            </div>
-
-            <div>
-              <strong>
-                {stage.stage}
-              </strong>
-
-              <small>
-                {
-                  stage.organisation
-                }
-              </small>
-            </div>
-          </div>
-        )
-      )}
-
-    </div>
-  );
-}
-
-function BackButton({
-  onClick,
-}) {
-  return (
-    <button
-      type="button"
-      className="back-button"
-      onClick={onClick}
-    >
-      ← Back
-    </button>
-  );
-}
-
-function Row({
-  label,
-  value,
-}) {
-  return (
-    <div className="detail-row">
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value || "—"}
-      </strong>
-    </div>
-  );
-}
-
-function PharmacistMetric({
-  label,
-  value,
-}) {
-  return (
-    <div className="pharmacist-metric">
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value}
-      </strong>
-    </div>
-  );
-}
+/* ICONS */
 
 function ScanIcon() {
   return (
     <svg
       className="home-scan-icon"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <path d="M8 3H5a2 2 0 0 0-2 2v3" />
       <path d="M16 3h3a2 2 0 0 1 2 2v3" />
       <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
       <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+      <rect
+        x="8"
+        y="8"
+        width="3"
+        height="3"
+      />
+      <rect
+        x="13"
+        y="8"
+        width="3"
+        height="3"
+      />
+      <rect
+        x="8"
+        y="13"
+        width="3"
+        height="3"
+      />
+      <rect
+        x="13"
+        y="13"
+        width="3"
+        height="3"
+      />
     </svg>
   );
 }
 
 function SearchIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <circle
         cx="11"
         cy="11"
         r="7"
       />
+
       <path d="m16 16 4 4" />
     </svg>
   );
 }
 
 function BatchLookupIcon() {
-  return (
-    <SearchIcon />
-  );
+  return <SearchIcon />;
 }
 
 function RecallIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M12 3v3" />
+
       <path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Z" />
+
+      <path d="M10 20h4" />
     </svg>
   );
 }
 
 function ShortagesIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <rect
         x="6"
         y="3"
@@ -4689,26 +8214,39 @@ function ShortagesIcon() {
         height="18"
         rx="2"
       />
+
+      <path d="M9 7h6" />
+      <path d="M9 11h6" />
+      <path d="M9 15h3" />
     </svg>
   );
 }
 
 function EscalateIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M12 3 3 20h18L12 3Z" />
+      <path d="M12 9v4" />
+      <path d="M12 17h.01" />
     </svg>
   );
 }
 
 function ProfileIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <circle
         cx="12"
         cy="8"
         r="4"
       />
+
       <path d="M4 21a8 8 0 0 1 16 0" />
     </svg>
   );
@@ -4716,12 +8254,16 @@ function ProfileIcon() {
 
 function SettingsIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <circle
         cx="12"
         cy="12"
         r="3"
       />
+
       <circle
         cx="12"
         cy="12"
@@ -4733,16 +8275,30 @@ function SettingsIcon() {
 
 function EyeIcon() {
   return (
-    <svg viewBox="0 0 24 24">
-      <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6Z" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="2.5"
+      />
     </svg>
   );
 }
 
 function EyeOffIcon() {
   return (
-    <svg viewBox="0 0 24 24">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="m3 3 18 18" />
+
+      <path d="M6 7c-2 2-3.5 5-3.5 5s3.5 6 9.5 6" />
     </svg>
   );
 }
@@ -4752,6 +8308,7 @@ function LockIcon() {
     <svg
       className="security-lock"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <rect
         x="5"
@@ -4760,7 +8317,109 @@ function LockIcon() {
         height="10"
         rx="2"
       />
+
       <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="2"
+      />
+
+      <path d="m4 7 8 6 8-6" />
+    </svg>
+  );
+}
+
+function MobileAdminIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="7"
+        y="2"
+        width="10"
+        height="20"
+        rx="2"
+      />
+
+      <path d="M10 18h4" />
+    </svg>
+  );
+}
+
+function DesktopAdminIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="3"
+        y="4"
+        width="18"
+        height="12"
+        rx="2"
+      />
+
+      <path d="M8 21h8" />
+
+      <path d="M12 16v5" />
+    </svg>
+  );
+}
+
+function AdminReportIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M7 3h10l3 3v15H4V3h3Z" />
+
+      <path d="M8 10h8" />
+
+      <path d="M8 14h8" />
+    </svg>
+  );
+}
+
+function InvestigationIcon() {
+  return <SearchIcon />;
+}
+
+function AuditIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="5"
+        y="3"
+        width="14"
+        height="18"
+        rx="2"
+      />
+
+      <path d="M8 8h8" />
+
+      <path d="M8 12h8" />
+
+      <path d="M8 16h5" />
     </svg>
   );
 }
