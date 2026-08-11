@@ -1069,7 +1069,7 @@ export default function App() {
 
         {/* ============= PHARMACIST ============= */}
 
-       function PharmacistDashboard({
+     function PharmacistDashboard({
   onVerify,
 }) {
   return (
@@ -1086,109 +1086,75 @@ export default function App() {
           </span>
         </div>
 
+        <button
+          type="button"
+          className="pharmacist-main-action"
+          onClick={onVerify}
+        >
+          Verify Medicine
+        </button>
+
         <div className="pharmacist-tools-grid">
 
-          {/* BATCH SCAN */}
-
           <button
             type="button"
             className="pharmacist-tool-card"
-            onClick={onVerify}
           >
-            <div className="tool-icon tool-icon-blue">
-              <BatchScanIcon />
-            </div>
-
             <strong>
-              Batch scan
+              Batch Lookup
             </strong>
 
             <span>
-              Scan multiple packs quickly
+              Check batch and recall status
             </span>
           </button>
 
-          {/* RECALL ALERTS */}
-
           <button
             type="button"
             className="pharmacist-tool-card"
-            onClick={() =>
-              alert(
-                "Recall alerts can be connected to your recall data here."
-              )
-            }
           >
-            <div className="tool-icon tool-icon-red">
-              <RecallIcon />
-            </div>
-
             <strong>
-              Recall alerts
+              Recalls & Alerts
             </strong>
 
             <span>
-              TGA and manufacturer notices
+              Review active notices
             </span>
           </button>
 
-          {/* SHORTAGES */}
-
           <button
             type="button"
             className="pharmacist-tool-card"
-            onClick={() =>
-              alert(
-                "Medicine shortage information can be connected here."
-              )
-            }
           >
-            <div className="tool-icon tool-icon-orange">
-              <ShortageIcon />
-            </div>
-
             <strong>
-              Shortages
+              Verification History
             </strong>
 
             <span>
-              Current availability
+              Review recent checks
             </span>
           </button>
 
-          {/* AUDIT LOG */}
-
           <button
             type="button"
             className="pharmacist-tool-card"
-            onClick={() =>
-              alert(
-                "Audit history can be connected here."
-              )
-            }
           >
-            <div className="tool-icon tool-icon-slate">
-              <AuditIcon />
-            </div>
-
             <strong>
-              Audit log
+              Escalate / Report
             </strong>
 
             <span>
-              Recent checks
+              Report suspicious medicine
             </span>
           </button>
 
         </div>
 
-        {/* STATS */}
-
         <div className="pharmacist-stats">
 
           <div className="pharmacist-stat-row">
             <span>
-              Scans today
+              Scans Today
             </span>
 
             <strong>
@@ -1198,7 +1164,7 @@ export default function App() {
 
           <div className="pharmacist-stat-row">
             <span>
-              Pending sync
+              Pending Sync
             </span>
 
             <strong>
@@ -1208,7 +1174,7 @@ export default function App() {
 
           <div className="pharmacist-stat-row">
             <span>
-              Recall matches
+              Recall Matches
             </span>
 
             <strong>
@@ -1216,21 +1182,17 @@ export default function App() {
             </strong>
           </div>
 
+          <div className="pharmacist-stat-row">
+            <span>
+              No Match Results
+            </span>
+
+            <strong>
+              3
+            </strong>
+          </div>
+
         </div>
-
-      </div>
-
-      <div className="pharmacist-important">
-
-        <h3>
-          Important
-        </h3>
-
-        <p>
-          Pharmacist mode is designed for
-          medicine verification and operational
-          workflow.
-        </p>
 
       </div>
     </>
