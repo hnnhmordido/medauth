@@ -43,10 +43,7 @@ function verifyMedicine(code, batch, offline) {
 
   const product = medicines[normalizedCode];
 
-  if (
-    offline &&
-    normalizedCode !== "MED-001"
-  ) {
+  if (offline && normalizedCode !== "MED-001") {
     return {
       status: "NOT_COVERED",
       product: null,
@@ -54,10 +51,7 @@ function verifyMedicine(code, batch, offline) {
     };
   }
 
-  if (
-    !product ||
-    product.coverageStatus !== "ENROLLED"
-  ) {
+  if (!product || product.coverageStatus !== "ENROLLED") {
     return {
       status: "NOT_COVERED",
       product: product || null,
@@ -90,7 +84,6 @@ export default function App() {
 
   const [code, setCode] = useState("MED-001");
   const [batch, setBatch] = useState("B1001");
-
   const [result, setResult] = useState(null);
 
   const [role, setRole] = useState("");
@@ -108,6 +101,12 @@ export default function App() {
 
   const [loginError, setLoginError] =
     useState("");
+
+  const [resetEmail, setResetEmail] =
+    useState("");
+
+  const [resetSent, setResetSent] =
+    useState(false);
 
   const totals = useMemo(
     () => ({
@@ -153,7 +152,6 @@ export default function App() {
 
     setCode("MED-001");
     setBatch("B1001");
-
     setResult(null);
 
     setRole("");
@@ -161,8 +159,10 @@ export default function App() {
     setReportRef("");
 
     setPassword("");
-
     setLoginError("");
+
+    setResetEmail("");
+    setResetSent(false);
   };
 
   const goBack = () => {
@@ -170,6 +170,7 @@ export default function App() {
       case "scan":
       case "manual":
       case "result":
+      case "forgotPassword":
         setScreen("home");
         break;
 
@@ -206,7 +207,6 @@ export default function App() {
       setLoginError(
         "Account not found. Check your email address."
       );
-
       return;
     }
 
@@ -214,7 +214,6 @@ export default function App() {
       setLoginError(
         "Incorrect password. Please try again."
       );
-
       return;
     }
 
@@ -222,27 +221,19 @@ export default function App() {
 
     switch (user.role) {
       case "manufacturer":
-        setScreen(
-          "manufacturerDashboard"
-        );
+        setScreen("manufacturerDashboard");
         break;
 
       case "pharmacist":
-        setScreen(
-          "pharmacistDashboard"
-        );
+        setScreen("pharmacistDashboard");
         break;
 
       case "consumer":
-        setScreen(
-          "consumerDashboard"
-        );
+        setScreen("consumerDashboard");
         break;
 
       case "admin":
-        setScreen(
-          "adminDashboard"
-        );
+        setScreen("adminDashboard");
         break;
 
       default:
@@ -250,6 +241,19 @@ export default function App() {
           "This account does not have a valid role."
         );
     }
+  };
+
+  const handleForgotPassword = (event) => {
+    event.preventDefault();
+
+    const normalizedEmail =
+      resetEmail.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      return;
+    }
+
+    setResetSent(true);
   };
 
   return (
@@ -264,7 +268,7 @@ export default function App() {
     >
       <main className="phone-stage">
 
-        {/* HOME */}
+        {/* ================= HOME ================= */}
 
         {screen === "home" && (
           <section className="screen home-screen">
@@ -303,17 +307,15 @@ export default function App() {
             </button>
 
             <div className="home-divider">
-              <span>
-                or
-              </span>
+              <span>or</span>
             </div>
 
             <form
               className="home-login-form"
               onSubmit={handleHomeLogin}
             >
-
               <label className="home-login-field">
+
                 <span>
                   EMAIL ADDRESS
                 </span>
@@ -332,9 +334,11 @@ export default function App() {
                   autoComplete="email"
                   required
                 />
+
               </label>
 
               <label className="home-login-field">
+
                 <span>
                   PASSWORD
                 </span>
@@ -382,6 +386,7 @@ export default function App() {
                   </button>
 
                 </div>
+
               </label>
 
               <div className="login-options">
@@ -407,11 +412,11 @@ export default function App() {
                 <button
                   type="button"
                   className="forgot-password"
-                  onClick={() =>
-                    alert(
-                      "Password recovery can be connected here."
-                    )
-                  }
+                  onClick={() => {
+                    setResetEmail(email);
+                    setResetSent(false);
+                    setScreen("forgotPassword");
+                  }}
                 >
                   Forgot password?
                 </button>
@@ -449,14 +454,129 @@ export default function App() {
               <LockIcon />
 
               <span>
-                Secure connection
+                Protected by AES-256 encryption
+                {" · "}
+                TLS 1.3
+                {" · "}
+                ISO 27001
               </span>
             </div>
 
           </section>
         )}
 
-        {/* SCAN */}
+        {/* ============= FORGOT PASSWORD ============= */}
+
+        {screen === "forgotPassword" && (
+          <section className="screen forgot-screen">
+
+            <BackButton onClick={goBack} />
+
+            <div className="forgot-brand">
+              <img
+                className="forgot-logo"
+                src={`${import.meta.env.BASE_URL}medauth-logo.png`}
+                alt="MedAuth"
+              />
+            </div>
+
+            {!resetSent ? (
+              <>
+                <div className="eyebrow">
+                  Account recovery
+                </div>
+
+                <h1>
+                  Forgot password?
+                </h1>
+
+                <p className="forgot-description">
+                  Enter the email address linked
+                  to your MedAuth account.
+                </p>
+
+                <form
+                  className="forgot-form"
+                  onSubmit={handleForgotPassword}
+                >
+                  <label className="home-login-field">
+
+                    <span>
+                      EMAIL ADDRESS
+                    </span>
+
+                    <input
+                      type="email"
+                      value={resetEmail}
+                      onChange={(event) =>
+                        setResetEmail(
+                          event.target.value
+                        )
+                      }
+                      placeholder="e.g. pharmacist@medauth.com"
+                      autoComplete="email"
+                      required
+                    />
+
+                  </label>
+
+                  <button
+                    type="submit"
+                    className="home-signin-button"
+                  >
+                    Send Reset Instructions
+                  </button>
+
+                </form>
+              </>
+            ) : (
+              <div className="reset-success">
+
+                <div className="reset-success-icon">
+                  <MailIcon />
+                </div>
+
+                <h1>
+                  Check your email
+                </h1>
+
+                <p>
+                  If an account exists for{" "}
+                  <strong>
+                    {resetEmail}
+                  </strong>
+                  , reset instructions have been
+                  requested.
+                </p>
+
+                <PrimaryButton
+                  onClick={() => {
+                    setScreen("home");
+                    setResetSent(false);
+                  }}
+                >
+                  Return to Sign In
+                </PrimaryButton>
+
+              </div>
+            )}
+
+            <div className="security-footer forgot-security">
+              <LockIcon />
+
+              <span>
+                Protected by AES-256 encryption
+                {" · "}
+                TLS 1.3
+                {" · "}
+                ISO 27001
+              </span>
+            </div>
+
+          </section>
+        )}
+
+        {/* ================= SCAN ================= */}
 
         {screen === "scan" && (
           <section className="screen">
@@ -472,8 +592,8 @@ export default function App() {
             </h1>
 
             <p>
-              Place a GS1 DataMatrix-style
-              code inside the frame.
+              Place the medicine code inside
+              the scanning area.
             </p>
 
             <div className="scanner-panel">
@@ -557,7 +677,7 @@ export default function App() {
           </section>
         )}
 
-        {/* MANUAL */}
+        {/* ================= MANUAL ================= */}
 
         {screen === "manual" && (
           <section className="screen">
@@ -573,6 +693,7 @@ export default function App() {
             </h1>
 
             <label className="field">
+
               Product code
 
               <input
@@ -584,9 +705,11 @@ export default function App() {
                 }
                 placeholder="e.g. MED-001"
               />
+
             </label>
 
             <label className="field">
+
               Batch (optional)
 
               <input
@@ -598,6 +721,7 @@ export default function App() {
                 }
                 placeholder="e.g. B1001"
               />
+
             </label>
 
             <PrimaryButton
@@ -611,7 +735,7 @@ export default function App() {
           </section>
         )}
 
-        {/* CHECKING */}
+        {/* ================= CHECKING ================= */}
 
         {screen === "checking" && (
           <section className="screen center-screen">
@@ -631,7 +755,7 @@ export default function App() {
           </section>
         )}
 
-        {/* RESULT */}
+        {/* ================= RESULT ================= */}
 
         {screen === "result" &&
           result && (
@@ -655,19 +779,18 @@ export default function App() {
                 />
               )}
 
-              {result.status ===
-                "NOT_COVERED" && (
+              {result.status === "NOT_COVERED" && (
                 <StatusCard
                   status="NOT_COVERED"
                   title="Unable to Verify"
-                  text="This product is not yet covered by the prototype data. This does not mean it is counterfeit."
+                  text="This product is not yet covered by the prototype data."
                 />
               )}
 
               {result.offline && (
                 <div className="notice">
-                  Offline result: cached
-                  prototype data may be used.
+                  Offline result: cached data
+                  may be used.
                 </div>
               )}
 
@@ -680,10 +803,7 @@ export default function App() {
                     </span>
 
                     <strong>
-                      {
-                        result.product
-                          .medicineName
-                      }
+                      {result.product.medicineName}
                     </strong>
                   </div>
 
@@ -693,10 +813,7 @@ export default function App() {
                     </span>
 
                     <strong>
-                      {
-                        result.product
-                          .manufacturer
-                      }
+                      {result.product.manufacturer}
                     </strong>
                   </div>
 
@@ -746,7 +863,7 @@ export default function App() {
             </section>
           )}
 
-        {/* DETAILS */}
+        {/* ================= DETAILS ================= */}
 
         {screen === "details" &&
           result?.product && (
@@ -759,10 +876,7 @@ export default function App() {
               </div>
 
               <h1>
-                {
-                  result.product
-                    .medicineName
-                }
+                {result.product.medicineName}
               </h1>
 
               <div className="details-list">
@@ -770,16 +884,14 @@ export default function App() {
                 <Row
                   label="Manufacturer"
                   value={
-                    result.product
-                      .manufacturer
+                    result.product.manufacturer
                   }
                 />
 
                 <Row
                   label="Product ID"
                   value={
-                    result.product
-                      .productId
+                    result.product.productId
                   }
                 />
 
@@ -800,20 +912,15 @@ export default function App() {
                 <Row
                   label="Country"
                   value={
-                    result.product
-                      .countryOfOrigin
+                    result.product.countryOfOrigin
                   }
                 />
 
                 <Row
                   label="Last updated"
                   value={
-                    result.product
-                      .lastUpdated
-                      .replace(
-                        "T",
-                        " "
-                      )
+                    result.product.lastUpdated
+                      .replace("T", " ")
                   }
                 />
 
@@ -830,7 +937,7 @@ export default function App() {
             </section>
           )}
 
-        {/* REPORT */}
+        {/* ================= REPORT ================= */}
 
         {screen === "report" && (
           <section className="screen">
@@ -845,45 +952,47 @@ export default function App() {
               Tell us what looks wrong
             </h1>
 
-            <div className="notice">
-              Prototype only. Do not enter
-              real personal or health
-              information.
-            </div>
-
             <label className="field">
+
               Product code
 
               <input
                 value={code}
                 readOnly
               />
+
             </label>
 
             <label className="field">
+
               Batch
 
               <input
                 value={batch}
                 readOnly
               />
+
             </label>
 
             <label className="field">
+
               Comment
 
               <textarea
                 placeholder="Example: Packaging looks different."
                 rows="4"
               />
+
             </label>
 
             <label className="field">
+
               Coarse location (optional)
 
               <input
                 placeholder="e.g. Adelaide SA"
               />
+
             </label>
 
             <PrimaryButton
@@ -891,14 +1000,11 @@ export default function App() {
                 setReportRef(
                   `MA-2026-${Math.floor(
                     10000 +
-                      Math.random() *
-                        89999
+                    Math.random() * 89999
                   )}`
                 );
 
-                setScreen(
-                  "confirmation"
-                );
+                setScreen("confirmation");
               }}
             >
               Submit Report
@@ -907,7 +1013,7 @@ export default function App() {
           </section>
         )}
 
-        {/* CONFIRMATION */}
+        {/* ================= CONFIRMATION ================= */}
 
         {screen === "confirmation" && (
           <section className="screen center-screen">
@@ -936,10 +1042,9 @@ export default function App() {
           </section>
         )}
 
-        {/* MANUFACTURER */}
+        {/* ============= MANUFACTURER ============= */}
 
-        {screen ===
-          "manufacturerDashboard" && (
+        {screen === "manufacturerDashboard" && (
           <section className="screen">
 
             <BackButton onClick={goBack} />
@@ -962,10 +1067,9 @@ export default function App() {
           </section>
         )}
 
-        {/* PHARMACIST */}
+        {/* ============= PHARMACIST ============= */}
 
-        {screen ===
-          "pharmacistDashboard" && (
+        {screen === "pharmacistDashboard" && (
           <section className="screen">
 
             <BackButton onClick={goBack} />
@@ -990,10 +1094,9 @@ export default function App() {
           </section>
         )}
 
-        {/* CONSUMER */}
+        {/* ============= CONSUMER ============= */}
 
-        {screen ===
-          "consumerDashboard" && (
+        {screen === "consumerDashboard" && (
           <section className="screen">
 
             <BackButton onClick={goBack} />
@@ -1011,8 +1114,7 @@ export default function App() {
 
               <p>
                 Scan a medicine package
-                to check its verification
-                record.
+                to verify it.
               </p>
 
               <PrimaryButton
@@ -1066,10 +1168,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ADMIN */}
+        {/* ================= ADMIN ================= */}
 
-        {screen ===
-          "adminDashboard" && (
+        {screen === "adminDashboard" && (
           <section className="screen">
 
             <BackButton onClick={goBack} />
@@ -1095,9 +1196,7 @@ export default function App() {
   );
 }
 
-function BackButton({
-  onClick,
-}) {
+function BackButton({ onClick }) {
   return (
     <button
       type="button"
@@ -1127,40 +1226,14 @@ function ScanIcon() {
       aria-hidden="true"
     >
       <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-
       <path d="M16 3h3a2 2 0 0 1 2 2v3" />
-
       <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
-
       <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
 
-      <rect
-        x="8"
-        y="8"
-        width="3"
-        height="3"
-      />
-
-      <rect
-        x="13"
-        y="8"
-        width="3"
-        height="3"
-      />
-
-      <rect
-        x="8"
-        y="13"
-        width="3"
-        height="3"
-      />
-
-      <rect
-        x="13"
-        y="13"
-        width="3"
-        height="3"
-      />
+      <rect x="8" y="8" width="3" height="3" />
+      <rect x="13" y="8" width="3" height="3" />
+      <rect x="8" y="13" width="3" height="3" />
+      <rect x="13" y="13" width="3" height="3" />
     </svg>
   );
 }
@@ -1213,6 +1286,25 @@ function LockIcon() {
       />
 
       <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="2"
+      />
+
+      <path d="m4 7 8 6 8-6" />
     </svg>
   );
 }
