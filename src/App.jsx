@@ -68,6 +68,14 @@ export default function App() {
 
   const [reportRef, setReportRef] = useState("");
 
+  /* HOME LOGIN */
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberDevice, setRememberDevice] =
+    useState(true);
+  const [showPassword, setShowPassword] =
+    useState(false);
+
   const totals = useMemo(
     () => ({
       scans: demoEvents.length,
@@ -107,12 +115,9 @@ export default function App() {
 
   const reset = () => {
     setScreen("home");
-
     setCode("MED-001");
     setBatch("B1001");
-
     setResult(null);
-
     setReportRef("");
   };
 
@@ -131,7 +136,7 @@ export default function App() {
         break;
 
       case "dashboard":
-        setScreen("login");
+        setScreen("home");
         break;
 
       case "confirmation":
@@ -142,6 +147,25 @@ export default function App() {
         setScreen("home");
         break;
     }
+  };
+
+  /*
+   * IMPORTANT:
+   * Connect this to your EXISTING authentication
+   * function if your real project already has one.
+   *
+   * Do not replace your real API/authentication logic.
+   */
+  const handleHomeLogin = (event) => {
+    event.preventDefault();
+
+    /*
+     * Keep your existing authentication call here.
+     *
+     * For the current prototype this opens the
+     * professional dashboard.
+     */
+    setScreen("dashboard");
   };
 
   return (
@@ -163,6 +187,8 @@ export default function App() {
         {screen === "home" && (
           <section className="screen home-screen">
 
+            {/* APP CONNECTION STATUS */}
+
             <div className="home-status-row">
               <NetworkBadge
                 offline={offline}
@@ -174,45 +200,164 @@ export default function App() {
               />
             </div>
 
-            <div className="home-content">
+            {/* MEDAUTH LOGO */}
 
-              <div className="home-brand">
-                <img
-                  className="hero-logo"
-                  src={`${import.meta.env.BASE_URL}medauth-logo.png`}
-                  alt="MedAuth"
+            <div className="home-brand">
+              <img
+                className="hero-logo"
+                src={`${import.meta.env.BASE_URL}medauth-logo.png`}
+                alt="MedAuth"
+              />
+            </div>
+
+            {/* SCAN */}
+
+            <PrimaryButton
+              onClick={() =>
+                setScreen("scan")
+              }
+            >
+              Scan Medicine
+            </PrimaryButton>
+
+            {/* DIVIDER */}
+
+            <div className="home-divider">
+              <span>Professional Access</span>
+            </div>
+
+            {/* HOME LOGIN FORM */}
+
+            <form
+              className="home-login-form"
+              onSubmit={handleHomeLogin}
+            >
+              <label className="home-login-field">
+                <span>
+                  EMAIL ADDRESS
+                </span>
+
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) =>
+                    setEmail(
+                      event.target.value
+                    )
+                  }
+                  placeholder="e.g. mai.nguyen@medauth.com"
+                  autoComplete="email"
+                  aria-label="Email address"
                 />
-              </div>
+              </label>
 
-              <div className="home-actions">
+              <label className="home-login-field">
+                <span>
+                  PASSWORD
+                </span>
 
-                <PrimaryButton
-                  onClick={() =>
-                    setScreen("scan")
-                  }
-                >
-                  Scan Medicine
-                </PrimaryButton>
+                <div className="password-input-wrap">
+                  <input
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
+                    value={password}
+                    onChange={(event) =>
+                      setPassword(
+                        event.target.value
+                      )
+                    }
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    aria-label="Password"
+                  />
 
-                <SecondaryButton
-                  onClick={() =>
-                    setScreen("manual")
-                  }
-                >
-                  Enter Code Instead
-                </SecondaryButton>
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() =>
+                      setShowPassword(
+                        (current) => !current
+                      )
+                    }
+                    aria-label={
+                      showPassword
+                        ? "Hide password"
+                        : "Show password"
+                    }
+                  >
+                    {showPassword ? (
+                      <EyeOffIcon />
+                    ) : (
+                      <EyeIcon />
+                    )}
+                  </button>
+                </div>
+              </label>
+
+              <div className="login-options">
+
+                <label className="remember-device">
+                  <input
+                    type="checkbox"
+                    checked={rememberDevice}
+                    onChange={(event) =>
+                      setRememberDevice(
+                        event.target.checked
+                      )
+                    }
+                  />
+
+                  <span>
+                    Remember this device
+                  </span>
+                </label>
 
                 <button
                   type="button"
-                  className="login-link"
-                  onClick={() =>
-                    setScreen("login")
-                  }
+                  className="forgot-password"
+                  onClick={() => {
+                    /*
+                     * Replace this with your
+                     * existing forgot-password
+                     * navigation/handler.
+                     */
+                    alert(
+                      "Connect this button to your existing password recovery flow."
+                    );
+                  }}
                 >
-                  Log In
+                  Forgot password?
                 </button>
 
               </div>
+
+              <button
+                type="submit"
+                className="home-signin-button"
+              >
+                Sign In
+                <span aria-hidden="true">
+                  →
+                </span>
+              </button>
+
+            </form>
+
+            {/* SECURITY FOOTER */}
+
+            <div className="security-footer">
+              <LockIcon />
+
+              <span>
+                Protected by AES-256 encryption
+                {" · "}
+                TLS 1.3
+                {" · "}
+                ISO 27001
+              </span>
             </div>
 
           </section>
@@ -877,18 +1022,9 @@ function BackButton({ onClick }) {
     >
       <svg
         viewBox="0 0 24 24"
-        width="20"
-        height="20"
         aria-hidden="true"
       >
-        <path
-          d="M15 18l-6-6 6-6"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M15 18l-6-6 6-6" />
       </svg>
 
       <span>
@@ -899,7 +1035,66 @@ function BackButton({ onClick }) {
 }
 
 /* =========================================
-   DETAIL ROW
+   PASSWORD ICONS
+========================================= */
+
+function EyeIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+      <circle
+        cx="12"
+        cy="12"
+        r="2.5"
+      />
+    </svg>
+  );
+}
+
+function EyeOffIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="m3 3 18 18" />
+
+      <path d="M10.6 6.2A10 10 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-2.1 2.8" />
+
+      <path d="M6.6 6.7C4 8.3 2.5 12 2.5 12s3.5 6 9.5 6a9.8 9.8 0 0 0 3.1-.5" />
+    </svg>
+  );
+}
+
+/* =========================================
+   LOCK ICON
+========================================= */
+
+function LockIcon() {
+  return (
+    <svg
+      className="security-lock"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="5"
+        y="10"
+        width="14"
+        height="10"
+        rx="2"
+      />
+
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
+
+/* =========================================
+   DETAILS ROW
 ========================================= */
 
 function Row({
@@ -922,7 +1117,7 @@ function Row({
 }
 
 /* =========================================
-   MANUFACTURER DASHBOARD
+   MANUFACTURER
 ========================================= */
 
 function ManufacturerDashboard({
@@ -997,7 +1192,7 @@ function ManufacturerDashboard({
 }
 
 /* =========================================
-   PHARMACIST DASHBOARD
+   PHARMACIST
 ========================================= */
 
 function PharmacistDashboard({
@@ -1052,7 +1247,7 @@ function PharmacistDashboard({
 }
 
 /* =========================================
-   ADMIN DASHBOARD
+   ADMIN
 ========================================= */
 
 function AdminDashboard() {
@@ -1098,7 +1293,7 @@ function AdminDashboard() {
 }
 
 /* =========================================
-   METRIC CARD
+   METRIC
 ========================================= */
 
 function Metric({
