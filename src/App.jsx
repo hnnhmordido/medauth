@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { medicines, demoEvents } from "./data/medicines";
+
 import {
   NetworkBadge,
   PrimaryButton,
@@ -13,6 +14,37 @@ const palette = {
   teal: "#00989F",
   aqua: "#01A09D",
 };
+
+/* =========================================================
+   DEMO USERS
+   Replace this with your real authentication later.
+========================================================= */
+
+const demoUsers = {
+  "manufacturer@medauth.com": {
+    role: "manufacturer",
+    password: "demo123",
+  },
+
+  "pharmacist@medauth.com": {
+    role: "pharmacist",
+    password: "demo123",
+  },
+
+  "consumer@medauth.com": {
+    role: "consumer",
+    password: "demo123",
+  },
+
+  "admin@medauth.com": {
+    role: "admin",
+    password: "demo123",
+  },
+};
+
+/* =========================================================
+   MEDICINE VERIFICATION
+========================================================= */
 
 function verifyMedicine(code, batch, offline) {
   const normalizedCode = code?.trim().toUpperCase();
@@ -64,9 +96,11 @@ export default function App() {
 
   const [result, setResult] = useState(null);
 
-  const [role, setRole] = useState("manufacturer");
+  const [role, setRole] = useState("");
 
   const [reportRef, setReportRef] = useState("");
+
+  /* Login */
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -76,6 +110,10 @@ export default function App() {
 
   const [showPassword, setShowPassword] =
     useState(false);
+
+  const [loginError, setLoginError] = useState("");
+
+  /* Dashboard totals */
 
   const totals = useMemo(
     () => ({
@@ -96,6 +134,10 @@ export default function App() {
     []
   );
 
+  /* =========================================================
+     VERIFY
+  ========================================================= */
+
   const runVerification = (
     nextCode = code,
     nextBatch = batch
@@ -103,25 +145,42 @@ export default function App() {
     setScreen("checking");
 
     window.setTimeout(() => {
-      setResult(
-        verifyMedicine(
-          nextCode,
-          nextBatch,
-          offline
-        )
+      const verificationResult = verifyMedicine(
+        nextCode,
+        nextBatch,
+        offline
       );
+
+      setResult(verificationResult);
 
       setScreen("result");
     }, 650);
   };
 
+  /* =========================================================
+     RESET / SIGN OUT
+  ========================================================= */
+
   const reset = () => {
     setScreen("home");
+
     setCode("MED-001");
     setBatch("B1001");
+
     setResult(null);
+
+    setRole("");
+
     setReportRef("");
+
+    setPassword("");
+
+    setLoginError("");
   };
+
+  /* =========================================================
+     BACK
+  ========================================================= */
 
   const goBack = () => {
     switch (screen) {
@@ -136,25 +195,68 @@ export default function App() {
         setScreen("result");
         break;
 
-      case "dashboard":
+      case "manufacturerDashboard":
+      case "pharmacistDashboard":
+      case "consumerDashboard":
+      case "adminDashboard":
         setScreen("home");
         break;
 
       default:
         setScreen("home");
+        break;
     }
   };
+
+  /* =========================================================
+     LOGIN
+  ========================================================= */
 
   const handleHomeLogin = (event) => {
     event.preventDefault();
 
-    /*
-      Keep your real authentication call here
-      if you add/connect one later.
+    setLoginError("");
 
-      Existing prototype navigation:
-    */
-    setScreen("dashboard");
+    const normalizedEmail =
+      email.trim().toLowerCase();
+
+    const user =
+      demoUsers[normalizedEmail];
+
+    if (!user) {
+      setLoginError(
+        "Account not found. Check your email address."
+      );
+      return;
+    }
+
+    if (user.password !== password) {
+      setLoginError(
+        "Incorrect password. Please try again."
+      );
+      return;
+    }
+
+    setRole(user.role);
+
+    if (user.role === "manufacturer") {
+      setScreen("manufacturerDashboard");
+      return;
+    }
+
+    if (user.role === "pharmacist") {
+      setScreen("pharmacistDashboard");
+      return;
+    }
+
+    if (user.role === "consumer") {
+      setScreen("consumerDashboard");
+      return;
+    }
+
+    if (user.role === "admin") {
+      setScreen("adminDashboard");
+    }
   };
 
   return (
@@ -169,9 +271,9 @@ export default function App() {
     >
       <main className="phone-stage">
 
-        {/* ==================================================
+        {/* =================================================
             HOME
-        ================================================== */}
+        ================================================= */}
 
         {screen === "home" && (
           <section className="screen home-screen">
@@ -217,6 +319,7 @@ export default function App() {
               className="home-login-form"
               onSubmit={handleHomeLogin}
             >
+
               <label className="home-login-field">
                 <span>
                   EMAIL ADDRESS
@@ -225,14 +328,17 @@ export default function App() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(event) =>
+                  onChange={(event) => {
                     setEmail(
                       event.target.value
-                    )
-                  }
-                  placeholder="e.g. mai.nguyen@medauth.com"
+                    );
+
+                    setLoginError("");
+                  }}
+                  placeholder="e.g. manufacturer@medauth.com"
                   autoComplete="email"
                   aria-label="Email address"
+                  required
                 />
               </label>
 
@@ -242,6 +348,7 @@ export default function App() {
                 </span>
 
                 <div className="password-input-wrap">
+
                   <input
                     type={
                       showPassword
@@ -249,14 +356,17 @@ export default function App() {
                         : "password"
                     }
                     value={password}
-                    onChange={(event) =>
+                    onChange={(event) => {
                       setPassword(
                         event.target.value
-                      )
-                    }
+                      );
+
+                      setLoginError("");
+                    }}
                     placeholder="••••••••"
                     autoComplete="current-password"
                     aria-label="Password"
+                    required
                   />
 
                   <button
@@ -279,12 +389,14 @@ export default function App() {
                       <EyeIcon />
                     )}
                   </button>
+
                 </div>
               </label>
 
               <div className="login-options">
 
                 <label className="remember-device">
+
                   <input
                     type="checkbox"
                     checked={rememberDevice}
@@ -298,19 +410,31 @@ export default function App() {
                   <span>
                     Remember this device
                   </span>
+
                 </label>
 
-                {/*
-                  Current prototype has no password
-                  recovery flow, so this remains text
-                  instead of a fake working button.
-                */}
-
-                <span className="forgot-password">
+                <button
+                  type="button"
+                  className="forgot-password"
+                  onClick={() =>
+                    alert(
+                      "Password recovery can be connected here."
+                    )
+                  }
+                >
                   Forgot password?
-                </span>
+                </button>
 
               </div>
+
+              {loginError && (
+                <div
+                  className="login-error"
+                  role="alert"
+                >
+                  {loginError}
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -334,16 +458,16 @@ export default function App() {
               <LockIcon />
 
               <span>
-                Protected connection
+                Secure connection
               </span>
             </div>
 
           </section>
         )}
 
-        {/* ==================================================
-            SCANNER
-        ================================================== */}
+        {/* =================================================
+            SCAN
+        ================================================= */}
 
         {screen === "scan" && (
           <section className="screen">
@@ -444,9 +568,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            MANUAL ENTRY
-        ================================================== */}
+        {/* =================================================
+            MANUAL CODE ENTRY
+        ================================================= */}
 
         {screen === "manual" && (
           <section className="screen">
@@ -498,7 +622,8 @@ export default function App() {
             </PrimaryButton>
 
             <p className="hint">
-              Try MED-001/B1001,
+              Demo examples:
+              MED-001/B1001,
               MED-002/B2045,
               or MED-003.
             </p>
@@ -506,9 +631,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
+        {/* =================================================
             CHECKING
-        ================================================== */}
+        ================================================= */}
 
         {screen === "checking" && (
           <section className="screen center-screen">
@@ -528,9 +653,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
+        {/* =================================================
             RESULT
-        ================================================== */}
+        ================================================= */}
 
         {screen === "result" &&
           result && (
@@ -538,7 +663,8 @@ export default function App() {
 
               <BackButton onClick={goBack} />
 
-              {result.status === "MATCH" && (
+              {result.status ===
+                "MATCH" && (
                 <StatusCard
                   status="MATCH"
                   title="Match"
@@ -546,7 +672,8 @@ export default function App() {
                 />
               )}
 
-              {result.status === "NO_MATCH" && (
+              {result.status ===
+                "NO_MATCH" && (
                 <StatusCard
                   status="NO_MATCH"
                   title="No Match"
@@ -567,7 +694,6 @@ export default function App() {
                 <div className="notice">
                   Offline result: cached
                   prototype data may be used.
-                  Sync will resume when online.
                 </div>
               )}
 
@@ -615,7 +741,8 @@ export default function App() {
 
               <div className="action-stack">
 
-                {result.status === "MATCH" && (
+                {result.status ===
+                  "MATCH" && (
                   <PrimaryButton
                     onClick={() =>
                       setScreen("details")
@@ -625,7 +752,8 @@ export default function App() {
                   </PrimaryButton>
                 )}
 
-                {result.status !== "MATCH" && (
+                {result.status !==
+                  "MATCH" && (
                   <PrimaryButton
                     onClick={() =>
                       setScreen("report")
@@ -633,18 +761,6 @@ export default function App() {
                   >
                     Report Medicine
                   </PrimaryButton>
-                )}
-
-                {result.status !== "MATCH" && (
-                  <SecondaryButton
-                    onClick={() =>
-                      alert(
-                        "Prototype action: contact a qualified pharmacist."
-                      )
-                    }
-                  >
-                    Contact Pharmacist
-                  </SecondaryButton>
                 )}
 
                 <SecondaryButton
@@ -658,9 +774,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ==================================================
-            DETAILS
-        ================================================== */}
+        {/* =================================================
+            MEDICINE DETAILS
+        ================================================= */}
 
         {screen === "details" &&
           result?.product && (
@@ -724,7 +840,10 @@ export default function App() {
                   value={
                     result.product
                       .lastUpdated
-                      .replace("T", " ")
+                      .replace(
+                        "T",
+                        " "
+                      )
                   }
                 />
 
@@ -741,9 +860,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ==================================================
+        {/* =================================================
             REPORT
-        ================================================== */}
+        ================================================= */}
 
         {screen === "report" && (
           <section className="screen">
@@ -759,9 +878,9 @@ export default function App() {
             </h1>
 
             <div className="notice">
-              Prototype only. Do not enter
-              real personal or health
-              information.
+              Prototype only.
+              Do not enter real personal
+              or health information.
             </div>
 
             <label className="field">
@@ -820,11 +939,12 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            CONFIRMATION
-        ================================================== */}
+        {/* =================================================
+            REPORT CONFIRMATION
+        ================================================= */}
 
-        {screen === "confirmation" && (
+        {screen ===
+          "confirmation" && (
           <section className="screen center-screen">
 
             <div className="success-badge">
@@ -851,55 +971,164 @@ export default function App() {
           </section>
         )}
 
-        {/* ==================================================
-            DASHBOARD
-        ================================================== */}
+        {/* =================================================
+            MANUFACTURER DASHBOARD
+        ================================================= */}
 
-        {screen === "dashboard" && (
+        {screen ===
+          "manufacturerDashboard" && (
           <section className="screen">
 
             <BackButton onClick={goBack} />
 
-            <div className="dashboard-head">
+            <DashboardHeader
+              title="Manufacturer"
+              role="Manufacturer"
+            />
 
-              <div>
+            <ManufacturerDashboard
+              totals={totals}
+            />
 
-                <div className="eyebrow">
-                  Professional dashboard
-                </div>
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
 
-                <h1>
-                  {role
-                    .charAt(0)
-                    .toUpperCase() +
-                    role.slice(1)}
-                </h1>
+          </section>
+        )}
 
-              </div>
+        {/* =================================================
+            PHARMACIST DASHBOARD
+        ================================================= */}
 
-              <span className="role-badge">
-                {role}
-              </span>
+        {screen ===
+          "pharmacistDashboard" && (
+          <section className="screen">
+
+            <BackButton onClick={goBack} />
+
+            <DashboardHeader
+              title="Pharmacist"
+              role="Pharmacist"
+            />
+
+            <PharmacistDashboard
+              onVerify={() =>
+                setScreen("scan")
+              }
+            />
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* =================================================
+            CONSUMER DASHBOARD
+        ================================================= */}
+
+        {screen ===
+          "consumerDashboard" && (
+          <section className="screen">
+
+            <BackButton onClick={goBack} />
+
+            <DashboardHeader
+              title="My MedAuth"
+              role="Consumer"
+            />
+
+            <div className="panel">
+
+              <h3>
+                Verify a medicine
+              </h3>
+
+              <p>
+                Scan a medicine package
+                to check its verification
+                record.
+              </p>
+
+              <PrimaryButton
+                onClick={() =>
+                  setScreen("scan")
+                }
+              >
+                Scan Medicine
+              </PrimaryButton>
 
             </div>
 
-            {role === "manufacturer" && (
-              <ManufacturerDashboard
-                totals={totals}
-              />
-            )}
+            <div className="panel">
 
-            {role === "pharmacist" && (
-              <PharmacistDashboard
-                onVerify={() =>
-                  setScreen("scan")
+              <h3>
+                Enter code manually
+              </h3>
+
+              <p>
+                You can also verify a
+                medicine using its product
+                code and batch.
+              </p>
+
+              <SecondaryButton
+                onClick={() =>
+                  setScreen("manual")
                 }
-              />
-            )}
+              >
+                Enter Medicine Code
+              </SecondaryButton>
 
-            {role === "admin" && (
-              <AdminDashboard />
-            )}
+            </div>
+
+            <div className="panel">
+
+              <h3>
+                Recent activity
+              </h3>
+
+              <p>
+                MED-001 / B1001 — Match
+              </p>
+
+              <p>
+                MED-002 / B2045 — No Match
+              </p>
+
+            </div>
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* =================================================
+            ADMIN DASHBOARD
+        ================================================= */}
+
+        {screen ===
+          "adminDashboard" && (
+          <section className="screen">
+
+            <BackButton onClick={goBack} />
+
+            <DashboardHeader
+              title="Administration"
+              role="Admin"
+            />
+
+            <AdminDashboard />
 
             <SecondaryButton
               onClick={reset}
@@ -915,11 +1144,13 @@ export default function App() {
   );
 }
 
-/* ==================================================
-   BACK BUTTON
-================================================== */
+/* =========================================================
+   BACK
+========================================================= */
 
-function BackButton({ onClick }) {
+function BackButton({
+  onClick,
+}) {
   return (
     <button
       type="button"
@@ -941,9 +1172,9 @@ function BackButton({ onClick }) {
   );
 }
 
-/* ==================================================
+/* =========================================================
    SCAN ICON
-================================================== */
+========================================================= */
 
 function ScanIcon() {
   return (
@@ -978,14 +1209,19 @@ function ScanIcon() {
         height="3"
       />
 
-      <path d="M14 14h2v2h-2z" />
+      <rect
+        x="13"
+        y="13"
+        width="3"
+        height="3"
+      />
     </svg>
   );
 }
 
-/* ==================================================
-   PASSWORD ICONS
-================================================== */
+/* =========================================================
+   EYE ICON
+========================================================= */
 
 function EyeIcon() {
   return (
@@ -1019,9 +1255,9 @@ function EyeOffIcon() {
   );
 }
 
-/* ==================================================
-   SECURITY ICON
-================================================== */
+/* =========================================================
+   LOCK
+========================================================= */
 
 function LockIcon() {
   return (
@@ -1043,9 +1279,40 @@ function LockIcon() {
   );
 }
 
-/* ==================================================
+/* =========================================================
+   DASHBOARD HEADER
+========================================================= */
+
+function DashboardHeader({
+  title,
+  role,
+}) {
+  return (
+    <div className="dashboard-head">
+
+      <div>
+
+        <div className="eyebrow">
+          MedAuth account
+        </div>
+
+        <h1>
+          {title}
+        </h1>
+
+      </div>
+
+      <span className="role-badge">
+        {role}
+      </span>
+
+    </div>
+  );
+}
+
+/* =========================================================
    DETAIL ROW
-================================================== */
+========================================================= */
 
 function Row({
   label,
@@ -1066,9 +1333,9 @@ function Row({
   );
 }
 
-/* ==================================================
-   MANUFACTURER DASHBOARD
-================================================== */
+/* =========================================================
+   MANUFACTURER
+========================================================= */
 
 function ManufacturerDashboard({
   totals,
@@ -1093,7 +1360,7 @@ function ManufacturerDashboard({
         />
 
         <Metric
-          label="Covered events"
+          label="Covered"
           value={totals.covered}
         />
 
@@ -1121,7 +1388,7 @@ function ManufacturerDashboard({
       <div className="panel">
 
         <h3>
-          Products & GS1
+          Products
         </h3>
 
         <p>
@@ -1141,9 +1408,9 @@ function ManufacturerDashboard({
   );
 }
 
-/* ==================================================
-   PHARMACIST DASHBOARD
-================================================== */
+/* =========================================================
+   PHARMACIST
+========================================================= */
 
 function PharmacistDashboard({
   onVerify,
@@ -1169,12 +1436,6 @@ function PharmacistDashboard({
           — Active Recall (demo)
         </p>
 
-        <p className="muted">
-          Use qualified clinical and
-          regulatory sources for real
-          decisions.
-        </p>
-
       </div>
 
       <div className="panel">
@@ -1196,9 +1457,9 @@ function PharmacistDashboard({
   );
 }
 
-/* ==================================================
-   ADMIN DASHBOARD
-================================================== */
+/* =========================================================
+   ADMIN
+========================================================= */
 
 function AdminDashboard() {
   return (
@@ -1242,9 +1503,9 @@ function AdminDashboard() {
   );
 }
 
-/* ==================================================
+/* =========================================================
    METRIC
-================================================== */
+========================================================= */
 
 function Metric({
   label,
