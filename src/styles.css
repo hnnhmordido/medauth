@@ -1,6 +1,1316 @@
-/* ==================================================
-   UPDATED VERIFICATION RESULT
-================================================== */
+/* =========================================================
+   MEDAUTH COMPLETE STYLES
+   Target phone size: 393 × 852
+========================================================= */
+
+:root {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  color: #17324d;
+  background: #eef5f9;
+
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  background: #eef5f9;
+
+  overflow-x: hidden;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+img,
+svg {
+  display: block;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.18);
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app-shell {
+  width: 100%;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 18px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f9fcfe 0%,
+      #edf5f9 100%
+    );
+}
+
+
+/* =========================================================
+   PHONE
+========================================================= */
+
+.phone-stage {
+  width: 393px;
+  height: 852px;
+
+  max-width: 100%;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border:
+    1px solid
+    #d6e5ed;
+
+  border-radius: 30px;
+
+  box-shadow:
+    0 12px 36px
+    rgba(18, 55, 84, 0.09);
+}
+
+
+/* =========================================================
+   SCREEN
+========================================================= */
+
+.screen {
+  width: 100%;
+  height: 100%;
+
+  min-height: 0;
+
+  flex: 1 1 auto;
+
+  padding:
+    max(
+      17px,
+      env(safe-area-inset-top)
+    )
+    25px
+    max(
+      17px,
+      env(safe-area-inset-bottom)
+    );
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background: #ffffff;
+
+  scrollbar-width: none;
+}
+
+.screen::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* =========================================================
+   GLOBAL TYPOGRAPHY
+========================================================= */
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin:
+    15px
+    0
+    10px;
+
+  color: #12304b;
+
+  font-size: 2rem;
+
+  line-height: 1.08;
+
+  letter-spacing: -0.035em;
+}
+
+h2 {
+  color: #12304b;
+
+  font-size: 1.35rem;
+
+  line-height: 1.2;
+}
+
+h3 {
+  color: #12304b;
+
+  font-size: 0.95rem;
+
+  line-height: 1.3;
+}
+
+p {
+  color: #526a7f;
+
+  font-size: 0.84rem;
+
+  line-height: 1.55;
+}
+
+.eyebrow {
+  color:
+    var(--brand-teal, #00989f);
+
+  font-size: 0.72rem;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.12em;
+}
+
+.muted {
+  color: #72879a;
+
+  font-size: 0.8rem;
+}
+
+
+/* =========================================================
+   SHARED BUTTONS
+========================================================= */
+
+.btn {
+  width: 100%;
+
+  min-height: 54px;
+
+  padding: 14px 18px;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius: 14px;
+
+  font-size: 0.94rem;
+
+  font-weight: 760;
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.985);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      110deg,
+      var(--brand-blue, #0b63b6),
+      var(--brand-teal, #00989f)
+    );
+
+  box-shadow:
+    0 5px 14px
+    rgba(11, 99, 182, 0.1);
+}
+
+.btn-secondary {
+  color:
+    var(--brand-deep, #084b99);
+
+  background: #ffffff;
+
+  border-color: #90bfdc;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.back-button {
+  width: auto;
+
+  min-height: 40px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  margin:
+    -4px
+    0
+    10px
+    -8px;
+
+  padding: 7px 9px;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  font-size: 0.88rem;
+
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+.back-button:hover,
+.back-button:active {
+  background: #edf6fb;
+}
+
+
+/* =========================================================
+   NETWORK BADGE
+========================================================= */
+
+.network-badge {
+  min-height: 34px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 7px 11px;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  font-size: 0.74rem;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    transform 0.12s ease;
+}
+
+.network-badge.online {
+  color: #117252;
+
+  background: #e8f7f1;
+}
+
+.network-badge.offline {
+  color: #687783;
+
+  background: #edf1f3;
+}
+
+.network-badge:active {
+  transform: scale(0.97);
+}
+
+.wifi-icon {
+  width: 18px;
+  height: 18px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.9;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+}
+
+.wifi-dot {
+  fill: currentColor;
+
+  stroke: none;
+}
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+.home-screen {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.home-status-row {
+  width: 100%;
+
+  min-height: 38px;
+
+  display: flex;
+
+  justify-content: flex-end;
+  align-items: flex-start;
+
+  flex-shrink: 0;
+}
+
+.home-brand {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  margin: 2px 0 16px;
+}
+
+.hero-logo {
+  width: 245px;
+
+  max-width: 78%;
+
+  height: auto;
+
+  max-height: 215px;
+
+  object-fit: contain;
+}
+
+.home-scan-button {
+  width: 100%;
+
+  min-height: 58px;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 14px 18px;
+
+  border: 0;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      110deg,
+      #0756b4,
+      var(--brand-teal, #00989f)
+    );
+
+  color: #ffffff;
+
+  font-size: 1rem;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 6px 16px
+    rgba(11, 99, 182, 0.13);
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease;
+}
+
+.home-scan-button:active {
+  transform: scale(0.985);
+}
+
+.home-scan-icon {
+  width: 23px;
+  height: 23px;
+
+  max-width: 23px;
+  max-height: 23px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home-divider {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin: 19px 0 15px;
+
+  color: #8394a3;
+
+  font-size: 0.84rem;
+
+  font-weight: 650;
+}
+
+.home-divider::before,
+.home-divider::after {
+  content: "";
+
+  flex: 1;
+
+  height: 1px;
+
+  background: #cad9e3;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.home-login-form {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 13px;
+}
+
+.home-login-field {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.home-login-field > span {
+  color: #16477e;
+
+  font-size: 0.7rem;
+
+  font-weight: 850;
+
+  letter-spacing: 0.055em;
+}
+
+.home-login-field input {
+  width: 100%;
+
+  height: 52px;
+
+  padding: 0 15px;
+
+  border:
+    1px solid
+    #9fc7e5;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #17324d;
+
+  font-size: 0.88rem;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.home-login-field input::placeholder {
+  color: #91a3b1;
+}
+
+.home-login-field input:focus {
+  border-color:
+    var(--brand-blue, #0b63b6);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(11, 99, 182, 0.09);
+}
+
+.password-input-wrap {
+  width: 100%;
+
+  position: relative;
+}
+
+.password-input-wrap input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+
+  right: 4px;
+
+  top: 50%;
+
+  width: 42px;
+  height: 42px;
+
+  transform:
+    translateY(-50%);
+
+  display: grid;
+
+  place-items: center;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #648097;
+}
+
+.password-toggle svg {
+  width: 19px;
+  height: 19px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.login-options {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.remember-device {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: #486a84;
+
+  font-size: 0.72rem;
+}
+
+.remember-device input {
+  width: 15px;
+  height: 15px;
+
+  margin: 0;
+
+  accent-color:
+    var(--brand-blue, #0b63b6);
+}
+
+.forgot-password {
+  min-height: 36px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 5px 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  font-size: 0.72rem;
+
+  font-weight: 750;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.home-signin-button {
+  width: 100%;
+
+  min-height: 56px;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 14px 18px;
+
+  border: 0;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      110deg,
+      #0756b4,
+      var(--brand-teal, #00989f)
+    );
+
+  color: #ffffff;
+
+  font-size: 0.94rem;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 5px 14px
+    rgba(11, 99, 182, 0.12);
+}
+
+.login-error {
+  width: 100%;
+
+  padding: 9px 11px;
+
+  border:
+    1px solid
+    #efc3c3;
+
+  border-radius: 10px;
+
+  background: #fff4f4;
+
+  color: #a43d3d;
+
+  font-size: 0.7rem;
+
+  line-height: 1.4;
+}
+
+.security-footer {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 14px;
+
+  padding: 8px 0 2px;
+
+  color: #647e92;
+
+  font-size: 0.57rem;
+
+  line-height: 1.35;
+
+  text-align: center;
+}
+
+.security-lock {
+  width: 13px;
+  height: 13px;
+
+  min-width: 13px;
+
+  flex: 0 0 13px;
+
+  fill: none;
+
+  stroke:
+    var(--brand-teal, #00989f);
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   FORGOT PASSWORD
+========================================================= */
+
+.forgot-screen {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.forgot-brand {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: center;
+
+  margin: 5px 0 22px;
+}
+
+.forgot-logo {
+  width: 145px;
+
+  max-width: 48%;
+
+  height: auto;
+
+  object-fit: contain;
+}
+
+.forgot-description {
+  margin:
+    0
+    0
+    24px;
+
+  color: #617a8e;
+
+  font-size: 0.86rem;
+
+  line-height: 1.6;
+}
+
+.forgot-form {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.reset-success {
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.reset-success-icon {
+  width: 72px;
+  height: 72px;
+
+  display: grid;
+
+  place-items: center;
+
+  margin-bottom: 16px;
+
+  border-radius: 50%;
+
+  background: #e9f8f5;
+
+  color:
+    var(--brand-teal, #00989f);
+}
+
+.reset-success-icon svg {
+  width: 32px;
+  height: 32px;
+
+  fill: none;
+
+  stroke: currentColor;
+}
+
+
+/* =========================================================
+   FORM FIELDS
+========================================================= */
+
+.field {
+  width: 100%;
+
+  display: grid;
+
+  gap: 8px;
+
+  margin:
+    16px
+    0;
+
+  color: #29475f;
+
+  font-size: 0.82rem;
+
+  font-weight: 750;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+
+  padding: 14px 15px;
+
+  border:
+    1px solid
+    #c8dbe7;
+
+  border-radius: 14px;
+
+  outline: none;
+
+  background: #fbfdff;
+
+  color: #17324d;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color:
+    var(--brand-blue, #0b63b6);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(11, 99, 182, 0.09);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+
+/* =========================================================
+   SCAN SCREEN
+========================================================= */
+
+.scanner-panel {
+  height: 280px;
+
+  position: relative;
+
+  display: grid;
+
+  place-items: center;
+
+  overflow: hidden;
+
+  margin:
+    20px
+    0
+    15px;
+
+  border:
+    2px solid
+    #b8dbe7;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #eff8fc,
+      #e8f7f4
+    );
+}
+
+.scanner-panel small {
+  position: absolute;
+
+  bottom: 14px;
+
+  color: #7290a3;
+
+  font-size: 0.7rem;
+}
+
+.scan-line {
+  position: absolute;
+
+  left: 15%;
+  right: 15%;
+
+  height: 3px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--brand-blue, #0b63b6),
+      var(--brand-aqua, #01a09d)
+    );
+
+  animation:
+    scan
+    2.4s
+    ease-in-out
+    infinite alternate;
+}
+
+@keyframes scan {
+  from {
+    top: 24%;
+  }
+
+  to {
+    top: 76%;
+  }
+}
+
+.scan-corners span {
+  position: absolute;
+
+  width: 58px;
+  height: 58px;
+
+  border-color:
+    var(--brand-blue, #0b63b6);
+
+  border-style: solid;
+}
+
+.scan-corners span:nth-child(1) {
+  left: 28px;
+
+  top: 28px;
+
+  border-width:
+    5px
+    0
+    0
+    5px;
+}
+
+.scan-corners span:nth-child(2) {
+  right: 28px;
+
+  top: 28px;
+
+  border-width:
+    5px
+    5px
+    0
+    0;
+}
+
+.scan-corners span:nth-child(3) {
+  left: 28px;
+
+  bottom: 28px;
+
+  border-width:
+    0
+    0
+    5px
+    5px;
+}
+
+.scan-corners span:nth-child(4) {
+  right: 28px;
+
+  bottom: 28px;
+
+  border-width:
+    0
+    5px
+    5px
+    0;
+}
+
+.sample-box {
+  width: 100%;
+
+  display: grid;
+
+  gap: 8px;
+
+  padding: 14px;
+
+  margin-bottom: 14px;
+
+  border:
+    1px solid
+    #dcebf2;
+
+  border-radius: 16px;
+
+  background: #f6fbfd;
+}
+
+.sample-box strong {
+  color: #234b67;
+
+  font-size: 0.78rem;
+}
+
+.sample-box button {
+  padding: 10px 11px;
+
+  border: 0;
+
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  color: #27536f;
+
+  text-align: left;
+
+  font-size: 0.74rem;
+}
+
+.sample-box button:hover {
+  background: #eef7fb;
+}
+
+
+/* =========================================================
+   CHECKING SCREEN
+========================================================= */
+
+.center-screen {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.loader {
+  width: 64px;
+  height: 64px;
+
+  border:
+    6px solid
+    #dbeaf3;
+
+  border-top-color:
+    var(--brand-teal, #00989f);
+
+  border-radius: 50%;
+
+  animation:
+    spin
+    0.9s
+    linear
+    infinite;
+}
+
+@keyframes spin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESULT STATUS CARDS
+========================================================= */
+
+.status-card {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    56px
+    1fr;
+
+  gap: 13px;
+
+  align-items: center;
+
+  padding: 15px;
+
+  border:
+    1px solid;
+
+  border-radius: 17px;
+}
+
+.status-card h2 {
+  margin:
+    2px
+    0
+    5px;
+
+  font-size: 1.45rem;
+}
+
+.status-card p {
+  margin: 0;
+
+  font-size: 0.78rem;
+
+  line-height: 1.45;
+}
+
+.status-icon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  font-size: 1.7rem;
+
+  font-weight: 900;
+}
+
+.status-card.match {
+  background: #eaf9f6;
+
+  border-color: #9edfd7;
+}
+
+.status-card.match
+.status-icon {
+  background:
+    var(--brand-teal, #00989f);
+}
+
+.status-card.no_match {
+  background: #fff5e9;
+
+  border-color: #f0c994;
+}
+
+.status-card.no_match
+.status-icon {
+  background: #c97900;
+}
+
+.status-card.not_covered {
+  background: #eef5fb;
+
+  border-color: #b9d5e7;
+}
+
+.status-card.not_covered
+.status-icon {
+  background:
+    var(--brand-blue, #0b63b6);
+}
+
+
+/* =========================================================
+   RESULT DETAILS
+========================================================= */
 
 .verification-details-card {
   width: 100%;
@@ -9,12 +1319,63 @@
 
   padding: 2px 14px;
 
-  border: 1px solid #dce7ed;
+  border:
+    1px solid
+    #dce7ed;
 
   border-radius: 15px;
 
   background: #ffffff;
 }
+
+.details-list {
+  width: 100%;
+
+  margin:
+    18px
+    0;
+
+  border-top:
+    1px solid
+    #dfebf2;
+}
+
+.detail-row {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1.35fr;
+
+  gap: 14px;
+
+  padding:
+    12px
+    0;
+
+  border-bottom:
+    1px solid
+    #dfebf2;
+
+  font-size: 0.78rem;
+}
+
+.detail-row span {
+  color: #6e8396;
+}
+
+.detail-row strong {
+  color: #203e55;
+
+  text-align: right;
+
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   RESULT INFORMATION BOXES
+========================================================= */
 
 .verification-info-box,
 .verification-warning-box {
@@ -28,13 +1389,17 @@
 }
 
 .verification-info-box {
-  border: 1px solid #d8e9f1;
+  border:
+    1px solid
+    #d8e9f1;
 
   background: #f4f9fc;
 }
 
 .verification-warning-box {
-  border: 1px solid #eddfc8;
+  border:
+    1px solid
+    #eddfc8;
 
   background: #fff9ee;
 }
@@ -47,7 +1412,7 @@
 
   color: #24465f;
 
-  font-size: 11px;
+  font-size: 0.7rem;
 }
 
 .verification-info-box p,
@@ -56,15 +1421,10 @@
 
   color: #667b89;
 
-  font-size: 10px;
+  font-size: 0.67rem;
 
   line-height: 1.5;
 }
-
-
-/* ==================================================
-   OFFLINE VERIFICATION
-================================================== */
 
 .offline-result-notice {
   width: 100%;
@@ -79,7 +1439,9 @@
 
   padding: 11px 12px;
 
-  border: 1px solid #dce4e7;
+  border:
+    1px solid
+    #dce4e7;
 
   border-radius: 12px;
 
@@ -89,21 +1451,21 @@
 .offline-result-notice strong {
   color: #526976;
 
-  font-size: 10px;
+  font-size: 0.68rem;
 }
 
 .offline-result-notice span {
   color: #7b8c95;
 
-  font-size: 9px;
+  font-size: 0.62rem;
 
   line-height: 1.4;
 }
 
 
-/* ==================================================
+/* =========================================================
    SUPPLY CHAIN SNAPSHOT
-================================================== */
+========================================================= */
 
 .supply-chain-card {
   width: 100%;
@@ -112,7 +1474,9 @@
 
   padding: 14px;
 
-  border: 1px solid #dce7ed;
+  border:
+    1px solid
+    #dce7ed;
 
   border-radius: 15px;
 
@@ -122,7 +1486,7 @@
 .supply-chain-card h3 {
   margin: 0;
 
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 
 .prototype-label {
@@ -132,7 +1496,7 @@
 
   color: #84949e;
 
-  font-size: 8px;
+  font-size: 0.54rem;
 }
 
 .supply-chain-timeline {
@@ -189,7 +1553,7 @@
 
   background: #2e8a69;
 
-  font-size: 11px;
+  font-size: 0.68rem;
 
   font-weight: 900;
 }
@@ -222,14 +1586,14 @@
 .supply-stage-heading strong {
   color: #294b61;
 
-  font-size: 10px;
+  font-size: 0.68rem;
 }
 
 .supply-stage-content > span,
 .supply-stage-content small {
   color: #82929c;
 
-  font-size: 8px;
+  font-size: 0.55rem;
 
   line-height: 1.35;
 }
@@ -239,7 +1603,7 @@
 
   color: #795f3f;
 
-  font-size: 8px;
+  font-size: 0.56rem;
 
   line-height: 1.4;
 }
@@ -251,7 +1615,7 @@
 
   border-radius: 999px;
 
-  font-size: 6.5px;
+  font-size: 0.46rem;
 
   font-weight: 850;
 }
@@ -291,7 +1655,7 @@
 
   background: #fff7e8;
 
-  font-size: 8px;
+  font-size: 0.56rem;
 
   line-height: 1.45;
 }
@@ -301,15 +1665,10 @@
 
   color: #8a989f;
 
-  font-size: 7.5px;
+  font-size: 0.52rem;
 
   line-height: 1.4;
 }
-
-
-/* ==================================================
-   SUPPLY CHAIN - NOT COVERED
-================================================== */
 
 .supply-unavailable-row {
   min-height: 40px;
@@ -322,19 +1681,1814 @@
 
   gap: 10px;
 
-  border-bottom: 1px solid #edf2f4;
+  border-bottom:
+    1px solid
+    #edf2f4;
 }
 
 .supply-unavailable-row span {
   color: #7b8d98;
 
-  font-size: 9px;
+  font-size: 0.62rem;
 }
 
 .supply-unavailable-row strong {
   color: #526b7b;
 
-  font-size: 9px;
+  font-size: 0.62rem;
 
   text-align: right;
+}
+
+
+/* =========================================================
+   ACTION STACK
+========================================================= */
+
+.action-stack {
+  width: 100%;
+
+  display: grid;
+
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+
+/* =========================================================
+   GENERIC PANELS
+========================================================= */
+
+.product-card,
+.panel,
+.notice {
+  width: 100%;
+
+  margin:
+    16px
+    0;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #d9e8f0;
+
+  border-radius: 16px;
+
+  background: #f9fcfe;
+}
+
+.panel h3 {
+  margin:
+    0
+    0
+    9px;
+}
+
+.panel p {
+  margin:
+    7px
+    0;
+}
+
+.notice {
+  background: #eef8fb;
+
+  color: #3f6177;
+}
+
+.product-card div {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding:
+    8px
+    0;
+
+  border-bottom:
+    1px solid
+    #e7f0f5;
+}
+
+.product-card div:last-child {
+  border-bottom: 0;
+}
+
+.product-card span {
+  color: #71879a;
+}
+
+.product-card strong {
+  text-align: right;
+}
+
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.success-badge {
+  width: 76px;
+  height: 76px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  font-size: 2.5rem;
+
+  font-weight: 900;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--brand-blue, #0b63b6),
+      var(--brand-teal, #00989f)
+    );
+}
+
+
+/* =========================================================
+   GENERAL DASHBOARD
+========================================================= */
+
+.dashboard-head {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin-bottom: 12px;
+}
+
+.role-badge {
+  flex-shrink: 0;
+
+  padding: 7px 10px;
+
+  border-radius: 999px;
+
+  background: #e8f4fb;
+
+  color:
+    var(--brand-deep, #084b99);
+
+  font-size: 0.72rem;
+
+  font-weight: 800;
+}
+
+.metric-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 10px;
+
+  margin:
+    14px
+    0;
+}
+
+.metric {
+  min-width: 0;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #d5e8f1;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f4faff,
+      #f2fffd
+    );
+}
+
+.metric span {
+  display: block;
+
+  color: #698197;
+
+  font-size: 0.7rem;
+}
+
+.metric strong {
+  display: block;
+
+  margin-top: 4px;
+
+  color:
+    var(--brand-deep, #084b99);
+
+  font-size: 1.45rem;
+}
+
+
+/* =========================================================
+   PHARMACIST DASHBOARD
+========================================================= */
+
+.pharmacist-screen {
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
+
+  padding:
+    19px
+    18px
+    10px;
+}
+
+.pharmacist-profile-header {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 12px;
+}
+
+.pharmacist-profile-main {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.pharmacist-avatar {
+  width: 58px !important;
+  height: 58px !important;
+
+  min-width: 58px !important;
+  min-height: 58px !important;
+
+  max-width: 58px !important;
+  max-height: 58px !important;
+
+  flex:
+    0
+    0
+    58px;
+
+  object-fit: cover;
+
+  object-position:
+    center 20%;
+
+  border:
+    2px solid
+    #d7e9f3;
+
+  border-radius: 50%;
+}
+
+.pharmacist-greeting {
+  min-width: 0;
+}
+
+.pharmacist-welcome {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #73899c;
+
+  font-size: 0.68rem;
+
+  font-weight: 650;
+}
+
+.pharmacist-greeting h1 {
+  margin: 0;
+
+  color: #082f5a;
+
+  font-size: 1.5rem;
+
+  line-height: 1.04;
+
+  letter-spacing:
+    -0.025em;
+}
+
+.pharmacist-greeting p {
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    var(--brand-teal, #00989f);
+
+  font-size: 0.62rem;
+
+  line-height: 1.2;
+
+  font-weight: 750;
+}
+
+.pharmacist-profile-actions {
+  flex-shrink: 0;
+
+  display: flex;
+
+  gap: 7px;
+}
+
+.profile-icon-button {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+
+  place-items: center;
+
+  padding: 0;
+
+  border:
+    1px solid
+    #d8e5ed;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color:
+    var(--brand-blue, #0b63b6);
+}
+
+.profile-icon-button svg {
+  width: 19px !important;
+  height: 19px !important;
+
+  fill: none !important;
+
+  stroke:
+    currentColor !important;
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   PHARMACIST STATUS
+========================================================= */
+
+.pharmacist-system-status {
+  width: 100%;
+
+  min-height: 52px;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 11px;
+
+  padding:
+    9px
+    13px;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius: 14px;
+}
+
+.pharmacist-system-status > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.pharmacist-system-status strong {
+  font-size: 0.72rem;
+
+  line-height: 1.25;
+}
+
+.pharmacist-system-status > div > span {
+  font-size: 0.56rem;
+}
+
+.pharmacist-system-status.is-online {
+  color: #17694f;
+
+  background: #eaf8f3;
+
+  border-color: #d7eee5;
+}
+
+.pharmacist-system-status.is-offline {
+  color: #586c7b;
+
+  background: #f1f4f6;
+
+  border-color: #e3e9ed;
+}
+
+.pharmacist-system-status
+.network-badge {
+  min-height: 31px;
+
+  padding:
+    6px
+    10px;
+
+  font-size: 0.62rem;
+
+  flex-shrink: 0;
+}
+
+.pharmacist-system-status
+.wifi-icon {
+  width: 15px;
+  height: 15px;
+}
+
+
+/* =========================================================
+   PHARMACIST VERIFY BUTTON
+========================================================= */
+
+.pharmacist-primary-action {
+  width: 100%;
+
+  min-height: 68px;
+
+  display: grid;
+
+  grid-template-columns:
+    27px
+    1fr
+    18px;
+
+  align-items: center;
+
+  gap: 11px;
+
+  padding:
+    12px
+    15px;
+
+  margin-bottom: 11px;
+
+  border: 0;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      110deg,
+      var(--brand-blue, #0b63b6),
+      var(--brand-teal, #00989f)
+    );
+
+  color: #ffffff;
+
+  text-align: left;
+
+  box-shadow:
+    0 5px 14px
+    rgba(11, 99, 182, 0.11);
+}
+
+.pharmacist-primary-action > svg {
+  width: 24px !important;
+  height: 24px !important;
+
+  fill: none !important;
+
+  stroke:
+    currentColor !important;
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pharmacist-primary-action > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.pharmacist-primary-action strong {
+  font-size: 0.95rem;
+
+  line-height: 1.2;
+
+  font-weight: 800;
+}
+
+.pharmacist-primary-action
+div span {
+  font-size: 0.62rem;
+
+  line-height: 1.3;
+
+  opacity: 0.9;
+}
+
+
+/* =========================================================
+   PHARMACIST ACTION GRID
+========================================================= */
+
+.pharmacist-action-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 9px;
+
+  margin-bottom: 11px;
+}
+
+.pharmacist-action-card {
+  width: 100%;
+
+  min-width: 0;
+
+  min-height: 92px;
+
+  display: grid;
+
+  grid-template-columns:
+    29px
+    minmax(
+      0,
+      1fr
+    );
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding:
+    12px
+    11px;
+
+  border:
+    1px solid
+    #d6e3ed;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  color: #17324d;
+
+  text-align: left;
+}
+
+.pharmacist-action-card > svg {
+  width: 23px !important;
+  height: 23px !important;
+
+  fill: none !important;
+
+  stroke:
+    var(--brand-blue, #0b63b6) !important;
+
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pharmacist-action-copy {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 6px;
+}
+
+.pharmacist-action-copy strong {
+  display: block;
+
+  width: 100%;
+
+  color: #092e56;
+
+  font-size: 0.78rem;
+
+  line-height: 1.2;
+
+  font-weight: 800;
+}
+
+.pharmacist-action-copy span {
+  display: block;
+
+  width: 100%;
+
+  color: #738496;
+
+  font-size: 0.56rem;
+
+  line-height: 1.35;
+}
+
+.pharmacist-escalate-card > svg {
+  stroke:
+    #c75f47 !important;
+}
+
+
+/* =========================================================
+   PHARMACIST SUMMARY
+========================================================= */
+
+.pharmacist-summary {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 7px;
+
+  margin-bottom: 13px;
+}
+
+.pharmacist-metric {
+  min-width: 0;
+
+  min-height: 68px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding:
+    7px
+    4px;
+
+  border:
+    1px solid
+    #d9e5ed;
+
+  border-radius: 12px;
+
+  background: #f7fbfd;
+
+  text-align: center;
+}
+
+.pharmacist-metric span {
+  min-height: 25px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #64778a;
+
+  font-size: 0.5rem;
+
+  line-height: 1.15;
+}
+
+.pharmacist-metric strong {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #082f59;
+
+  font-size: 1.18rem;
+
+  line-height: 1;
+
+  font-weight: 850;
+}
+
+
+/* =========================================================
+   RECENT ACTIVITY
+========================================================= */
+
+.pharmacist-recent {
+  width: 100%;
+
+  flex:
+    1
+    1
+    auto;
+
+  min-height: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+.section-heading-row {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 5px;
+}
+
+.section-heading-row h3 {
+  margin: 0;
+
+  color: #092f58;
+
+  font-size: 0.86rem;
+
+  line-height: 1.2;
+
+  font-weight: 800;
+}
+
+.text-action {
+  min-height: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  padding:
+    4px
+    0;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  font-size: 0.62rem;
+
+  font-weight: 750;
+}
+
+.recent-event-row {
+  width: 100%;
+
+  min-height: 52px;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  padding:
+    7px
+    0;
+
+  border-bottom:
+    1px solid
+    #e5edf2;
+}
+
+.recent-event-row > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.recent-event-row strong {
+  max-width: 205px;
+
+  color: #183a56;
+
+  font-size: 0.68rem;
+
+  line-height: 1.2;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+.recent-event-row span {
+  color: #778a99;
+
+  font-size: 0.54rem;
+
+  line-height: 1.2;
+}
+
+.recent-event-result {
+  flex-shrink: 0;
+
+  text-align: right;
+}
+
+
+/* =========================================================
+   PHARMACIST NAV
+========================================================= */
+
+.pharmacist-nav {
+  width: 100%;
+
+  flex-shrink: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      5,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 4px;
+
+  margin-top: 8px;
+
+  padding-top: 8px;
+
+  border-top:
+    1px solid
+    #dce7ed;
+
+  background: #ffffff;
+}
+
+.pharmacist-nav button {
+  min-width: 0;
+
+  min-height: 38px;
+
+  padding:
+    6px
+    2px;
+
+  border: 0;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #6f8190;
+
+  font-size: 0.56rem;
+
+  line-height: 1.1;
+
+  font-weight: 700;
+}
+
+.pharmacist-nav button.active {
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: #edf6fb;
+}
+
+
+/* =========================================================
+   SHORTAGES
+========================================================= */
+
+.shortage-list {
+  width: 100%;
+
+  display: grid;
+
+  gap: 11px;
+
+  margin-top: 18px;
+}
+
+.shortage-card {
+  width: 100%;
+
+  min-height: 78px;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #dce7ed;
+
+  border-radius: 14px;
+
+  background: #fbfdfe;
+}
+
+.shortage-card > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.shortage-card strong {
+  color: #173653;
+
+  font-size: 0.78rem;
+
+  font-weight: 800;
+
+  line-height: 1.25;
+}
+
+.shortage-card div span {
+  color: #748795;
+
+  font-size: 0.62rem;
+
+  line-height: 1.3;
+}
+
+.availability-badge {
+  flex-shrink: 0;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 27px;
+
+  padding:
+    6px
+    9px;
+
+  border-radius: 999px;
+
+  font-size: 0.56rem;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.availability-badge.available {
+  background: #e8f7f1;
+
+  color: #227659;
+}
+
+.availability-badge.low {
+  background: #fff5df;
+
+  color: #95620b;
+}
+
+.availability-badge.unavailable {
+  background: #fff0ee;
+
+  color: #b24b40;
+}
+
+
+/* =========================================================
+   BATCH LOOKUP
+========================================================= */
+
+.batch-result-card {
+  width: 100%;
+
+  margin-top: 16px;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #dce7ed;
+
+  border-radius: 15px;
+
+  background: #fbfdfe;
+}
+
+.recall-status {
+  display: inline-flex;
+
+  margin-bottom: 12px;
+
+  padding:
+    6px
+    9px;
+
+  border-radius: 999px;
+
+  font-size: 0.66rem;
+
+  font-weight: 800;
+}
+
+.recall-status.active {
+  background: #fff0ee;
+
+  color: #b84d3d;
+}
+
+.recall-status.clear {
+  background: #eaf8f2;
+
+  color: #27795d;
+}
+
+.recall-notice {
+  width: 100%;
+
+  margin-top: 14px;
+
+  padding: 12px;
+
+  border:
+    1px solid
+    #f3ddce;
+
+  border-radius: 12px;
+
+  background: #fff6f1;
+}
+
+.recall-notice strong {
+  color: #8f4a32;
+
+  font-size: 0.7rem;
+}
+
+.recall-notice p {
+  margin:
+    5px
+    0
+    0;
+
+  color: #745a4d;
+
+  font-size: 0.66rem;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   RECALLS
+========================================================= */
+
+.recall-list {
+  width: 100%;
+
+  display: grid;
+
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+.recall-list-card {
+  width: 100%;
+
+  display: grid;
+
+  gap: 7px;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #dce7ed;
+
+  border-radius: 15px;
+
+  background: #fbfdfe;
+
+  color: inherit;
+
+  text-align: left;
+}
+
+.recall-list-card strong {
+  color: #273e51;
+
+  font-size: 0.78rem;
+}
+
+.recall-list-card span,
+.recall-list-card small {
+  color: #748793;
+
+  font-size: 0.62rem;
+}
+
+.recall-pill {
+  width: max-content;
+
+  padding:
+    5px
+    8px;
+
+  border-radius: 999px;
+
+  background: #fff0ee;
+
+  color:
+    #b84d3d !important;
+
+  font-size:
+    0.58rem !important;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-list {
+  width: 100%;
+
+  display: grid;
+
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+.history-card {
+  width: 100%;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #dce7ed;
+
+  border-radius: 15px;
+
+  background: #fbfdfe;
+}
+
+.history-card-head {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 8px;
+}
+
+.history-card-head strong {
+  min-width: 0;
+
+  color: #253b4e;
+
+  font-size: 0.78rem;
+}
+
+.history-status {
+  flex-shrink: 0;
+
+  padding:
+    4px
+    7px;
+
+  border-radius: 999px;
+
+  font-size: 0.58rem;
+
+  font-weight: 800;
+}
+
+.history-match {
+  background: #e9f8f3;
+
+  color: #23765b;
+}
+
+.history-no_match {
+  background: #fff0ed;
+
+  color: #b44f41;
+}
+
+.history-not_covered {
+  background: #edf4f8;
+
+  color: #546c7d;
+}
+
+.history-recall_check {
+  background: #fff6e6;
+
+  color: #9c6807;
+}
+
+
+/* =========================================================
+   PROFILE PAGE
+========================================================= */
+
+.pharmacist-sub-screen {
+  background: #ffffff;
+}
+
+.profile-page-header {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  margin:
+    4px
+    0
+    22px;
+
+  text-align: center;
+}
+
+.profile-page-avatar {
+  width: 110px !important;
+  height: 110px !important;
+
+  min-width: 110px !important;
+  min-height: 110px !important;
+
+  max-width: 110px !important;
+  max-height: 110px !important;
+
+  object-fit: cover;
+
+  object-position:
+    center 20%;
+
+  margin:
+    0
+    auto
+    12px;
+
+  border:
+    3px solid
+    #e1edf4;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 6px 18px
+    rgba(18, 55, 84, 0.08);
+}
+
+.profile-page-header h1 {
+  margin:
+    2px
+    0
+    5px;
+
+  font-size: 1.6rem;
+}
+
+.profile-page-header p {
+  margin:
+    0
+    0
+    8px;
+
+  color: #61788a;
+
+  font-size: 0.78rem;
+}
+
+.professional-status {
+  padding:
+    5px
+    9px;
+
+  border-radius: 999px;
+
+  background: #e8f7f2;
+
+  color: #27775d;
+
+  font-size: 0.6rem;
+
+  font-weight: 750;
+}
+
+.profile-information-card {
+  padding:
+    0
+    14px;
+
+  border:
+    1px solid
+    #dce8ef;
+
+  border-radius: 15px;
+
+  background: #fbfdfe;
+}
+
+.profile-row {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 15px;
+
+  padding:
+    14px
+    0;
+
+  border-bottom:
+    1px solid
+    #e7eef2;
+
+  font-size: 0.72rem;
+}
+
+.profile-row:last-child {
+  border-bottom: 0;
+}
+
+.profile-row span {
+  color: #758997;
+}
+
+.profile-row strong {
+  color: #263e51;
+
+  text-align: right;
+}
+
+.profile-note {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 7px;
+
+  margin-top: 15px;
+
+  padding: 11px;
+
+  border-radius: 12px;
+
+  background: #f0f8fa;
+
+  color: #617b8e;
+
+  font-size: 0.62rem;
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings-card {
+  width: 100%;
+
+  margin:
+    15px
+    0;
+
+  padding:
+    0
+    13px;
+
+  border:
+    1px solid
+    #dce8ef;
+
+  border-radius: 15px;
+
+  background: #fbfdfe;
+}
+
+.settings-row {
+  min-height: 66px;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+    11px
+    0;
+
+  border-bottom:
+    1px solid
+    #e7eef2;
+}
+
+.settings-row:last-child {
+  border-bottom: 0;
+}
+
+.settings-row > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.settings-row strong {
+  color: #263e51;
+
+  font-size: 0.72rem;
+}
+
+.settings-row span {
+  color: #748895;
+
+  font-size: 0.6rem;
+}
+
+.settings-value {
+  color:
+    var(--brand-blue, #0b63b6) !important;
+
+  font-size:
+    0.84rem !important;
+
+  font-weight: 800;
+}
+
+.settings-checkbox {
+  width: 18px;
+  height: 18px;
+
+  accent-color:
+    var(--brand-blue, #0b63b6);
+}
+
+.settings-link-row {
+  width: 100%;
+
+  min-height: 52px;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  padding:
+    10px
+    0;
+
+  border: 0;
+
+  border-bottom:
+    1px solid
+    #e7eef2;
+
+  background: transparent;
+
+  color: #27465d;
+
+  font-size: 0.7rem;
+
+  font-weight: 750;
+
+  text-align: left;
+}
+
+.settings-link-row:last-child {
+  border-bottom: 0;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 393px) {
+
+  .app-shell {
+    padding: 0;
+  }
+
+  .phone-stage {
+    width: 100vw;
+
+    height: 100dvh;
+
+    max-width: none;
+
+    border: 0;
+
+    border-radius: 0;
+
+    box-shadow: none;
+  }
+
+  .screen {
+    padding-left: 20px;
+
+    padding-right: 20px;
+  }
+
+  .pharmacist-screen {
+    padding:
+      18px
+      17px
+      10px;
+  }
+}
+
+
+/* =========================================================
+   SMALL WIDTH
+========================================================= */
+
+@media (max-width: 360px) {
+
+  .screen {
+    padding-left: 17px;
+
+    padding-right: 17px;
+  }
+
+  .login-options {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 2px;
+  }
+
+  .pharmacist-profile-header {
+    gap: 8px;
+  }
+
+  .pharmacist-avatar {
+    width: 52px !important;
+    height: 52px !important;
+
+    min-width: 52px !important;
+    min-height: 52px !important;
+
+    max-width: 52px !important;
+    max-height: 52px !important;
+
+    flex-basis: 52px;
+  }
+
+  .pharmacist-greeting h1 {
+    font-size: 1.3rem;
+  }
+
+  .profile-icon-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .pharmacist-action-card {
+    min-height: 84px;
+
+    padding:
+      10px
+      9px;
+  }
+}
+
+
+/* =========================================================
+   SHORT PHONES
+========================================================= */
+
+@media (max-height: 760px) {
+
+  .home-brand {
+    margin-bottom: 9px;
+  }
+
+  .hero-logo {
+    width: 180px;
+
+    max-height: 142px;
+  }
+
+  .home-scan-button {
+    min-height: 52px;
+  }
+
+  .home-divider {
+    margin:
+      11px
+      0;
+  }
+
+  .home-login-form {
+    gap: 9px;
+  }
+
+  .home-login-field input {
+    height: 45px;
+  }
+
+  .home-signin-button {
+    min-height: 50px;
+  }
+
+  .pharmacist-screen {
+    padding-top: 12px;
+
+    overflow-y: auto;
+  }
+
+  .pharmacist-avatar {
+    width: 50px !important;
+    height: 50px !important;
+
+    min-width: 50px !important;
+    min-height: 50px !important;
+
+    max-width: 50px !important;
+    max-height: 50px !important;
+
+    flex-basis: 50px;
+  }
+
+  .pharmacist-greeting h1 {
+    font-size: 1.3rem;
+  }
+
+  .pharmacist-system-status {
+    min-height: 45px;
+
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-primary-action {
+    min-height: 58px;
+
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-action-grid {
+    gap: 7px;
+
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-action-card {
+    min-height: 76px;
+  }
+
+  .pharmacist-summary {
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-metric {
+    min-height: 57px;
+  }
+
+  .recent-event-row {
+    min-height: 42px;
+  }
+
+  .pharmacist-nav button {
+    min-height: 32px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (
+  prefers-reduced-motion:
+  reduce
+) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      0.01ms !important;
+
+    scroll-behavior:
+      auto !important;
+  }
 }
