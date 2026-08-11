@@ -563,8 +563,13 @@ export default function App() {
         return;
       }
 
-      setRole(user.role);
-      setCurrentUser(user);
+      setRole(
+        user.role
+      );
+
+      setCurrentUser(
+        user
+      );
 
       switch (
         user.role
@@ -755,21 +760,26 @@ export default function App() {
               medicineName:
                 registeredProduct
                   .medicineName,
+
               batch:
                 registeredProduct
                   .batch,
+
               recallDate:
                 registeredProduct
                   .recall
                   .recallDate,
+
               severity:
                 registeredProduct
                   .recall
                   .severity,
+
               status:
                 registeredProduct
                   .recall
                   .status,
+
               reason:
                 registeredProduct
                   .recall
@@ -780,8 +790,10 @@ export default function App() {
       setBatchResult({
         batch:
           normalizedBatch,
+
         medicine:
           registeredProduct,
+
         recall,
       });
     };
@@ -894,6 +906,7 @@ export default function App() {
     setReportComment("");
     setReportLocation("");
     setReportImageName("");
+
     setReportOrigin(
       "result"
     );
@@ -904,6 +917,7 @@ export default function App() {
     setBatchSearch("");
     setBatchProductCode("");
     setBatchResult(null);
+
     setSelectedRecall(null);
   };
 
@@ -996,22 +1010,28 @@ export default function App() {
       style={{
         "--brand-blue":
           palette.blue,
+
         "--brand-deep":
           palette.deepBlue,
+
         "--brand-teal":
           palette.teal,
+
         "--brand-aqua":
           palette.aqua,
       }}
     >
       <main className="phone-stage">
 
-        {/* ================= HOME ================= */}
+        {/* ==================================================
+            HOME
+        ================================================== */}
 
         {screen === "home" && (
           <section className="screen home-screen">
 
             <div className="home-status-row">
+
               <NetworkBadge
                 offline={
                   offline
@@ -1020,14 +1040,17 @@ export default function App() {
                   handleNetworkToggle
                 }
               />
+
             </div>
 
             <div className="home-brand">
+
               <img
                 className="hero-logo"
                 src={`${import.meta.env.BASE_URL}medauth-logo.png`}
                 alt="MedAuth"
               />
+
             </div>
 
             <button
@@ -1047,9 +1070,11 @@ export default function App() {
             </button>
 
             <div className="home-divider">
+
               <span>
                 or
               </span>
+
             </div>
 
             <form
@@ -1218,6 +1243,7 @@ export default function App() {
             </form>
 
             <div className="security-footer">
+
               <LockIcon />
 
               <span>
@@ -1227,12 +1253,15 @@ export default function App() {
                 {" · "}
                 ISO 27001
               </span>
+
             </div>
 
           </section>
         )}
 
-        {/* ================= FORGOT ================= */}
+        {/* ==================================================
+            FORGOT PASSWORD
+        ================================================== */}
 
         {screen === "forgotPassword" && (
           <section className="screen forgot-screen">
@@ -1244,11 +1273,13 @@ export default function App() {
             />
 
             <div className="forgot-brand">
+
               <img
                 className="forgot-logo"
                 src={`${import.meta.env.BASE_URL}medauth-logo.png`}
                 alt="MedAuth"
               />
+
             </div>
 
             {!resetSent ? (
@@ -1330,6 +1361,7 @@ export default function App() {
                     setScreen(
                       "home"
                     );
+
                     setResetSent(
                       false
                     );
@@ -1344,7 +1376,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= SCAN ================= */}
+        {/* ==================================================
+            SCAN
+        ================================================== */}
 
         {screen === "scan" && (
           <section className="screen">
@@ -1468,7 +1502,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= MANUAL ================= */}
+        {/* ==================================================
+            MANUAL
+        ================================================== */}
 
         {screen === "manual" && (
           <section className="screen">
@@ -1540,7 +1576,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= CHECKING ================= */}
+        {/* ==================================================
+            CHECKING
+        ================================================== */}
 
         {screen === "checking" && (
           <section className="screen center-screen">
@@ -1558,7 +1596,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= RESULT ================= */}
+        {/* ==================================================
+            RESULT
+        ================================================== */}
 
         {screen === "result" &&
           result && (
@@ -1853,7 +1893,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ================= DETAILS ================= */}
+        {/* ==================================================
+            DETAILS
+        ================================================== */}
 
         {screen === "details" &&
           result?.product && (
@@ -1870,8 +1912,10 @@ export default function App() {
               </div>
 
               <h1>
-                {result.product
-                  .medicineName}
+                {
+                  result.product
+                    .medicineName
+                }
               </h1>
 
               <div className="details-list">
@@ -1951,7 +1995,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ================= REPORT ================= */}
+        {/* ==================================================
+            REPORT
+        ================================================== */}
 
         {screen === "report" && (
           <section className="screen">
@@ -2111,7 +2157,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= CONFIRMATION ================= */}
+        {/* ==================================================
+            CONFIRMATION
+        ================================================== */}
 
         {screen === "confirmation" && (
           <section className="screen center-screen">
@@ -2155,7 +2203,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= PHARMACIST ================= */}
+        {/* ==================================================
+            PHARMACIST DASHBOARD
+        ================================================== */}
 
         {screen === "pharmacistDashboard" && (
           <section className="screen pharmacist-screen">
@@ -2272,6 +2322,7 @@ export default function App() {
               <ScanIcon />
 
               <div>
+
                 <strong>
                   Verify Medicine
                 </strong>
@@ -2279,11 +2330,13 @@ export default function App() {
                 <span>
                   Scan or enter a medicine code
                 </span>
+
               </div>
 
               <span>
                 →
               </span>
+
             </button>
 
             <div className="pharmacist-action-grid">
@@ -2312,6 +2365,7 @@ export default function App() {
                 <BatchLookupIcon />
 
                 <div className="pharmacist-action-copy">
+
                   <strong>
                     Batch Lookup
                   </strong>
@@ -2319,6 +2373,7 @@ export default function App() {
                   <span>
                     Check batch and recall status
                   </span>
+
                 </div>
               </button>
 
@@ -2334,6 +2389,7 @@ export default function App() {
                 <RecallIcon />
 
                 <div className="pharmacist-action-copy">
+
                   <strong>
                     Recalls & Alerts
                   </strong>
@@ -2341,6 +2397,7 @@ export default function App() {
                   <span>
                     Review active notices
                   </span>
+
                 </div>
               </button>
 
@@ -2356,6 +2413,7 @@ export default function App() {
                 <ShortagesIcon />
 
                 <div className="pharmacist-action-copy">
+
                   <strong>
                     Shortages
                   </strong>
@@ -2363,6 +2421,7 @@ export default function App() {
                   <span>
                     Current availability
                   </span>
+
                 </div>
               </button>
 
@@ -2382,6 +2441,7 @@ export default function App() {
                 <EscalateIcon />
 
                 <div className="pharmacist-action-copy">
+
                   <strong>
                     Escalate / Report
                   </strong>
@@ -2389,6 +2449,7 @@ export default function App() {
                   <span>
                     Report suspicious medicine
                   </span>
+
                 </div>
               </button>
 
@@ -2509,7 +2570,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= BATCH ================= */}
+        {/* ==================================================
+            BATCH LOOKUP
+        ================================================== */}
 
         {screen === "pharmacistBatchLookup" && (
           <section className="screen">
@@ -2675,7 +2738,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= RECALLS ================= */}
+        {/* ==================================================
+            RECALLS
+        ================================================== */}
 
         {screen === "pharmacistRecalls" && (
           <section className="screen">
@@ -2757,7 +2822,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= RECALL DETAIL ================= */}
+        {/* ==================================================
+            RECALL DETAIL
+        ================================================== */}
 
         {screen === "pharmacistRecallDetail" &&
           selectedRecall && (
@@ -2838,7 +2905,9 @@ export default function App() {
             </section>
           )}
 
-        {/* ================= SHORTAGES ================= */}
+        {/* ==================================================
+            SHORTAGES
+        ================================================== */}
 
         {screen === "pharmacistShortages" && (
           <section className="screen">
@@ -2913,7 +2982,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= HISTORY ================= */}
+        {/* ==================================================
+            HISTORY
+        ================================================== */}
 
         {screen === "pharmacistHistory" && (
           <section className="screen">
@@ -3029,7 +3100,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= PROFILE ================= */}
+        {/* ==================================================
+            PROFILE
+        ================================================== */}
 
         {screen === "pharmacistProfile" && (
           <section className="screen pharmacist-sub-screen">
@@ -3115,7 +3188,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= SETTINGS ================= */}
+        {/* ==================================================
+            SETTINGS
+        ================================================== */}
 
         {screen === "pharmacistSettings" && (
           <section className="screen pharmacist-sub-screen">
@@ -3278,7 +3353,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= MANUFACTURER ================= */}
+        {/* ==================================================
+            MANUFACTURER
+        ================================================== */}
 
         {screen === "manufacturerDashboard" && (
           <section className="screen">
@@ -3311,7 +3388,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= CONSUMER ================= */}
+        {/* ==================================================
+            CONSUMER
+        ================================================== */}
 
         {screen === "consumerDashboard" && (
           <section className="screen">
@@ -3356,7 +3435,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= ADMIN ================= */}
+        {/* ==================================================
+            ADMIN
+        ================================================== */}
 
         {screen === "adminDashboard" && (
           <section className="screen">
@@ -3389,6 +3470,10 @@ export default function App() {
     </div>
   );
 }
+
+/* ==================================================
+   RESULT DETAILS
+================================================== */
 
 function MedicineResultDetails({
   product,
@@ -3466,6 +3551,10 @@ function MedicineResultDetails({
     </div>
   );
 }
+
+/* ==================================================
+   SUPPLY CHAIN
+================================================== */
 
 function SupplyChainSnapshot({
   product,
@@ -3685,6 +3774,10 @@ function SupplyChainSnapshot({
     </div>
   );
 }
+
+/* ==================================================
+   SMALL COMPONENTS
+================================================== */
 
 function BackButton({
   onClick,
@@ -3948,7 +4041,9 @@ function AdminDashboard() {
   );
 }
 
-/* ================= ICONS ================= */
+/* ==================================================
+   ICONS
+================================================== */
 
 function ScanIcon() {
   return (
@@ -4004,6 +4099,7 @@ function BatchLookupIcon() {
         cy="10"
         r="6"
       />
+
       <path d="m15 15 5 5" />
     </svg>
   );
@@ -4016,7 +4112,9 @@ function RecallIcon() {
       aria-hidden="true"
     >
       <path d="M12 3v3" />
+
       <path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Z" />
+
       <path d="M10 20h4" />
     </svg>
   );
@@ -4035,6 +4133,7 @@ function ShortagesIcon() {
         height="18"
         rx="2"
       />
+
       <path d="M9 7h6" />
       <path d="M9 11h6" />
       <path d="M9 15h3" />
@@ -4049,7 +4148,9 @@ function EscalateIcon() {
       aria-hidden="true"
     >
       <path d="M12 3 3 20h18L12 3Z" />
+
       <path d="M12 9v4" />
+
       <path d="M12 17h.01" />
     </svg>
   );
@@ -4066,6 +4167,7 @@ function ProfileIcon() {
         cy="8"
         r="4"
       />
+
       <path d="M4 21a8 8 0 0 1 16 0" />
     </svg>
   );
@@ -4082,6 +4184,7 @@ function SettingsIcon() {
         cy="12"
         r="3"
       />
+
       <circle
         cx="12"
         cy="12"
@@ -4098,6 +4201,7 @@ function EyeIcon() {
       aria-hidden="true"
     >
       <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+
       <circle
         cx="12"
         cy="12"
@@ -4114,6 +4218,7 @@ function EyeOffIcon() {
       aria-hidden="true"
     >
       <path d="m3 3 18 18" />
+
       <path d="M6 7c-2 2-3.5 5-3.5 5s3.5 6 9.5 6" />
     </svg>
   );
@@ -4133,6 +4238,7 @@ function LockIcon() {
         height="10"
         rx="2"
       />
+
       <path d="M8 10V7a4 4 0 0 1 8 0v3" />
     </svg>
   );
@@ -4151,6 +4257,7 @@ function MailIcon() {
         height="14"
         rx="2"
       />
+
       <path d="m4 7 8 6 8-6" />
     </svg>
   );
