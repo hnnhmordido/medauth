@@ -37,8 +37,9 @@ const demoUsers = {
   "consumer@medauth.com": {
     role: "consumer",
     password: "demo123",
-    name: "Consumer",
-    fullName: "MedAuth Consumer",
+    name: "Ron",
+    fullName: "Ron",
+    title: "Consumer",
     email: "consumer@medauth.com",
   },
 
@@ -3118,6 +3119,28 @@ export default function App() {
             <BackButton
               onClick={goBack}
             />
+
+            <div className="pharmacist-profile-header">
+              <div className="pharmacist-profile-main">
+                <img
+                  className="pharmacist-avatar"
+                  src={`${import.meta.env.BASE_URL}consumer-ron.png`}
+                  alt="Ron"
+                />
+
+                <div className="pharmacist-greeting">
+                  <span className="pharmacist-welcome">
+                    Welcome
+                  </span>
+
+                  <h1>
+                    Hi, {currentUser?.name || "Ron"}
+                  </h1>
+
+                  <p>Consumer</p>
+                </div>
+              </div>
+            </div>
 
             <DashboardHeader
               title="My MedAuth"
