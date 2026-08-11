@@ -24,13 +24,18 @@ body,
   width: 100%;
   min-width: 320px;
   min-height: 100%;
+
   margin: 0;
 }
 
 body {
   min-height: 100vh;
   min-height: 100dvh;
+
+  margin: 0;
+
   background: #eef5f9;
+
   overflow-x: hidden;
 }
 
@@ -43,21 +48,27 @@ textarea {
 
 button {
   cursor: pointer;
+
   -webkit-tap-highlight-color: transparent;
 }
 
-img {
+img,
+svg {
   display: block;
 }
 
-/* APP */
+/* ==================================================
+   APP
+================================================== */
 
 .app-shell {
   width: 100%;
+
   min-height: 100vh;
   min-height: 100dvh;
 
   display: flex;
+
   justify-content: center;
   align-items: flex-start;
 
@@ -71,11 +82,14 @@ img {
     );
 }
 
-/* PHONE */
+/* ==================================================
+   PHONE - KEEP 393 x 852
+================================================== */
 
 .phone-stage {
   width: 393px;
   height: 852px;
+
   max-width: 100%;
 
   position: relative;
@@ -95,19 +109,28 @@ img {
     rgba(18, 55, 84, 0.09);
 }
 
-/* SCREENS */
+/* ==================================================
+   SCREEN
+================================================== */
 
 .screen {
   width: 100%;
   height: 100%;
+
   min-height: 0;
 
   flex: 1 1 auto;
 
   padding:
-    max(17px, env(safe-area-inset-top))
+    max(
+      17px,
+      env(safe-area-inset-top)
+    )
     25px
-    max(17px, env(safe-area-inset-bottom));
+    max(
+      17px,
+      env(safe-area-inset-bottom)
+    );
 
   overflow-y: auto;
   overflow-x: hidden;
@@ -115,7 +138,9 @@ img {
   background: #ffffff;
 }
 
-/* HOME */
+/* ==================================================
+   HOME
+================================================== */
 
 .home-screen {
   display: flex;
@@ -124,19 +149,24 @@ img {
 
 .home-status-row {
   width: 100%;
+
   min-height: 38px;
 
   display: flex;
+
   justify-content: flex-end;
   align-items: flex-start;
 }
 
-/* NETWORK */
+/* ==================================================
+   NETWORK
+================================================== */
 
 .network-badge {
   min-height: 34px;
 
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
 
@@ -150,18 +180,18 @@ img {
   font-size: 0.76rem;
   font-weight: 800;
 
-  transition:
-    color 0.18s ease,
-    background-color 0.18s ease;
+  line-height: 1;
 }
 
 .network-badge.online {
   color: #117252;
+
   background: #e8f7f1;
 }
 
 .network-badge.offline {
   color: #687783;
+
   background: #edf1f3;
 }
 
@@ -170,45 +200,59 @@ img {
   height: 18px;
 
   fill: none;
+
   stroke: currentColor;
 
   stroke-width: 1.9;
+
   stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .wifi-dot {
   fill: currentColor;
+
   stroke: none;
 }
 
-/* HOME LOGO */
+/* ==================================================
+   HOME LOGO
+================================================== */
 
 .home-brand {
   width: 100%;
 
   display: flex;
+
   justify-content: center;
+  align-items: center;
 
   margin: 2px 0 16px;
 }
 
 .hero-logo {
   width: 245px;
+
   max-width: 78%;
 
   height: auto;
+
   max-height: 215px;
 
   object-fit: contain;
 }
 
-/* HOME SCAN */
+/* ==================================================
+   HOME SCAN BUTTON
+================================================== */
 
 .home-scan-button {
   width: 100%;
+
   min-height: 58px;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
@@ -240,17 +284,24 @@ img {
   max-height: 23px;
 
   fill: none;
+
   stroke: currentColor;
 
   stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* DIVIDER */
+/* ==================================================
+   DIVIDER
+================================================== */
 
 .home-divider {
   width: 100%;
 
   display: flex;
+
   align-items: center;
 
   gap: 14px;
@@ -274,17 +325,25 @@ img {
   background: #cad9e3;
 }
 
-/* LOGIN */
+/* ==================================================
+   LOGIN
+================================================== */
 
 .home-login-form {
+  width: 100%;
+
   display: flex;
+
   flex-direction: column;
 
   gap: 13px;
 }
 
 .home-login-field {
+  width: 100%;
+
   display: flex;
+
   flex-direction: column;
 
   gap: 7px;
@@ -301,11 +360,15 @@ img {
 
 .home-login-field input {
   width: 100%;
+
   height: 52px;
 
   padding: 0 15px;
 
-  border: 1px solid #9fc7e5;
+  border:
+    1px solid
+    #9fc7e5;
+
   border-radius: 12px;
 
   outline: none;
@@ -318,16 +381,21 @@ img {
 }
 
 .home-login-field input:focus {
-  border-color: var(--brand-blue);
+  border-color:
+    var(--brand-blue);
 
   box-shadow:
     0 0 0 3px
     rgba(11, 99, 182, 0.09);
 }
 
-/* PASSWORD */
+/* ==================================================
+   PASSWORD
+================================================== */
 
 .password-input-wrap {
+  width: 100%;
+
   position: relative;
 }
 
@@ -339,15 +407,20 @@ img {
   position: absolute;
 
   right: 4px;
+
   top: 50%;
 
   width: 42px;
   height: 42px;
 
-  transform: translateY(-50%);
+  transform:
+    translateY(-50%);
 
   display: grid;
+
   place-items: center;
+
+  padding: 0;
 
   border: 0;
 
@@ -361,15 +434,21 @@ img {
   height: 19px;
 
   fill: none;
+
   stroke: currentColor;
 
   stroke-width: 1.7;
 }
 
-/* LOGIN OPTIONS */
+/* ==================================================
+   LOGIN OPTIONS
+================================================== */
 
 .login-options {
+  width: 100%;
+
   display: flex;
+
   justify-content: space-between;
   align-items: center;
 
@@ -378,6 +457,7 @@ img {
 
 .remember-device {
   display: inline-flex;
+
   align-items: center;
 
   gap: 7px;
@@ -401,6 +481,7 @@ img {
   min-height: 36px;
 
   display: inline-flex;
+
   align-items: center;
 
   padding: 5px 0;
@@ -416,13 +497,17 @@ img {
   font-weight: 750;
 }
 
-/* SIGN IN */
+/* ==================================================
+   SIGN IN
+================================================== */
 
 .home-signin-button {
   width: 100%;
+
   min-height: 56px;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
@@ -446,12 +531,19 @@ img {
   font-weight: 800;
 }
 
-/* ERROR */
+/* ==================================================
+   LOGIN ERROR
+================================================== */
 
 .login-error {
+  width: 100%;
+
   padding: 9px 11px;
 
-  border: 1px solid #efc3c3;
+  border:
+    1px solid
+    #efc3c3;
+
   border-radius: 10px;
 
   background: #fff4f4;
@@ -461,12 +553,15 @@ img {
   font-size: 0.72rem;
 }
 
-/* SECURITY */
+/* ==================================================
+   SECURITY
+================================================== */
 
 .security-footer {
   width: 100%;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
@@ -474,9 +569,13 @@ img {
 
   margin-top: 14px;
 
+  padding: 8px 0 2px;
+
   color: #647e92;
 
   font-size: 0.59rem;
+
+  line-height: 1.35;
 
   text-align: center;
 }
@@ -486,6 +585,7 @@ img {
   height: 13px;
 
   min-width: 13px;
+
   max-width: 13px;
 
   fill: none;
@@ -496,22 +596,31 @@ img {
   stroke-width: 1.8;
 }
 
-/* BACK */
+/* ==================================================
+   BACK BUTTON
+================================================== */
 
 .back-button {
   width: auto;
-  height: 40px;
+
+  min-height: 40px;
 
   display: inline-flex;
+
   align-items: center;
 
   gap: 4px;
 
-  margin: -4px 0 10px -8px;
+  margin:
+    -4px
+    0
+    10px
+    -8px;
 
   padding: 7px 9px;
 
   border: 0;
+
   border-radius: 10px;
 
   background: transparent;
@@ -520,25 +629,34 @@ img {
     var(--brand-blue);
 
   font-size: 0.9rem;
+
   font-weight: 700;
 }
 
-/* FORGOT */
+/* ==================================================
+   FORGOT
+================================================== */
 
 .forgot-screen {
   display: flex;
+
   flex-direction: column;
 }
 
 .forgot-brand {
   display: flex;
+
   justify-content: center;
 
-  margin: 5px 0 22px;
+  margin:
+    5px
+    0
+    22px;
 }
 
 .forgot-logo {
   width: 145px;
+
   max-width: 48%;
 
   height: auto;
@@ -547,15 +665,21 @@ img {
 }
 
 .forgot-description {
-  margin: 0 0 24px;
+  margin:
+    0
+    0
+    24px;
 
   color: #617a8e;
 
   font-size: 0.9rem;
+
+  line-height: 1.6;
 }
 
 .forgot-form {
   display: flex;
+
   flex-direction: column;
 
   gap: 18px;
@@ -565,6 +689,7 @@ img {
   flex: 1;
 
   display: flex;
+
   flex-direction: column;
 
   justify-content: center;
@@ -578,6 +703,7 @@ img {
   height: 72px;
 
   display: grid;
+
   place-items: center;
 
   margin-bottom: 16px;
@@ -595,10 +721,13 @@ img {
   height: 32px;
 
   fill: none;
+
   stroke: currentColor;
 }
 
-/* BUTTONS */
+/* ==================================================
+   SHARED BUTTONS
+================================================== */
 
 .btn {
   width: 100%;
@@ -607,10 +736,14 @@ img {
 
   padding: 14px 18px;
 
-  border: 1px solid transparent;
+  border:
+    1px solid
+    transparent;
+
   border-radius: 14px;
 
   font-size: 0.96rem;
+
   font-weight: 760;
 }
 
@@ -634,15 +767,23 @@ img {
   border-color: #90bfdc;
 }
 
-/* TEXT */
+/* ==================================================
+   TYPOGRAPHY
+================================================== */
 
 h1 {
-  margin: 15px 0 10px;
+  margin:
+    15px
+    0
+    10px;
 
   color: #12304b;
 
   font-size: 2.1rem;
+
   line-height: 1.06;
+
+  letter-spacing: -0.04em;
 }
 
 h2,
@@ -661,6 +802,7 @@ p {
     var(--brand-teal);
 
   font-size: 0.76rem;
+
   font-weight: 800;
 
   text-transform: uppercase;
@@ -674,14 +816,20 @@ p {
   font-size: 0.88rem;
 }
 
-/* FORMS */
+/* ==================================================
+   FIELDS
+================================================== */
 
 .field {
+  width: 100%;
+
   display: grid;
 
   gap: 8px;
 
-  margin: 16px 0;
+  margin:
+    16px
+    0;
 
   color: #29475f;
 
@@ -695,7 +843,10 @@ p {
 
   padding: 14px 15px;
 
-  border: 1px solid #c8dbe7;
+  border:
+    1px solid
+    #c8dbe7;
+
   border-radius: 14px;
 
   outline: none;
@@ -705,7 +856,9 @@ p {
   color: #17324d;
 }
 
-/* SCANNER */
+/* ==================================================
+   SCANNER
+================================================== */
 
 .scanner-panel {
   height: 295px;
@@ -713,13 +866,20 @@ p {
   position: relative;
 
   display: grid;
+
   place-items: center;
 
   overflow: hidden;
 
-  margin: 22px 0 16px;
+  margin:
+    22px
+    0
+    16px;
 
-  border: 2px solid #b8dbe7;
+  border:
+    2px solid
+    #b8dbe7;
+
   border-radius: 24px;
 
   background:
@@ -746,7 +906,8 @@ p {
     );
 
   animation:
-    scan 2.4s
+    scan
+    2.4s
     ease-in-out
     infinite alternate;
 }
@@ -775,37 +936,55 @@ p {
 
 .scan-corners span:nth-child(1) {
   left: 28px;
+
   top: 28px;
 
   border-width:
-    5px 0 0 5px;
+    5px
+    0
+    0
+    5px;
 }
 
 .scan-corners span:nth-child(2) {
   right: 28px;
+
   top: 28px;
 
   border-width:
-    5px 5px 0 0;
+    5px
+    5px
+    0
+    0;
 }
 
 .scan-corners span:nth-child(3) {
   left: 28px;
+
   bottom: 28px;
 
   border-width:
-    0 0 5px 5px;
+    0
+    0
+    5px
+    5px;
 }
 
 .scan-corners span:nth-child(4) {
   right: 28px;
+
   bottom: 28px;
 
   border-width:
-    0 5px 5px 0;
+    0
+    5px
+    5px
+    0;
 }
 
-/* SAMPLE */
+/* ==================================================
+   SAMPLE
+================================================== */
 
 .sample-box {
   display: grid;
@@ -816,7 +995,10 @@ p {
 
   margin-bottom: 14px;
 
-  border: 1px solid #dcebf2;
+  border:
+    1px solid
+    #dcebf2;
+
   border-radius: 16px;
 
   background: #f6fbfd;
@@ -826,6 +1008,7 @@ p {
   padding: 10px 11px;
 
   border: 0;
+
   border-radius: 11px;
 
   background: #ffffff;
@@ -835,10 +1018,13 @@ p {
   text-align: left;
 }
 
-/* CHECKING */
+/* ==================================================
+   LOADING
+================================================== */
 
 .center-screen {
   display: flex;
+
   flex-direction: column;
 
   justify-content: center;
@@ -851,23 +1037,31 @@ p {
   width: 64px;
   height: 64px;
 
-  border: 6px solid #dbeaf3;
+  border:
+    6px solid
+    #dbeaf3;
+
   border-top-color:
     var(--brand-teal);
 
   border-radius: 50%;
 
   animation:
-    spin 0.9s linear infinite;
+    spin
+    0.9s
+    linear infinite;
 }
 
 @keyframes spin {
   to {
-    transform: rotate(360deg);
+    transform:
+      rotate(360deg);
   }
 }
 
-/* RESULT */
+/* ==================================================
+   RESULTS
+================================================== */
 
 .action-stack {
   display: grid;
@@ -881,7 +1075,8 @@ p {
   display: grid;
 
   grid-template-columns:
-    60px 1fr;
+    60px
+    1fr;
 
   gap: 14px;
 
@@ -889,7 +1084,9 @@ p {
 
   padding: 16px;
 
-  border: 1px solid;
+  border:
+    1px solid;
+
   border-radius: 18px;
 }
 
@@ -898,6 +1095,7 @@ p {
   height: 54px;
 
   display: grid;
+
   place-items: center;
 
   border-radius: 50%;
@@ -905,6 +1103,7 @@ p {
   color: #ffffff;
 
   font-size: 1.8rem;
+
   font-weight: 900;
 }
 
@@ -914,7 +1113,8 @@ p {
   border-color: #9edfd7;
 }
 
-.status-card.match .status-icon {
+.status-card.match
+.status-icon {
   background:
     var(--brand-teal);
 }
@@ -925,7 +1125,8 @@ p {
   border-color: #f0c994;
 }
 
-.status-card.no_match .status-icon {
+.status-card.no_match
+.status-icon {
   background: #c97900;
 }
 
@@ -935,21 +1136,29 @@ p {
   border-color: #b9d5e7;
 }
 
-.status-card.not_covered .status-icon {
+.status-card.not_covered
+.status-icon {
   background:
     var(--brand-blue);
 }
 
-/* PANELS */
+/* ==================================================
+   PANELS
+================================================== */
 
 .product-card,
 .panel,
 .notice {
-  margin: 16px 0;
+  margin:
+    16px
+    0;
 
   padding: 14px;
 
-  border: 1px solid #d9e8f0;
+  border:
+    1px solid
+    #d9e8f0;
+
   border-radius: 16px;
 
   background: #f9fcfe;
@@ -962,37 +1171,49 @@ p {
 
   gap: 14px;
 
-  padding: 8px 0;
+  padding:
+    8px
+    0;
 
   border-bottom:
-    1px solid #e7f0f5;
+    1px solid
+    #e7f0f5;
 }
 
 .product-card div:last-child {
   border-bottom: 0;
 }
 
-/* DETAILS */
+/* ==================================================
+   DETAILS
+================================================== */
 
 .details-list {
-  margin: 18px 0;
+  margin:
+    18px
+    0;
 
   border-top:
-    1px solid #dfebf2;
+    1px solid
+    #dfebf2;
 }
 
 .detail-row {
   display: grid;
 
   grid-template-columns:
-    1fr 1.35fr;
+    1fr
+    1.35fr;
 
   gap: 14px;
 
-  padding: 13px 0;
+  padding:
+    13px
+    0;
 
   border-bottom:
-    1px solid #dfebf2;
+    1px solid
+    #dfebf2;
 
   font-size: 0.82rem;
 }
@@ -1005,13 +1226,16 @@ p {
   text-align: right;
 }
 
-/* SUCCESS */
+/* ==================================================
+   SUCCESS
+================================================== */
 
 .success-badge {
   width: 76px;
   height: 76px;
 
   display: grid;
+
   place-items: center;
 
   border-radius: 50%;
@@ -1019,6 +1243,7 @@ p {
   color: #ffffff;
 
   font-size: 2.5rem;
+
   font-weight: 900;
 
   background:
@@ -1029,7 +1254,9 @@ p {
     );
 }
 
-/* GENERIC DASHBOARD */
+/* ==================================================
+   GENERAL DASHBOARD
+================================================== */
 
 .dashboard-head {
   display: flex;
@@ -1053,6 +1280,7 @@ p {
     var(--brand-deep);
 
   font-size: 0.76rem;
+
   font-weight: 800;
 }
 
@@ -1060,17 +1288,28 @@ p {
   display: grid;
 
   grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
 
   gap: 10px;
 
-  margin: 14px 0;
+  margin:
+    14px
+    0;
 }
 
 .metric {
   padding: 14px;
 
-  border: 1px solid #d5e8f1;
+  border:
+    1px solid
+    #d5e8f1;
+
   border-radius: 16px;
 
   background:
@@ -1108,59 +1347,68 @@ p {
   height: 100%;
 
   display: flex;
+
   flex-direction: column;
 
   overflow: hidden;
 
   padding:
-    14px
-    22px
-    10px;
+    17px
+    15px
+    12px;
 }
 
-/* PROFILE HEADER */
+/* ==================================================
+   PHARMACIST PROFILE HEADER
+================================================== */
 
 .pharmacist-profile-header {
   width: 100%;
 
   display: flex;
+
   justify-content: space-between;
   align-items: center;
 
   gap: 10px;
 
-  margin-bottom: 7px;
+  margin-bottom: 11px;
 }
 
 .pharmacist-profile-main {
   min-width: 0;
 
   display: flex;
+
   align-items: center;
 
-  gap: 9px;
+  gap: 11px;
 }
 
-/* IMPORTANT PHOTO FIX */
-
 .pharmacist-avatar {
-  width: 48px !important;
-  height: 48px !important;
+  width: 54px !important;
+  height: 54px !important;
 
-  min-width: 48px !important;
-  min-height: 48px !important;
+  min-width: 54px !important;
+  min-height: 54px !important;
 
-  max-width: 48px !important;
-  max-height: 48px !important;
+  max-width: 54px !important;
+  max-height: 54px !important;
 
-  flex: 0 0 48px;
-
-  display: block;
+  flex:
+    0
+    0
+    54px;
 
   object-fit: cover;
-  object-position: center 20%;
 
-  border: 2px solid #d7e9f3;
+  object-position:
+    center 20%;
+
+  border:
+    2px solid
+    #d7e9f3;
+
   border-radius: 50%;
 
   overflow: hidden;
@@ -1171,28 +1419,42 @@ p {
 }
 
 .pharmacist-welcome {
-  color: #7890a1;
+  display: block;
 
-  font-size: 0.5rem;
+  color: #73899c;
+
+  font-size: 10px;
+
   font-weight: 650;
+
+  margin-bottom: 1px;
 }
 
 .pharmacist-greeting h1 {
-  margin: 1px 0;
+  margin: 0;
 
-  color: #12304b;
+  color: #082f5a;
 
-  font-size: 1.08rem;
+  font-size: 22px;
+
   line-height: 1.05;
+
+  letter-spacing:
+    -0.025em;
 }
 
 .pharmacist-greeting p {
-  margin: 0;
+  margin-top: 3px;
+
+  margin-bottom: 0;
 
   color:
     var(--brand-teal);
 
-  font-size: 0.5rem;
+  font-size: 10px;
+
+  line-height: 1.2;
+
   font-weight: 750;
 }
 
@@ -1201,123 +1463,153 @@ p {
 
   display: flex;
 
-  gap: 4px;
+  gap: 7px;
 }
 
 .profile-icon-button {
-  width: 30px;
-  height: 30px;
+  width: 38px;
+  height: 38px;
 
   display: grid;
+
   place-items: center;
 
   padding: 0;
 
-  border: 1px solid #dce8ef;
-  border-radius: 9px;
+  border:
+    1px solid
+    #d8e5ed;
 
-  background: #f8fbfd;
+  border-radius: 11px;
+
+  background: #ffffff;
 
   color:
     var(--brand-blue);
 }
 
 .profile-icon-button svg {
-  width: 15px !important;
-  height: 15px !important;
+  width: 18px !important;
+  height: 18px !important;
 
-  max-width: 15px !important;
-  max-height: 15px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
 
   fill: none !important;
 
-  stroke: currentColor !important;
+  stroke:
+    currentColor !important;
 
   stroke-width: 1.7;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
 }
 
-/* SYSTEM STATUS */
+/* ==================================================
+   PHARMACIST SYSTEM STATUS
+================================================== */
 
 .pharmacist-system-status {
   width: 100%;
 
+  min-height: 48px;
+
   display: flex;
+
   justify-content: space-between;
   align-items: center;
 
   gap: 8px;
 
-  margin: 0 0 7px;
+  margin-bottom: 10px;
 
-  padding: 7px 9px;
+  padding:
+    8px
+    12px;
 
-  border-radius: 10px;
+  border-radius: 13px;
 }
 
 .pharmacist-system-status > div {
   min-width: 0;
 
   display: flex;
+
   flex-direction: column;
 
-  gap: 1px;
+  gap: 2px;
 }
 
 .pharmacist-system-status strong {
-  font-size: 0.61rem;
+  font-size: 11px;
+
+  line-height: 1.25;
 }
 
 .pharmacist-system-status > div > span {
-  font-size: 0.53rem;
+  font-size: 9px;
 }
 
 .pharmacist-system-status.is-online {
-  background: #edf9f5;
+  color: #17694f;
 
-  color: #22765d;
+  background: #eaf8f3;
 }
 
 .pharmacist-system-status.is-offline {
-  background: #f2f4f6;
+  color: #586c7b;
 
-  color: #5f6d78;
+  background: #f1f4f6;
 }
 
-.pharmacist-system-status .network-badge {
-  min-height: 25px;
+.pharmacist-system-status
+.network-badge {
+  min-height: 30px;
 
-  padding: 4px 7px;
+  padding:
+    6px
+    9px;
 
-  font-size: 0.55rem;
+  font-size: 10px;
 }
 
-.pharmacist-system-status .wifi-icon {
-  width: 12px;
-  height: 12px;
+.pharmacist-system-status
+.wifi-icon {
+  width: 14px;
+  height: 14px;
 }
 
-/* VERIFY */
+/* ==================================================
+   VERIFY MEDICINE
+================================================== */
 
 .pharmacist-primary-action {
   width: 100%;
 
-  min-height: 52px;
+  min-height: 64px;
 
   display: grid;
 
   grid-template-columns:
-    20px 1fr 14px;
+    25px
+    1fr
+    18px;
 
   align-items: center;
 
-  gap: 8px;
+  gap: 10px;
 
-  padding: 9px 11px;
+  padding:
+    11px
+    14px;
 
-  margin-bottom: 7px;
+  margin-bottom: 10px;
 
   border: 0;
-  border-radius: 12px;
+
+  border-radius: 15px;
 
   background:
     linear-gradient(
@@ -1329,85 +1621,126 @@ p {
   color: #ffffff;
 
   text-align: left;
+
+  box-shadow:
+    0 5px 14px
+    rgba(
+      11,
+      99,
+      182,
+      0.11
+    );
 }
 
-.pharmacist-primary-action > svg {
-  width: 19px !important;
-  height: 19px !important;
+.pharmacist-primary-action
+> svg {
+  width: 22px !important;
+  height: 22px !important;
 
-  max-width: 19px !important;
-  max-height: 19px !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
 
   fill: none !important;
 
-  stroke: currentColor !important;
+  stroke:
+    currentColor !important;
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
 }
 
-.pharmacist-primary-action div {
+.pharmacist-primary-action
+> div {
   display: flex;
+
   flex-direction: column;
 
-  gap: 1px;
+  gap: 3px;
 }
 
-.pharmacist-primary-action strong {
-  font-size: 0.73rem;
+.pharmacist-primary-action
+strong {
+  font-size: 15px;
+
+  line-height: 1.2;
+
+  font-weight: 800;
 }
 
-.pharmacist-primary-action div span {
-  font-size: 0.51rem;
+.pharmacist-primary-action
+div span {
+  font-size: 10px;
+
+  line-height: 1.25;
 
   opacity: 0.88;
 }
 
-/* ACTION GRID */
+/* ==================================================
+   PHARMACIST ACTION CARDS
+================================================== */
 
 .pharmacist-action-grid {
+  width: 100%;
+
   display: grid;
 
   grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
 
-  gap: 6px;
+  gap: 8px;
 
-  margin-bottom: 7px;
+  margin-bottom: 10px;
 }
 
 .pharmacist-action-card {
-  min-height: 65px;
+  min-width: 0;
+
+  min-height: 85px;
 
   display: grid;
 
   grid-template-columns:
-    18px 1fr;
-
-  grid-template-rows:
-    auto auto;
-
-  column-gap: 7px;
+    27px
+    1fr;
 
   align-items: center;
 
-  padding: 8px;
+  gap: 8px;
 
-  border: 1px solid #dce7ed;
-  border-radius: 11px;
+  padding:
+    11px
+    10px;
+
+  border:
+    1px solid
+    #d6e3ed;
+
+  border-radius: 13px;
 
   background: #ffffff;
 
-  color: #263c4f;
+  color: #17324d;
 
   text-align: left;
 }
 
-.pharmacist-action-card > svg {
-  grid-row: 1 / 3;
+.pharmacist-action-card
+> svg {
+  width: 21px !important;
+  height: 21px !important;
 
-  width: 17px !important;
-  height: 17px !important;
-
-  max-width: 17px !important;
-  max-height: 17px !important;
+  max-width: 21px !important;
+  max-height: 21px !important;
 
   fill: none !important;
 
@@ -1415,69 +1748,134 @@ p {
     var(--brand-blue) !important;
 
   stroke-width: 1.7;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
 }
 
-.pharmacist-action-card strong {
-  font-size: 0.61rem;
+.pharmacist-action-copy {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
 }
 
-.pharmacist-action-card span {
-  color: #738694;
+.pharmacist-action-copy
+strong {
+  color: #092e56;
 
-  font-size: 0.48rem;
+  font-size: 12px;
+
+  line-height: 1.2;
+
+  font-weight: 800;
 }
 
-.pharmacist-escalate-card > svg {
-  stroke: #c56543 !important;
+.pharmacist-action-copy
+span {
+  color: #738496;
+
+  font-size: 9px;
+
+  line-height: 1.25;
 }
 
-/* STATS */
+.pharmacist-escalate-card
+> svg {
+  stroke:
+    #c75f47 !important;
+}
+
+/* ==================================================
+   PHARMACIST SUMMARY
+================================================== */
 
 .pharmacist-summary {
+  width: 100%;
+
   display: grid;
 
   grid-template-columns:
-    repeat(4, minmax(0, 1fr));
+    repeat(
+      4,
+      minmax(
+        0,
+        1fr
+      )
+    );
 
-  gap: 5px;
+  gap: 6px;
 
-  margin-bottom: 7px;
+  margin-bottom: 12px;
 }
 
 .pharmacist-metric {
-  padding: 6px 3px;
+  min-width: 0;
 
-  border: 1px solid #deeaef;
-  border-radius: 9px;
+  min-height: 63px;
 
-  background: #f8fbfd;
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding:
+    6px
+    4px;
+
+  border:
+    1px solid
+    #d9e5ed;
+
+  border-radius: 11px;
+
+  background: #f7fbfd;
 
   text-align: center;
 }
 
 .pharmacist-metric span {
-  display: block;
+  min-height: 24px;
 
-  min-height: 19px;
+  display: flex;
 
-  color: #718696;
+  align-items: center;
 
-  font-size: 0.43rem;
+  justify-content: center;
+
+  color: #64778a;
+
+  font-size: 8px;
+
+  line-height: 1.15;
 }
 
 .pharmacist-metric strong {
   display: block;
 
-  margin-top: 2px;
+  margin-top: 3px;
 
-  color: #17324d;
+  color: #082f59;
 
-  font-size: 0.84rem;
+  font-size: 17px;
+
+  line-height: 1;
+
+  font-weight: 850;
 }
 
-/* RECENT */
+/* ==================================================
+   RECENT ACTIVITY
+================================================== */
 
 .pharmacist-recent {
+  width: 100%;
+
   flex: 1;
 
   min-height: 0;
@@ -1486,22 +1884,32 @@ p {
 }
 
 .section-heading-row {
+  width: 100%;
+
   display: flex;
 
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 1px;
+  margin-bottom: 4px;
 }
 
 .section-heading-row h3 {
   margin: 0;
 
-  font-size: 0.68rem;
+  color: #092f58;
+
+  font-size: 13px;
+
+  font-weight: 800;
 }
 
 .text-action {
-  padding: 3px 0;
+  min-height: 30px;
+
+  padding:
+    4px
+    0;
 
   border: 0;
 
@@ -1510,40 +1918,64 @@ p {
   color:
     var(--brand-blue);
 
-  font-size: 0.5rem;
+  font-size: 10px;
+
   font-weight: 750;
 }
 
 .recent-event-row {
+  width: 100%;
+
+  min-height: 45px;
+
   display: flex;
 
   justify-content: space-between;
+  align-items: center;
 
-  gap: 6px;
+  gap: 8px;
 
-  padding: 4px 0;
+  padding:
+    6px
+    0;
 
   border-bottom:
-    1px solid #edf1f3;
+    1px solid
+    #e5edf2;
 }
 
 .recent-event-row > div {
   min-width: 0;
 
   display: flex;
+
   flex-direction: column;
+
+  gap: 2px;
 }
 
 .recent-event-row strong {
-  color: #253b4e;
+  max-width: 190px;
 
-  font-size: 0.52rem;
+  color: #183a56;
+
+  font-size: 11px;
+
+  line-height: 1.2;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
 }
 
 .recent-event-row span {
-  color: #778995;
+  color: #778a99;
 
-  font-size: 0.44rem;
+  font-size: 8px;
+
+  line-height: 1.2;
 }
 
 .recent-event-result {
@@ -1552,7 +1984,9 @@ p {
   text-align: right;
 }
 
-/* NAV */
+/* ==================================================
+   PHARMACIST NAVIGATION
+================================================== */
 
 .pharmacist-nav {
   width: 100%;
@@ -1560,41 +1994,56 @@ p {
   display: grid;
 
   grid-template-columns:
-    repeat(5, 1fr);
+    repeat(
+      5,
+      minmax(
+        0,
+        1fr
+      )
+    );
 
-  gap: 2px;
+  gap: 3px;
 
-  margin-top: 4px;
+  margin-top: 6px;
 
-  padding-top: 5px;
+  padding-top: 7px;
 
   border-top:
-    1px solid #dfe8ed;
+    1px solid
+    #dce7ed;
 
   background: #ffffff;
+
+  flex-shrink: 0;
 }
 
 .pharmacist-nav button {
-  min-height: 27px;
+  min-width: 0;
 
-  padding: 3px 1px;
+  min-height: 34px;
+
+  padding:
+    5px
+    2px;
 
   border: 0;
-  border-radius: 6px;
+
+  border-radius: 8px;
 
   background: transparent;
 
-  color: #758592;
+  color: #6f8190;
 
-  font-size: 0.43rem;
+  font-size: 8px;
+
   font-weight: 700;
 }
 
 .pharmacist-nav button.active {
-  background: #edf6fb;
-
   color:
     var(--brand-blue);
+
+  background: #edf6fb;
 }
 
 /* ==================================================
@@ -1607,16 +2056,18 @@ p {
 
 .profile-page-header {
   display: flex;
+
   flex-direction: column;
 
   align-items: center;
 
-  margin: 4px 0 22px;
+  margin:
+    4px
+    0
+    22px;
 
   text-align: center;
 }
-
-/* IMPORTANT LARGE PROFILE PHOTO FIX */
 
 .profile-page-avatar {
   width: 110px !important;
@@ -1628,31 +2079,46 @@ p {
   max-width: 110px !important;
   max-height: 110px !important;
 
-  display: block;
-
   object-fit: cover;
-  object-position: center 20%;
 
-  margin: 0 auto 12px;
+  object-position:
+    center 20%;
 
-  border: 3px solid #e1edf4;
+  margin:
+    0
+    auto
+    12px;
+
+  border:
+    3px solid
+    #e1edf4;
+
   border-radius: 50%;
-
-  overflow: hidden;
 
   box-shadow:
     0 6px 18px
-    rgba(18, 55, 84, 0.08);
+    rgba(
+      18,
+      55,
+      84,
+      0.08
+    );
 }
 
 .profile-page-header h1 {
-  margin: 2px 0 5px;
+  margin:
+    2px
+    0
+    5px;
 
   font-size: 1.6rem;
 }
 
 .profile-page-header p {
-  margin: 0 0 8px;
+  margin:
+    0
+    0
+    8px;
 
   color: #61788a;
 
@@ -1660,7 +2126,9 @@ p {
 }
 
 .professional-status {
-  padding: 5px 9px;
+  padding:
+    5px
+    9px;
 
   border-radius: 999px;
 
@@ -1669,13 +2137,19 @@ p {
   color: #27775d;
 
   font-size: 0.64rem;
+
   font-weight: 750;
 }
 
 .profile-information-card {
-  padding: 0 14px;
+  padding:
+    0
+    14px;
 
-  border: 1px solid #dce8ef;
+  border:
+    1px solid
+    #dce8ef;
+
   border-radius: 15px;
 
   background: #fbfdfe;
@@ -1689,10 +2163,13 @@ p {
 
   gap: 15px;
 
-  padding: 14px 0;
+  padding:
+    14px
+    0;
 
   border-bottom:
-    1px solid #e7eef2;
+    1px solid
+    #e7eef2;
 
   font-size: 0.73rem;
 }
@@ -1713,6 +2190,7 @@ p {
 
 .profile-note {
   display: flex;
+
   align-items: flex-start;
 
   gap: 7px;
@@ -1735,11 +2213,20 @@ p {
 ================================================== */
 
 .settings-card {
-  margin: 15px 0;
+  width: 100%;
 
-  padding: 0 13px;
+  margin:
+    15px
+    0;
 
-  border: 1px solid #dce8ef;
+  padding:
+    0
+    13px;
+
+  border:
+    1px solid
+    #dce8ef;
+
   border-radius: 15px;
 
   background: #fbfdfe;
@@ -1755,10 +2242,13 @@ p {
 
   gap: 12px;
 
-  padding: 11px 0;
+  padding:
+    11px
+    0;
 
   border-bottom:
-    1px solid #e7eef2;
+    1px solid
+    #e7eef2;
 }
 
 .settings-row:last-child {
@@ -1767,6 +2257,7 @@ p {
 
 .settings-row > div {
   display: flex;
+
   flex-direction: column;
 
   gap: 3px;
@@ -1788,7 +2279,9 @@ p {
   color:
     var(--brand-blue) !important;
 
-  font-size: 0.84rem !important;
+  font-size:
+    0.84rem !important;
+
   font-weight: 800;
 }
 
@@ -1810,17 +2303,22 @@ p {
   justify-content: space-between;
   align-items: center;
 
-  padding: 10px 0;
+  padding:
+    10px
+    0;
 
   border: 0;
+
   border-bottom:
-    1px solid #e7eef2;
+    1px solid
+    #e7eef2;
 
   background: transparent;
 
   color: #27465d;
 
   font-size: 0.72rem;
+
   font-weight: 750;
 }
 
@@ -1828,7 +2326,9 @@ p {
   border-bottom: 0;
 }
 
-/* BATCH / RECALL */
+/* ==================================================
+   BATCH / RECALL
+================================================== */
 
 .batch-result-card,
 .history-card {
@@ -1836,7 +2336,10 @@ p {
 
   padding: 14px;
 
-  border: 1px solid #dce7ed;
+  border:
+    1px solid
+    #dce7ed;
+
   border-radius: 15px;
 
   background: #fbfdfe;
@@ -1847,11 +2350,14 @@ p {
 
   margin-bottom: 12px;
 
-  padding: 6px 9px;
+  padding:
+    6px
+    9px;
 
   border-radius: 999px;
 
   font-size: 0.68rem;
+
   font-weight: 800;
 }
 
@@ -1887,13 +2393,18 @@ p {
 }
 
 .recall-list-card {
+  width: 100%;
+
   display: grid;
 
   gap: 7px;
 
   padding: 14px;
 
-  border: 1px solid #dce7ed;
+  border:
+    1px solid
+    #dce7ed;
+
   border-radius: 15px;
 
   background: #fbfdfe;
@@ -1906,15 +2417,20 @@ p {
 .recall-pill {
   width: max-content;
 
-  padding: 5px 8px;
+  padding:
+    5px
+    8px;
 
   border-radius: 999px;
 
   font-size: 0.64rem;
+
   font-weight: 800;
 }
 
-/* HISTORY */
+/* ==================================================
+   HISTORY
+================================================== */
 
 .history-list {
   display: grid;
@@ -1936,11 +2452,14 @@ p {
 }
 
 .history-status {
-  padding: 4px 7px;
+  padding:
+    4px
+    7px;
 
   border-radius: 999px;
 
   font-size: 0.62rem;
+
   font-weight: 800;
 }
 
@@ -1968,7 +2487,9 @@ p {
   color: #9c6807;
 }
 
-/* MOBILE */
+/* ==================================================
+   MOBILE
+================================================== */
 
 @media (max-width: 393px) {
   .app-shell {
@@ -1977,24 +2498,38 @@ p {
 
   .phone-stage {
     width: 100vw;
+
     height: 100dvh;
 
     border: 0;
+
     border-radius: 0;
 
     box-shadow: none;
   }
 
   .screen {
-    padding-left: 22px;
-    padding-right: 22px;
+    padding-left: 20px;
+
+    padding-right: 20px;
+  }
+
+  .pharmacist-screen {
+    padding-left: 14px;
+
+    padding-right: 14px;
   }
 }
 
+/* ==================================================
+   SMALL WIDTH
+================================================== */
+
 @media (max-width: 360px) {
   .screen {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 17px;
+
+    padding-right: 17px;
   }
 
   .login-options {
@@ -2004,7 +2539,29 @@ p {
 
     gap: 2px;
   }
+
+  .pharmacist-action-card {
+    min-height: 78px;
+
+    padding:
+      9px
+      8px;
+  }
+
+  .pharmacist-action-copy
+  strong {
+    font-size: 11px;
+  }
+
+  .pharmacist-action-copy
+  span {
+    font-size: 8px;
+  }
 }
+
+/* ==================================================
+   SHORT PHONE
+================================================== */
 
 @media (max-height: 760px) {
   .home-brand {
@@ -2022,7 +2579,9 @@ p {
   }
 
   .home-divider {
-    margin: 11px 0;
+    margin:
+      11px
+      0;
   }
 
   .home-login-form {
@@ -2040,9 +2599,28 @@ p {
   .pharmacist-screen {
     overflow-y: auto;
   }
+
+  .pharmacist-action-card {
+    min-height: 74px;
+  }
+
+  .pharmacist-primary-action {
+    min-height: 57px;
+  }
+
+  .recent-event-row {
+    min-height: 40px;
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* ==================================================
+   ACCESSIBILITY
+================================================== */
+
+@media (
+  prefers-reduced-motion:
+  reduce
+) {
   *,
   *::before,
   *::after {
