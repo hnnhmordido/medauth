@@ -15,13 +15,12 @@ const palette = {
 };
 
 function verifyMedicine(code, batch, offline) {
-  const product =
-    medicines[code?.trim().toUpperCase()];
+  const normalizedCode = code?.trim().toUpperCase();
+  const normalizedBatch = batch?.trim().toUpperCase();
 
-  if (
-    offline &&
-    code?.trim().toUpperCase() !== "MED-001"
-  ) {
+  const product = medicines[normalizedCode];
+
+  if (offline && normalizedCode !== "MED-001") {
     return {
       status: "NOT_COVERED",
       product: null,
@@ -29,10 +28,7 @@ function verifyMedicine(code, batch, offline) {
     };
   }
 
-  if (
-    !product ||
-    product.coverageStatus !== "ENROLLED"
-  ) {
+  if (!product || product.coverageStatus !== "ENROLLED") {
     return {
       status: "NOT_COVERED",
       product: product || null,
@@ -41,8 +37,8 @@ function verifyMedicine(code, batch, offline) {
   }
 
   if (
-    batch?.trim() &&
-    batch.trim().toUpperCase() !== product.batch
+    normalizedBatch &&
+    normalizedBatch !== product.batch
   ) {
     return {
       status: "NO_MATCH",
@@ -59,57 +55,8 @@ function verifyMedicine(code, batch, offline) {
 }
 
 export default function App() {
-  const goBack = () => {
-  if (screen === "home") return;
-
-  if (screen === "scan") {
-    setScreen("home");
-    return;
-  }
-
-  if (screen === "manual") {
-    setScreen("home");
-    return;
-  }
-
-  if (screen === "checking") {
-    setScreen("manual");
-    return;
-  }
-
-  if (screen === "result") {
-    setScreen("home");
-    return;
-  }
-
-  if (screen === "details") {
-    setScreen("result");
-    return;
-  }
-
-  if (screen === "report") {
-    setScreen("result");
-    return;
-  }
-
-  if (screen === "confirmation") {
-    setScreen("home");
-    return;
-  }
-
-  if (screen === "login") {
-    setScreen("home");
-    return;
-  }
-
-  if (screen === "dashboard") {
-    setScreen("login");
-    return;
-  }
-
-  setScreen("home");
-};
   const [screen, setScreen] = useState("home");
+
   const [offline, setOffline] = useState(false);
 
   const [code, setCode] = useState("MED-001");
@@ -134,8 +81,7 @@ export default function App() {
       ).length,
 
       covered: demoEvents.filter(
-        (event) =>
-          event.result !== "NOT_COVERED"
+        (event) => event.result !== "NOT_COVERED"
       ).length,
     }),
     []
@@ -148,14 +94,13 @@ export default function App() {
     setScreen("checking");
 
     window.setTimeout(() => {
-      setResult(
-        verifyMedicine(
-          nextCode,
-          nextBatch,
-          offline
-        )
+      const verificationResult = verifyMedicine(
+        nextCode,
+        nextBatch,
+        offline
       );
 
+      setResult(verificationResult);
       setScreen("result");
     }, 650);
   };
@@ -171,6 +116,34 @@ export default function App() {
     setReportRef("");
   };
 
+  const goBack = () => {
+    switch (screen) {
+      case "scan":
+      case "manual":
+      case "result":
+      case "login":
+        setScreen("home");
+        break;
+
+      case "details":
+      case "report":
+        setScreen("result");
+        break;
+
+      case "dashboard":
+        setScreen("login");
+        break;
+
+      case "confirmation":
+        setScreen("home");
+        break;
+
+      default:
+        setScreen("home");
+        break;
+    }
+  };
+
   return (
     <div
       className="app-shell"
@@ -182,27 +155,10 @@ export default function App() {
       }}
     >
       <main className="phone-stage">
-        {screen !== "home" && (
-  <button
-    type="button"
-    className="back-button"
-    onClick={goBack}
-    aria-label="Go back"
-  >
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
 
-    <span>Back</span>
-  </button>
-)}
-
-        {/* ============================
+        {/* =====================================
             HOME
-        ============================ */}
+        ===================================== */}
 
         {screen === "home" && (
           <section className="screen home-screen">
@@ -223,7 +179,7 @@ export default function App() {
               <div className="home-brand">
                 <img
                   className="hero-logo"
-                   src={`${import.meta.env.BASE_URL}medauth-logo.png`}
+                  src={`${import.meta.env.BASE_URL}medauth-logo.png`}
                   alt="MedAuth"
                 />
               </div>
@@ -247,8 +203,8 @@ export default function App() {
                 </SecondaryButton>
 
                 <button
-                  className="login-link"
                   type="button"
+                  className="login-link"
                   onClick={() =>
                     setScreen("login")
                   }
@@ -262,12 +218,14 @@ export default function App() {
           </section>
         )}
 
-        {/* ============================
+        {/* =====================================
             SCAN
-        ============================ */}
+        ===================================== */}
 
         {screen === "scan" && (
           <section className="screen">
+
+            <BackButton onClick={goBack} />
 
             <div className="eyebrow">
               Guest verification
@@ -363,12 +321,14 @@ export default function App() {
           </section>
         )}
 
-        {/* ============================
+        {/* =====================================
             MANUAL ENTRY
-        ============================ */}
+        ===================================== */}
 
         {screen === "manual" && (
           <section className="screen">
+
+            <BackButton onClick={goBack} />
 
             <div className="eyebrow">
               Manual verification
@@ -423,9 +383,9 @@ export default function App() {
           </section>
         )}
 
-        {/* ============================
+        {/* =====================================
             CHECKING
-        ============================ */}
+        ===================================== */}
 
         {screen === "checking" && (
           <section className="screen center-screen">
@@ -445,16 +405,17 @@ export default function App() {
           </section>
         )}
 
-        {/* ============================
+        {/* =====================================
             RESULT
-        ============================ */}
+        ===================================== */}
 
         {screen === "result" &&
           result && (
             <section className="screen">
 
-              {result.status ===
-                "MATCH" && (
+              <BackButton onClick={goBack} />
+
+              {result.status === "MATCH" && (
                 <StatusCard
                   status="MATCH"
                   title="Match"
@@ -462,8 +423,7 @@ export default function App() {
                 />
               )}
 
-              {result.status ===
-                "NO_MATCH" && (
+              {result.status === "NO_MATCH" && (
                 <StatusCard
                   status="NO_MATCH"
                   title="No Match"
@@ -483,9 +443,8 @@ export default function App() {
               {result.offline && (
                 <div className="notice">
                   Offline result: cached
-                  prototype data may be
-                  used. Sync will resume
-                  when online.
+                  prototype data may be used.
+                  Sync will resume when online.
                 </div>
               )}
 
@@ -533,8 +492,7 @@ export default function App() {
 
               <div className="action-stack">
 
-                {result.status ===
-                  "MATCH" && (
+                {result.status === "MATCH" && (
                   <PrimaryButton
                     onClick={() =>
                       setScreen("details")
@@ -544,8 +502,7 @@ export default function App() {
                   </PrimaryButton>
                 )}
 
-                {result.status !==
-                  "MATCH" && (
+                {result.status !== "MATCH" && (
                   <PrimaryButton
                     onClick={() =>
                       setScreen("report")
@@ -555,8 +512,7 @@ export default function App() {
                   </PrimaryButton>
                 )}
 
-                {result.status !==
-                  "MATCH" && (
+                {result.status !== "MATCH" && (
                   <SecondaryButton
                     onClick={() =>
                       alert(
@@ -579,13 +535,15 @@ export default function App() {
             </section>
           )}
 
-        {/* ============================
-            DETAILS
-        ============================ */}
+        {/* =====================================
+            MEDICINE DETAILS
+        ===================================== */}
 
         {screen === "details" &&
           result?.product && (
             <section className="screen">
+
+              <BackButton onClick={goBack} />
 
               <div className="eyebrow">
                 Medicine details
@@ -643,10 +601,7 @@ export default function App() {
                   value={
                     result.product
                       .lastUpdated
-                      .replace(
-                        "T",
-                        " "
-                      )
+                      .replace("T", " ")
                   }
                 />
 
@@ -663,12 +618,14 @@ export default function App() {
             </section>
           )}
 
-        {/* ============================
+        {/* =====================================
             REPORT
-        ============================ */}
+        ===================================== */}
 
         {screen === "report" && (
           <section className="screen">
+
+            <BackButton onClick={goBack} />
 
             <div className="eyebrow">
               Suspicious medicine report
@@ -679,9 +636,9 @@ export default function App() {
             </h1>
 
             <div className="notice">
-              Prototype only.
-              Do not enter real personal
-              or health information.
+              Prototype only. Do not enter
+              real personal or health
+              information.
             </div>
 
             <label className="field">
@@ -712,8 +669,7 @@ export default function App() {
             </label>
 
             <label className="field">
-              Coarse location
-              (optional)
+              Coarse location (optional)
 
               <input
                 placeholder="e.g. Adelaide SA"
@@ -741,12 +697,11 @@ export default function App() {
           </section>
         )}
 
-        {/* ============================
+        {/* =====================================
             CONFIRMATION
-        ============================ */}
+        ===================================== */}
 
-        {screen ===
-          "confirmation" && (
+        {screen === "confirmation" && (
           <section className="screen center-screen">
 
             <div className="success-badge">
@@ -773,12 +728,14 @@ export default function App() {
           </section>
         )}
 
-        {/* ============================
+        {/* =====================================
             LOGIN
-        ============================ */}
+        ===================================== */}
 
         {screen === "login" && (
           <section className="screen">
+
+            <BackButton onClick={goBack} />
 
             <div className="eyebrow">
               Professional access
@@ -842,17 +799,19 @@ export default function App() {
           </section>
         )}
 
-        {/* ============================
+        {/* =====================================
             DASHBOARD
-        ============================ */}
+        ===================================== */}
 
-        {screen ===
-          "dashboard" && (
+        {screen === "dashboard" && (
           <section className="screen">
+
+            <BackButton onClick={goBack} />
 
             <div className="dashboard-head">
 
               <div>
+
                 <div className="eyebrow">
                   Professional dashboard
                 </div>
@@ -863,6 +822,7 @@ export default function App() {
                     .toUpperCase() +
                     role.slice(1)}
                 </h1>
+
               </div>
 
               <span className="role-badge">
@@ -871,15 +831,13 @@ export default function App() {
 
             </div>
 
-            {role ===
-              "manufacturer" && (
+            {role === "manufacturer" && (
               <ManufacturerDashboard
                 totals={totals}
               />
             )}
 
-            {role ===
-              "pharmacist" && (
+            {role === "pharmacist" && (
               <PharmacistDashboard
                 onVerify={() =>
                   setScreen("scan")
@@ -887,8 +845,7 @@ export default function App() {
               />
             )}
 
-            {role ===
-              "admin" && (
+            {role === "admin" && (
               <AdminDashboard />
             )}
 
@@ -906,12 +863,52 @@ export default function App() {
   );
 }
 
+/* =========================================
+   BACK BUTTON
+========================================= */
+
+function BackButton({ onClick }) {
+  return (
+    <button
+      type="button"
+      className="back-button"
+      onClick={onClick}
+      aria-label="Go back"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        aria-hidden="true"
+      >
+        <path
+          d="M15 18l-6-6 6-6"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+
+      <span>
+        Back
+      </span>
+    </button>
+  );
+}
+
+/* =========================================
+   DETAIL ROW
+========================================= */
+
 function Row({
   label,
   value,
 }) {
   return (
     <div className="detail-row">
+
       <span>
         {label}
       </span>
@@ -919,9 +916,14 @@ function Row({
       <strong>
         {value}
       </strong>
+
     </div>
   );
 }
+
+/* =========================================
+   MANUFACTURER DASHBOARD
+========================================= */
 
 function ManufacturerDashboard({
   totals,
@@ -953,6 +955,7 @@ function ManufacturerDashboard({
       </div>
 
       <div className="panel">
+
         <h3>
           Brand alerts
         </h3>
@@ -967,9 +970,11 @@ function ManufacturerDashboard({
           No Match • Adelaide SA •
           Under review
         </p>
+
       </div>
 
       <div className="panel">
+
         <h3>
           Products & GS1
         </h3>
@@ -985,10 +990,15 @@ function ManufacturerDashboard({
         <p>
           TestMed 5mg — not yet covered
         </p>
+
       </div>
     </>
   );
 }
+
+/* =========================================
+   PHARMACIST DASHBOARD
+========================================= */
 
 function PharmacistDashboard({
   onVerify,
@@ -1002,6 +1012,7 @@ function PharmacistDashboard({
       </PrimaryButton>
 
       <div className="panel">
+
         <h3>
           Batch lookup
         </h3>
@@ -1018,9 +1029,11 @@ function PharmacistDashboard({
           regulatory sources for real
           decisions.
         </p>
+
       </div>
 
       <div className="panel">
+
         <h3>
           Recent activity
         </h3>
@@ -1032,10 +1045,15 @@ function PharmacistDashboard({
         <p>
           MED-002 / B2045 — No Match
         </p>
+
       </div>
     </>
   );
 }
+
+/* =========================================
+   ADMIN DASHBOARD
+========================================= */
 
 function AdminDashboard() {
   return (
@@ -1079,12 +1097,17 @@ function AdminDashboard() {
   );
 }
 
+/* =========================================
+   METRIC CARD
+========================================= */
+
 function Metric({
   label,
   value,
 }) {
   return (
     <div className="metric">
+
       <span>
         {label}
       </span>
@@ -1092,6 +1115,7 @@ function Metric({
       <strong>
         {value}
       </strong>
+
     </div>
   );
 }
