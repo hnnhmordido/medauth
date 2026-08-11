@@ -1813,10 +1813,24 @@ export default function App() {
           setScreen(
             "pharmacistSettings"
           );
+        } else if (
+          role ===
+          "consumer"
+        ) {
+          setScreen(
+            "consumerSettings"
+          );
         } else {
           setScreen("home");
         }
 
+        break;
+
+      case "consumerProfile":
+      case "consumerSettings":
+        setScreen(
+          "consumerDashboard"
+        );
         break;
 
       case "manufacturerDashboard":
@@ -3114,22 +3128,21 @@ export default function App() {
 
         {screen ===
           "consumerDashboard" && (
-          <section className="screen">
+          <section className="screen consumer-screen">
 
-            <BackButton
-              onClick={goBack}
-            />
+            <div className="consumer-profile-header">
 
-            <div className="pharmacist-profile-header">
-              <div className="pharmacist-profile-main">
+              <div className="consumer-profile-main">
+
                 <img
-                  className="pharmacist-avatar"
+                  className="consumer-avatar"
                   src={`${import.meta.env.BASE_URL}consumer-ron.png`}
                   alt="Ron"
                 />
 
-                <div className="pharmacist-greeting">
-                  <span className="pharmacist-welcome">
+                <div className="consumer-greeting">
+
+                  <span className="consumer-welcome">
                     Welcome
                   </span>
 
@@ -3137,49 +3150,413 @@ export default function App() {
                     Hi, {currentUser?.name || "Ron"}
                   </h1>
 
-                  <p>Consumer</p>
+                  <p>
+                    Consumer
+                  </p>
+
                 </div>
+
               </div>
+
+              <div className="consumer-profile-actions">
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "consumerProfile"
+                    )
+                  }
+                  aria-label="My Profile"
+                >
+                  <ProfileIcon />
+                </button>
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "consumerSettings"
+                    )
+                  }
+                  aria-label="Settings"
+                >
+                  <SettingsIcon />
+                </button>
+
+              </div>
+
             </div>
 
-            <DashboardHeader
-              title="My MedAuth"
-              role="Consumer"
+            <div
+              className={`consumer-system-status ${
+                offline
+                  ? "is-offline"
+                  : "is-online"
+              }`}
+            >
+
+              <div>
+
+                <strong>
+                  {offline
+                    ? "Offline — Using Cached Data"
+                    : "System Online"}
+                </strong>
+
+                {pendingSync > 0 && (
+                  <span>
+                    Pending Sync: {pendingSync}
+                  </span>
+                )}
+
+              </div>
+
+              <NetworkBadge
+                offline={offline}
+                onToggle={handleNetworkToggle}
+              />
+
+            </div>
+
+            <div className="consumer-welcome-card">
+
+              <div className="consumer-welcome-icon">
+                <ScanIcon />
+              </div>
+
+              <div>
+
+                <h2>
+                  Check your medicine
+                </h2>
+
+                <p>
+                  Scan the package or enter the medicine code.
+                </p>
+
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              className="consumer-primary-action"
+              onClick={() =>
+                setScreen(
+                  "scan"
+                )
+              }
+            >
+
+              <ScanIcon />
+
+              <div>
+
+                <strong>
+                  Scan Medicine
+                </strong>
+
+                <span>
+                  Scan a medicine package code
+                </span>
+
+              </div>
+
+              <span aria-hidden="true">
+                →
+              </span>
+
+            </button>
+
+            <button
+              type="button"
+              className="consumer-enter-code"
+              onClick={() =>
+                setScreen(
+                  "manual"
+                )
+              }
+            >
+
+              <div className="consumer-enter-code-icon">
+                <CodeIcon />
+              </div>
+
+              <div>
+
+                <strong>
+                  Enter Code
+                </strong>
+
+                <span>
+                  Type the medicine code manually
+                </span>
+
+              </div>
+
+              <span className="consumer-enter-arrow" aria-hidden="true">
+                →
+              </span>
+
+            </button>
+
+            <div className="consumer-privacy-card">
+
+              <div className="consumer-privacy-icon">
+                <LockIcon />
+              </div>
+
+              <div>
+
+                <strong>
+                  Private and simple
+                </strong>
+
+                <span>
+                  No account required to check a medicine
+                </span>
+
+                <span>
+                  No health information needed
+                </span>
+
+              </div>
+
+            </div>
+
+            <div className="consumer-prototype-note">
+              MedAuth compares medicine information with prototype records. A match does not guarantee that a medicine is authentic or safe.
+            </div>
+
+            <button
+              type="button"
+              className="consumer-signout-link"
+              onClick={reset}
+            >
+              Sign Out
+            </button>
+
+          </section>
+        )}
+
+        {/* CONSUMER PROFILE */}
+
+        {screen ===
+          "consumerProfile" && (
+          <section className="screen consumer-profile-page">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "consumerDashboard"
+                )
+              }
             />
 
-            <div className="panel">
+            <div className="consumer-profile-page-header">
 
-              <h3>
-                Verify a medicine
-              </h3>
+              <img
+                className="consumer-profile-page-avatar"
+                src={`${import.meta.env.BASE_URL}consumer-ron.png`}
+                alt="Ron"
+              />
 
-              <PrimaryButton
-                onClick={() =>
-                  setScreen(
-                    "scan"
-                  )
-                }
-              >
-                Scan Medicine
-              </PrimaryButton>
+              <h1>
+                {currentUser?.fullName || "Ron"}
+              </h1>
+
+              <p>
+                Consumer
+              </p>
+
+              <span className="consumer-status-badge">
+                Demo Profile
+              </span>
 
             </div>
 
-            <div className="panel">
+            <div className="profile-information-card">
 
-              <h3>
-                Enter code manually
-              </h3>
+              <ProfileRow
+                label="Name"
+                value={currentUser?.fullName || "Ron"}
+              />
 
-              <SecondaryButton
+              <ProfileRow
+                label="Role"
+                value="Consumer"
+              />
+
+              <ProfileRow
+                label="Email"
+                value={
+                  currentUser?.email ||
+                  "consumer@medauth.com"
+                }
+              />
+
+            </div>
+
+            <div className="profile-note">
+
+              <LockIcon />
+
+              <span>
+                This demo profile is optional. Medicine verification does not require personal health information.
+              </span>
+
+            </div>
+
+          </section>
+        )}
+
+        {/* CONSUMER SETTINGS */}
+
+        {screen ===
+          "consumerSettings" && (
+          <section className="screen">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "consumerDashboard"
+                )
+              }
+            />
+
+            <div className="eyebrow">
+              Consumer
+            </div>
+
+            <h1>
+              Settings
+            </h1>
+
+            <div className="settings-card">
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Connection
+                  </strong>
+
+                  <span>
+                    {offline
+                      ? "Offline — cached data"
+                      : "System Online"}
+                  </span>
+
+                </div>
+
+                <NetworkBadge
+                  offline={offline}
+                  onToggle={handleNetworkToggle}
+                />
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Pending Sync
+                  </strong>
+
+                  <span>
+                    Activity waiting to synchronise
+                  </span>
+
+                </div>
+
+                <span className="settings-value">
+                  {pendingSync}
+                </span>
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Remember this device
+                  </strong>
+
+                  <span>
+                    Keep your demo preference
+                  </span>
+
+                </div>
+
+                <input
+                  className="settings-checkbox"
+                  type="checkbox"
+                  checked={rememberDevice}
+                  onChange={(event) =>
+                    setRememberDevice(
+                      event.target.checked
+                    )
+                  }
+                />
+
+              </div>
+
+            </div>
+
+            <div className="settings-card">
+
+              <button
+                type="button"
+                className="settings-link-row"
                 onClick={() =>
                   setScreen(
-                    "manual"
+                    "consumerProfile"
                   )
                 }
               >
-                Enter Medicine Code
-              </SecondaryButton>
+
+                <span>
+                  My Profile
+                </span>
+
+                <span>
+                  →
+                </span>
+
+              </button>
+
+              <button
+                type="button"
+                className="settings-link-row"
+                onClick={() => {
+                  setResetEmail(
+                    currentUser?.email ||
+                    "consumer@medauth.com"
+                  );
+
+                  setResetSent(false);
+
+                  setScreen(
+                    "forgotPassword"
+                  );
+                }}
+              >
+
+                <span>
+                  Change Password
+                </span>
+
+                <span>
+                  →
+                </span>
+
+              </button>
 
             </div>
 
@@ -8292,6 +8669,19 @@ function SettingsIcon() {
         cy="12"
         r="8"
       />
+    </svg>
+  );
+}
+
+function CodeIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M8 9 5 12l3 3" />
+      <path d="m16 9 3 3-3 3" />
+      <path d="m14 5-4 14" />
     </svg>
   );
 }
