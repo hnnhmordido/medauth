@@ -498,6 +498,52 @@ export default function App() {
     setCurrentUser,
   ] = useState(null);
 
+  const [
+    accessibilityPrefs,
+    setAccessibilityPrefs,
+  ] = useState(() => {
+    try {
+      const saved =
+        window.localStorage.getItem(
+          "medauth-accessibility"
+        );
+
+      return saved
+        ? JSON.parse(saved)
+        : {
+            textSize: "standard",
+            highContrast: false,
+            voiceAssistance: false,
+            reducedMotion: false,
+          };
+    } catch {
+      return {
+        textSize: "standard",
+        highContrast: false,
+        voiceAssistance: false,
+        reducedMotion: false,
+      };
+    }
+  });
+
+  const updateAccessibilityPrefs =
+    (nextPrefs) => {
+      setAccessibilityPrefs(
+        nextPrefs
+      );
+
+      try {
+        window.localStorage.setItem(
+          "medauth-accessibility",
+          JSON.stringify(
+            nextPrefs
+          )
+        );
+      } catch {
+        // Local prototype only.
+      }
+    };
+
   const [email, setEmail] =
     useState("");
 
@@ -2115,7 +2161,15 @@ export default function App() {
   if (isAdminWebScreen) {
     return (
       <div
-        className="admin-app-shell"
+        className={`admin-app-shell text-${accessibilityPrefs.textSize} ${
+          accessibilityPrefs.highContrast
+            ? "high-contrast"
+            : ""
+        } ${
+          accessibilityPrefs.reducedMotion
+            ? "reduced-motion"
+            : ""
+        }`}
         style={{
           "--brand-blue":
             palette.blue,
@@ -2135,6 +2189,15 @@ export default function App() {
           setScreen={setScreen}
           currentUser={
             currentUser
+          }
+          setCurrentUser={
+            setCurrentUser
+          }
+          accessibilityPrefs={
+            accessibilityPrefs
+          }
+          updateAccessibilityPrefs={
+            updateAccessibilityPrefs
           }
           search={adminSearch}
           setSearch={
@@ -2263,7 +2326,15 @@ export default function App() {
 
   return (
     <div
-      className="app-shell"
+      className={`app-shell text-${accessibilityPrefs.textSize} ${
+        accessibilityPrefs.highContrast
+          ? "high-contrast"
+          : ""
+      } ${
+        accessibilityPrefs.reducedMotion
+          ? "reduced-motion"
+          : ""
+      }`}
       style={{
         "--brand-blue":
           palette.blue,
@@ -2478,6 +2549,10 @@ export default function App() {
               </button>
 
             </form>
+
+            <div className="calm-trust-note">
+              Independent medicine verification prototype · MedAuth checks registered information and does not sell medicines.
+            </div>
 
             <div className="security-footer">
 
@@ -3734,47 +3809,21 @@ export default function App() {
 
             </div>
 
-            <div className="profile-information-card">
-
-              <ProfileRow
-                label="Name"
-                value="Harry"
-              />
-
-              <ProfileRow
-                label="Role"
-                value="Manufacturer"
-              />
-
-              <ProfileRow
-                label="Organisation"
-                value={
-                  currentUser
-                    ?.organisation ||
-                  "MedAuth Manufacturer Demo"
-                }
-              />
-
-              <ProfileRow
-                label="Email"
-                value={
-                  currentUser
-                    ?.email ||
-                  "manufacturer@medauth.com"
-                }
-              />
-
-            </div>
-
-            <div className="profile-note">
-
-              <LockIcon />
-
-              <span>
-                Manufacturer access is limited to product, brand-alert, intelligence and verification-history features.
-              </span>
-
-            </div>
+            <EditableProfilePanel
+              currentUser={currentUser}
+              setCurrentUser={setCurrentUser}
+              roleLabel="Manufacturer"
+              defaults={{
+                fullName: "Harry",
+                title: "Manufacturer Representative",
+                organisation: "MedAuth Manufacturer Demo",
+                email: "manufacturer@medauth.com",
+                phone: "",
+              }}
+              accessibilityPrefs={accessibilityPrefs}
+              updateAccessibilityPrefs={updateAccessibilityPrefs}
+              privacyNote="Manufacturer role access is controlled separately. Profile editing cannot change the user's role."
+            />
 
           </section>
         )}
@@ -5059,37 +5108,21 @@ export default function App() {
 
             </div>
 
-            <div className="profile-information-card">
-
-              <ProfileRow
-                label="Name"
-                value={currentUser?.fullName || "Ron"}
-              />
-
-              <ProfileRow
-                label="Role"
-                value="Consumer"
-              />
-
-              <ProfileRow
-                label="Email"
-                value={
-                  currentUser?.email ||
-                  "consumer@medauth.com"
-                }
-              />
-
-            </div>
-
-            <div className="profile-note">
-
-              <LockIcon />
-
-              <span>
-                This demo profile is optional. Medicine verification does not require personal health information.
-              </span>
-
-            </div>
+            <EditableProfilePanel
+              currentUser={currentUser}
+              setCurrentUser={setCurrentUser}
+              roleLabel="Consumer"
+              defaults={{
+                fullName: "Ron",
+                title: "Consumer",
+                organisation: "",
+                email: "consumer@medauth.com",
+                phone: "",
+              }}
+              accessibilityPrefs={accessibilityPrefs}
+              updateAccessibilityPrefs={updateAccessibilityPrefs}
+              privacyNote="Demo/local profile only. Medicine checking does not require medical history, prescriptions, diagnosis or health information."
+            />
 
           </section>
         )}
@@ -6153,51 +6186,21 @@ export default function App() {
 
             </div>
 
-            <div className="profile-information-card">
-
-              <ProfileRow
-                label="Name"
-                value={
-                  currentUser
-                    ?.fullName ||
-                  "Marie Nguyen"
-                }
-              />
-
-              <ProfileRow
-                label="Role"
-                value="Pharmacist"
-              />
-
-              <ProfileRow
-                label="Email"
-                value={
-                  currentUser
-                    ?.email ||
-                  "pharmacist@medauth.com"
-                }
-              />
-
-              <ProfileRow
-                label="Organisation"
-                value={
-                  currentUser
-                    ?.organisation ||
-                  "MedAuth Pharmacy Demo"
-                }
-              />
-
-            </div>
-
-            <div className="profile-note">
-
-              <LockIcon />
-
-              <span>
-                Demo professional profile. No patient health information is stored.
-              </span>
-
-            </div>
+            <EditableProfilePanel
+              currentUser={currentUser}
+              setCurrentUser={setCurrentUser}
+              roleLabel="Pharmacist"
+              defaults={{
+                fullName: "Marie Nguyen",
+                title: "Registered Pharmacist",
+                organisation: "MedAuth Pharmacy Demo",
+                email: "pharmacist@medauth.com",
+                phone: "",
+              }}
+              accessibilityPrefs={accessibilityPrefs}
+              updateAccessibilityPrefs={updateAccessibilityPrefs}
+              privacyNote="Professional demo profile only. No patient health information is stored."
+            />
 
           </section>
         )}
@@ -7438,51 +7441,21 @@ export default function App() {
 
             </div>
 
-            <div className="profile-information-card">
-
-              <ProfileRow
-                label="Name"
-                value={
-                  currentUser
-                    ?.fullName ||
-                  "Luna Chen"
-                }
-              />
-
-              <ProfileRow
-                label="Role"
-                value="Admin / Regulator"
-              />
-
-              <ProfileRow
-                label="Email"
-                value={
-                  currentUser
-                    ?.email ||
-                  "admin@medauth.com"
-                }
-              />
-
-              <ProfileRow
-                label="Organisation"
-                value={
-                  currentUser
-                    ?.organisation ||
-                  "MedAuth Administration"
-                }
-              />
-
-            </div>
-
-            <div className="profile-note">
-
-              <LockIcon />
-
-              <span>
-                Authorised MedAuth prototype administrator account.
-              </span>
-
-            </div>
+            <EditableProfilePanel
+              currentUser={currentUser}
+              setCurrentUser={setCurrentUser}
+              roleLabel="Admin / Regulator"
+              defaults={{
+                fullName: "Luna Chen",
+                title: "MedAuth Administrator",
+                organisation: "MedAuth Administration",
+                email: "admin@medauth.com",
+                phone: "",
+              }}
+              accessibilityPrefs={accessibilityPrefs}
+              updateAccessibilityPrefs={updateAccessibilityPrefs}
+              privacyNote="Admin / Regulator role access is managed separately in Users & Access and cannot be removed from this profile."
+            />
 
           </section>
         )}
@@ -7648,6 +7621,9 @@ function AdminWorkspace({
   screen,
   setScreen,
   currentUser,
+  setCurrentUser,
+  accessibilityPrefs,
+  updateAccessibilityPrefs,
   search,
   setSearch,
   reports,
@@ -7790,7 +7766,15 @@ function AdminWorkspace({
 
         <div className="admin-sidebar-footer">
 
-          <div className="admin-profile-mini">
+          <button
+            type="button"
+            className="admin-profile-mini"
+            onClick={() =>
+              setScreen(
+                "adminProfile"
+              )
+            }
+          >
 
             <img
               src={`${import.meta.env.BASE_URL}admin-luna.png`}
@@ -7799,9 +7783,8 @@ function AdminWorkspace({
 
             <div>
               <strong>
-                {currentUser
-                  ?.name ||
-                  "Luna"}
+                {currentUser?.fullName ||
+                  "Luna Chen"}
               </strong>
 
               <span>
@@ -7809,7 +7792,7 @@ function AdminWorkspace({
               </span>
             </div>
 
-          </div>
+          </button>
 
           <button
             type="button"
@@ -7941,7 +7924,7 @@ function AdminWorkspace({
               className="admin-avatar-button"
               onClick={() =>
                 setScreen(
-                  "adminUsers"
+                  "adminProfile"
                 )
               }
             >
@@ -7961,9 +7944,9 @@ function AdminWorkspace({
             "adminOverview" && (
             <>
               <AdminPageHeader
-                eyebrow="Admin Monitoring"
-                title="Investigation Overview"
-                subtitle="Review suspicious medicine activity, verification provenance, and investigation status"
+                eyebrow="Admin / Regulator"
+                title="Admin Overview"
+                subtitle="Monitor verification activity, review reports and trace investigation history"
               />
 
               <div className="admin-summary-strip">
@@ -7997,9 +7980,9 @@ function AdminWorkspace({
                 />
 
                 <AdminSummary
-                  label="Recall Matches"
+                  label="Active Investigations"
                   value={
-                    summary.recalls
+                    clusters.length
                   }
                 />
 
@@ -8163,6 +8146,83 @@ function AdminWorkspace({
                   regions={
                     regions
                   }
+                />
+
+              </section>
+            </>
+          )}
+
+          {screen ===
+            "adminProfile" && (
+            <>
+              <AdminPageHeader
+                eyebrow="Profile"
+                title={
+                  currentUser?.fullName ||
+                  "Luna Chen"
+                }
+                subtitle="Admin / Regulator profile and accessibility preferences"
+                backAction={() =>
+                  setScreen(
+                    "adminOverview"
+                  )
+                }
+              />
+
+              <section className="admin-panel admin-profile-panel">
+
+                <div className="admin-profile-page-head">
+
+                  <img
+                    src={`${import.meta.env.BASE_URL}admin-luna.png`}
+                    alt="Luna"
+                  />
+
+                  <div>
+                    <h2>
+                      {currentUser?.fullName ||
+                        "Luna Chen"}
+                    </h2>
+
+                    <p>
+                      {currentUser?.title ||
+                        "MedAuth Administrator"}
+                    </p>
+
+                    <span className="admin-access-badge">
+                      Admin / Regulator
+                    </span>
+                  </div>
+
+                </div>
+
+                <EditableProfilePanel
+                  currentUser={
+                    currentUser
+                  }
+                  setCurrentUser={
+                    setCurrentUser
+                  }
+                  roleLabel="Admin / Regulator"
+                  defaults={{
+                    fullName:
+                      "Luna Chen",
+                    title:
+                      "MedAuth Administrator",
+                    organisation:
+                      "MedAuth Administration",
+                    email:
+                      "admin@medauth.com",
+                    phone: "",
+                  }}
+                  accessibilityPrefs={
+                    accessibilityPrefs
+                  }
+                  updateAccessibilityPrefs={
+                    updateAccessibilityPrefs
+                  }
+                  privacyNote="Admin / Regulator role access is managed separately in Users & Access and cannot be removed from this profile."
+                  web
                 />
 
               </section>
@@ -9745,6 +9805,349 @@ function SupplyChainSnapshot({
         This is prototype/sample supply-chain information and is not a real blockchain record.
       </p>
 
+    </div>
+  );
+}
+
+function EditableProfilePanel({
+  currentUser,
+  setCurrentUser,
+  roleLabel,
+  defaults,
+  accessibilityPrefs,
+  updateAccessibilityPrefs,
+  privacyNote,
+  web = false,
+}) {
+  const [editing, setEditing] =
+    useState(false);
+
+  const [message, setMessage] =
+    useState("");
+
+  const buildDraft = () => ({
+    fullName:
+      currentUser?.fullName ||
+      defaults.fullName ||
+      "",
+    title:
+      currentUser?.title ||
+      defaults.title ||
+      "",
+    organisation:
+      currentUser?.organisation ||
+      defaults.organisation ||
+      "",
+    email:
+      currentUser?.email ||
+      defaults.email ||
+      "",
+    phone:
+      currentUser?.phone ||
+      defaults.phone ||
+      "",
+  });
+
+  const [draft, setDraft] =
+    useState(buildDraft);
+
+  const [prefDraft, setPrefDraft] =
+    useState(accessibilityPrefs);
+
+  const beginEdit = () => {
+    setDraft(buildDraft());
+    setPrefDraft(
+      accessibilityPrefs
+    );
+    setMessage("");
+    setEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setDraft(buildDraft());
+    setPrefDraft(
+      accessibilityPrefs
+    );
+    setMessage("");
+    setEditing(false);
+  };
+
+  const saveProfile = () => {
+    setCurrentUser(
+      (current) => ({
+        ...(current || {}),
+        ...draft,
+      })
+    );
+
+    updateAccessibilityPrefs(
+      prefDraft
+    );
+
+    setMessage(
+      "Profile updated"
+    );
+    setEditing(false);
+  };
+
+  const field = (
+    key,
+    label,
+    type = "text"
+  ) => (
+    <label className="editable-profile-field">
+      <span>{label}</span>
+      <input
+        type={type}
+        value={draft[key]}
+        onChange={(event) =>
+          setDraft(
+            (current) => ({
+              ...current,
+              [key]:
+                event.target.value,
+            })
+          )
+        }
+      />
+    </label>
+  );
+
+  return (
+    <div
+      className={`editable-profile-panel ${
+        web ? "web" : ""
+      }`}
+    >
+      <div className="editable-profile-heading">
+        <div>
+          <h2>
+            Profile details
+          </h2>
+          <p>
+            {roleLabel}
+          </p>
+        </div>
+
+        {!editing && (
+          <button
+            type="button"
+            className="edit-profile-button"
+            onClick={beginEdit}
+          >
+            Edit Profile
+          </button>
+        )}
+      </div>
+
+      {!editing ? (
+        <div className="profile-information-card">
+          <ProfileRow
+            label="Name"
+            value={
+              currentUser?.fullName ||
+              defaults.fullName ||
+              "—"
+            }
+          />
+          <ProfileRow
+            label="Job title"
+            value={
+              currentUser?.title ||
+              defaults.title ||
+              "—"
+            }
+          />
+          {(currentUser?.organisation ||
+            defaults.organisation) && (
+            <ProfileRow
+              label="Organisation"
+              value={
+                currentUser?.organisation ||
+                defaults.organisation
+              }
+            />
+          )}
+          <ProfileRow
+            label="Email"
+            value={
+              currentUser?.email ||
+              defaults.email ||
+              "—"
+            }
+          />
+          {(currentUser?.phone ||
+            defaults.phone) && (
+            <ProfileRow
+              label="Phone"
+              value={
+                currentUser?.phone ||
+                defaults.phone
+              }
+            />
+          )}
+          <ProfileRow
+            label="Role"
+            value={roleLabel}
+          />
+        </div>
+      ) : (
+        <div className="editable-profile-form">
+          {field("fullName", "Name")}
+          {field(
+            "title",
+            roleLabel === "Consumer"
+              ? "Display title"
+              : "Job title"
+          )}
+          {roleLabel !== "Consumer" &&
+            field(
+              "organisation",
+              "Organisation"
+            )}
+          {field(
+            "email",
+            "Email",
+            "email"
+          )}
+          {roleLabel !== "Consumer" &&
+            field(
+              "phone",
+              "Phone",
+              "tel"
+            )}
+        </div>
+      )}
+
+      <div className="profile-preferences-card">
+        <div className="profile-preferences-head">
+          <h3>
+            Accessibility
+          </h3>
+          <span>
+            Calm Trust preferences
+          </span>
+        </div>
+
+        <label className="profile-preference-row">
+          <div>
+            <strong>
+              Text Size
+            </strong>
+            <span>
+              Standard, Large or Extra Large
+            </span>
+          </div>
+
+          <select
+            value={
+              editing
+                ? prefDraft.textSize
+                : accessibilityPrefs.textSize
+            }
+            disabled={!editing}
+            onChange={(event) =>
+              setPrefDraft(
+                (current) => ({
+                  ...current,
+                  textSize:
+                    event.target.value,
+                })
+              )
+            }
+          >
+            <option value="standard">
+              Standard
+            </option>
+            <option value="large">
+              Large
+            </option>
+            <option value="extra-large">
+              Extra Large
+            </option>
+          </select>
+        </label>
+
+        {[
+          ["highContrast", "High Contrast"],
+          ["voiceAssistance", "Voice Assistance"],
+          ["reducedMotion", "Reduced Motion"],
+        ].map(([key, label]) => (
+          <label
+            className="profile-preference-row"
+            key={key}
+          >
+            <div>
+              <strong>
+                {label}
+              </strong>
+              <span>
+                {(
+                  editing
+                    ? prefDraft[key]
+                    : accessibilityPrefs[key]
+                )
+                  ? "On"
+                  : "Off"}
+              </span>
+            </div>
+
+            <input
+              type="checkbox"
+              checked={
+                editing
+                  ? prefDraft[key]
+                  : accessibilityPrefs[key]
+              }
+              disabled={!editing}
+              onChange={(event) =>
+                setPrefDraft(
+                  (current) => ({
+                    ...current,
+                    [key]:
+                      event.target.checked,
+                  })
+                )
+              }
+            />
+          </label>
+        ))}
+      </div>
+
+      {editing && (
+        <div className="editable-profile-actions">
+          <button
+            type="button"
+            className="save-profile-button"
+            onClick={saveProfile}
+          >
+            Save Changes
+          </button>
+          <button
+            type="button"
+            className="cancel-profile-button"
+            onClick={cancelEdit}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {message && (
+        <div
+          className="profile-updated-message"
+          role="status"
+        >
+          ✓ {message}
+        </div>
+      )}
+
+      <div className="profile-note">
+        <LockIcon />
+        <span>
+          {privacyNote}
+        </span>
+      </div>
     </div>
   );
 }
