@@ -98,6 +98,54 @@ const initialAdminReports = [
   },
 ];
 
+const initialConsumerActivity = [
+  {
+    id: "CVE-0001",
+    timestamp: "2026-08-11T14:35:00",
+    displayDate: "Today, 2:35 PM",
+    code: "MED-001",
+    productId: "09312345678901",
+    medicine: "SampleMed 10mg",
+    batch: "B1001",
+    result: "MATCH",
+    method: "Scan",
+    offline: false,
+    pendingSync: false,
+    channel: "CONSUMER",
+    type: "verification",
+  },
+  {
+    id: "CVE-0002",
+    timestamp: "2026-08-10T16:20:00",
+    displayDate: "Yesterday, 4:20 PM",
+    code: "MED-002",
+    productId: "09312345678902",
+    medicine: "HealthMed 20mg",
+    batch: "B2045",
+    result: "NO_MATCH",
+    method: "Scan",
+    offline: false,
+    pendingSync: false,
+    channel: "CONSUMER",
+    type: "verification",
+  },
+  {
+    id: "CVE-0003",
+    timestamp: "2026-08-08T11:10:00",
+    displayDate: "8 Aug, 11:10 AM",
+    code: "MED-003",
+    productId: "09312345678903",
+    medicine: "TestMed 5mg",
+    batch: "B9912",
+    result: "NOT_COVERED",
+    method: "Manual Entry",
+    offline: false,
+    pendingSync: false,
+    channel: "CONSUMER",
+    type: "verification",
+  },
+];
+
 const initialAuditEvents = [
   {
     id: "AUD-0001",
@@ -496,6 +544,23 @@ export default function App() {
   ]);
 
   const [
+    consumerActivityEvents,
+    setConsumerActivityEvents,
+  ] = useState(
+    initialConsumerActivity
+  );
+
+  const [
+    consumerActivityFilter,
+    setConsumerActivityFilter,
+  ] = useState("ALL");
+
+  const [
+    resultOrigin,
+    setResultOrigin,
+  ] = useState("");
+
+  const [
     batchSearch,
     setBatchSearch,
   ] = useState("");
@@ -591,6 +656,29 @@ export default function App() {
     mapFilter,
     setMapFilter,
   ] = useState("ALL");
+
+  const currentConsumerMedicine =
+    consumerActivityEvents[0] ||
+    null;
+
+  const filteredConsumerActivity =
+    useMemo(() => {
+      if (
+        consumerActivityFilter ===
+        "ALL"
+      ) {
+        return consumerActivityEvents;
+      }
+
+      return consumerActivityEvents.filter(
+        (event) =>
+          event.result ===
+          consumerActivityFilter
+      );
+    }, [
+      consumerActivityEvents,
+      consumerActivityFilter,
+    ]);
 
   const activeRecalls =
     useMemo(
@@ -1181,8 +1269,20 @@ export default function App() {
   const runVerification =
     (
       nextCode = code,
-      nextBatch = batch
+      nextBatch = batch,
+      nextMethod =
+        screen === "manual"
+          ? "Manual Entry"
+          : "Scan"
     ) => {
+      if (
+        role === "consumer"
+      ) {
+        setResultOrigin(
+          "consumerDashboard"
+        );
+      }
+
       setScreen("checking");
 
       window.setTimeout(
@@ -1259,6 +1359,9 @@ export default function App() {
 
             type:
               "verification",
+
+            method:
+              nextMethod,
           };
 
           setVerificationEvents(
@@ -1267,6 +1370,23 @@ export default function App() {
               ...current,
             ]
           );
+
+          if (
+            role === "consumer"
+          ) {
+            setConsumerActivityEvents(
+              (current) => [
+                {
+                  ...newEvent,
+                  displayDate:
+                    formatEventTime(
+                      newEvent.timestamp
+                    ),
+                },
+                ...current,
+              ]
+            );
+          }
 
           setAuditEvents(
             (current) => [
@@ -1736,6 +1856,15 @@ export default function App() {
               ? "adminMobileDashboard"
               : "adminModeChoice"
           );
+        } else if (
+          role === "consumer"
+        ) {
+          setScreen(
+            resultOrigin ===
+            "consumerActivity"
+              ? "consumerActivity"
+              : "consumerDashboard"
+          );
         } else {
           setScreen("home");
         }
@@ -1828,6 +1957,7 @@ export default function App() {
 
       case "consumerProfile":
       case "consumerSettings":
+      case "consumerActivity":
         setScreen(
           "consumerDashboard"
         );
@@ -3221,23 +3351,126 @@ export default function App() {
 
             </div>
 
-            <div className="consumer-welcome-card">
+            <div className="consumer-current-card">
 
-              <div className="consumer-welcome-icon">
-                <ScanIcon />
+              <div className="consumer-current-card-head">
+
+                <div>
+
+                  <span className="consumer-current-label">
+                    Check your medicine
+                  </span>
+
+                  <h2>
+                    {currentConsumerMedicine
+                      ? currentConsumerMedicine.medicine
+                      : "No medicine checked yet"}
+                  </h2>
+
+                </div>
+
+                {currentConsumerMedicine && (
+                  <span
+                    className={`consumer-current-status ${
+                      currentConsumerMedicine.result.toLowerCase()
+                    }`}
+                  >
+                    {currentConsumerMedicine.result === "MATCH"
+                      ? "✓ Match"
+                      : currentConsumerMedicine.result === "NO_MATCH"
+                      ? "⚠ No Match"
+                      : "? Unable to Verify"}
+                  </span>
+                )}
+
               </div>
 
-              <div>
+              {currentConsumerMedicine ? (
+                <>
 
-                <h2>
-                  Check your medicine
-                </h2>
+                  <div className="consumer-current-details">
 
+                    <div>
+                      <span>Code</span>
+
+                      <strong>
+                        {currentConsumerMedicine.code}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>Batch</span>
+
+                      <strong>
+                        {currentConsumerMedicine.batch}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  <button
+                    type="button"
+                    className="consumer-current-details-button"
+                    onClick={() => {
+                      const product =
+                        findMedicine(
+                          currentConsumerMedicine.code
+                        );
+
+                      setCode(
+                        currentConsumerMedicine.code
+                      );
+
+                      setBatch(
+                        currentConsumerMedicine.batch
+                      );
+
+                      setResult({
+                        status:
+                          currentConsumerMedicine.result,
+
+                        product:
+                          product || null,
+
+                        scannedCode:
+                          currentConsumerMedicine.code,
+
+                        scannedBatch:
+                          currentConsumerMedicine.batch,
+
+                        offline:
+                          currentConsumerMedicine.offline,
+
+                        mismatchField:
+                          currentConsumerMedicine.result === "NO_MATCH"
+                            ? "batch"
+                            : null,
+                      });
+
+                      setResultOrigin(
+                        "consumerDashboard"
+                      );
+
+                      setScreen(
+                        "result"
+                      );
+                    }}
+                  >
+                    <span>
+                      View Current Medicine
+                    </span>
+
+                    <span aria-hidden="true">
+                      →
+                    </span>
+                  </button>
+
+                </>
+              ) : (
                 <p>
-                  Scan the package or enter the medicine code.
+                  Scan a package or enter a medicine code to begin.
                 </p>
-
-              </div>
+              )}
 
             </div>
 
@@ -3303,6 +3536,45 @@ export default function App() {
 
             </button>
 
+            <button
+              type="button"
+              className="consumer-activity-link-card"
+              onClick={() => {
+                setConsumerActivityFilter(
+                  "ALL"
+                );
+
+                setScreen(
+                  "consumerActivity"
+                );
+              }}
+            >
+
+              <div className="consumer-activity-link-icon">
+                <HistoryIcon />
+              </div>
+
+              <div className="consumer-activity-link-copy">
+
+                <strong>
+                  Activity Log
+                </strong>
+
+                <span>
+                  View your recent medicine checks
+                </span>
+
+              </div>
+
+              <span
+                className="consumer-activity-link-arrow"
+                aria-hidden="true"
+              >
+                →
+              </span>
+
+            </button>
+
             <div className="consumer-privacy-card">
 
               <div className="consumer-privacy-icon">
@@ -3338,6 +3610,252 @@ export default function App() {
             >
               Sign Out
             </button>
+
+          </section>
+        )}
+
+        {/* CONSUMER ACTIVITY LOG */}
+
+        {screen ===
+          "consumerActivity" && (
+          <section className="screen consumer-activity-screen">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "consumerDashboard"
+                )
+              }
+            />
+
+            <div className="eyebrow">
+              Consumer
+            </div>
+
+            <h1>
+              Activity Log
+            </h1>
+
+            <p className="consumer-activity-subtitle">
+              Your recent medicine checks
+            </p>
+
+            <div
+              className="consumer-activity-filters"
+              role="group"
+              aria-label="Filter activity"
+            >
+
+              {[
+                ["ALL", "All"],
+                ["MATCH", "Match"],
+                ["NO_MATCH", "No Match"],
+                [
+                  "NOT_COVERED",
+                  "Unable to Verify",
+                ],
+              ].map(
+                ([
+                  value,
+                  label,
+                ]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={
+                      consumerActivityFilter ===
+                      value
+                        ? "active"
+                        : ""
+                    }
+                    onClick={() =>
+                      setConsumerActivityFilter(
+                        value
+                      )
+                    }
+                    aria-pressed={
+                      consumerActivityFilter ===
+                      value
+                    }
+                  >
+                    {label}
+                  </button>
+                )
+              )}
+
+            </div>
+
+            <div className="consumer-activity-list">
+
+              {filteredConsumerActivity.map(
+                (event) => {
+                  const product =
+                    findMedicine(
+                      event.code
+                    );
+
+                  const statusText =
+                    event.result ===
+                    "MATCH"
+                      ? "Match"
+                      : event.result ===
+                        "NO_MATCH"
+                      ? "No Match"
+                      : "Unable to Verify";
+
+                  const statusIcon =
+                    event.result ===
+                    "MATCH"
+                      ? "✓"
+                      : event.result ===
+                        "NO_MATCH"
+                      ? "!"
+                      : "?";
+
+                  return (
+                    <article
+                      className="consumer-activity-card"
+                      key={event.id}
+                    >
+
+                      <div className="consumer-activity-card-head">
+
+                        <div>
+
+                          <h2>
+                            {event.medicine}
+                          </h2>
+
+                          <span>
+                            {event.displayDate ||
+                              formatEventTime(
+                                event.timestamp
+                              )}
+                          </span>
+
+                        </div>
+
+                        <span
+                          className={`consumer-activity-status ${event.result.toLowerCase()}`}
+                        >
+                          <span
+                            className="consumer-activity-status-icon"
+                            aria-hidden="true"
+                          >
+                            {statusIcon}
+                          </span>
+
+                          {statusText}
+                        </span>
+
+                      </div>
+
+                      <div className="consumer-activity-meta">
+
+                        <div>
+                          <span>Code</span>
+
+                          <strong>
+                            {event.code}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Batch</span>
+
+                          <strong>
+                            {event.batch}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Method</span>
+
+                          <strong>
+                            {event.method ||
+                              "Scan"}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Network</span>
+
+                          <strong>
+                            {event.offline
+                              ? "Offline"
+                              : "Online"}
+                          </strong>
+                        </div>
+
+                      </div>
+
+                      <button
+                        type="button"
+                        className="consumer-activity-details-button"
+                        onClick={() => {
+                          setCode(
+                            event.code
+                          );
+
+                          setBatch(
+                            event.batch
+                          );
+
+                          setResult({
+                            status:
+                              event.result,
+
+                            product:
+                              product ||
+                              null,
+
+                            scannedCode:
+                              event.code,
+
+                            scannedBatch:
+                              event.batch,
+
+                            offline:
+                              event.offline,
+
+                            mismatchField:
+                              event.result ===
+                              "NO_MATCH"
+                                ? "batch"
+                                : null,
+                          });
+
+                          setResultOrigin(
+                            "consumerActivity"
+                          );
+
+                          setScreen(
+                            "result"
+                          );
+                        }}
+                      >
+                        <span>
+                          View Details
+                        </span>
+
+                        <span aria-hidden="true">
+                          →
+                        </span>
+                      </button>
+
+                    </article>
+                  );
+                }
+              )}
+
+              {filteredConsumerActivity.length ===
+                0 && (
+                <div className="consumer-activity-empty">
+                  No activity found for this filter.
+                </div>
+              )}
+
+            </div>
 
           </section>
         )}
@@ -8682,6 +9200,19 @@ function CodeIcon() {
       <path d="M8 9 5 12l3 3" />
       <path d="m16 9 3 3-3 3" />
       <path d="m14 5-4 14" />
+    </svg>
+  );
+}
+
+function HistoryIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <path d="M3 4v5h5" />
+      <path d="M12 7v5l3 2" />
     </svg>
   );
 }
