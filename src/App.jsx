@@ -68,11 +68,12 @@ export default function App() {
 
   const [reportRef, setReportRef] = useState("");
 
-  /* HOME LOGIN */
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [rememberDevice, setRememberDevice] =
     useState(true);
+
   const [showPassword, setShowPassword] =
     useState(false);
 
@@ -89,7 +90,8 @@ export default function App() {
       ).length,
 
       covered: demoEvents.filter(
-        (event) => event.result !== "NOT_COVERED"
+        (event) =>
+          event.result !== "NOT_COVERED"
       ).length,
     }),
     []
@@ -102,22 +104,27 @@ export default function App() {
     setScreen("checking");
 
     window.setTimeout(() => {
-      const verificationResult = verifyMedicine(
-        nextCode,
-        nextBatch,
-        offline
-      );
+      const verificationResult =
+        verifyMedicine(
+          nextCode,
+          nextBatch,
+          offline
+        );
 
       setResult(verificationResult);
+
       setScreen("result");
     }, 650);
   };
 
   const reset = () => {
     setScreen("home");
+
     setCode("MED-001");
     setBatch("B1001");
+
     setResult(null);
+
     setReportRef("");
   };
 
@@ -149,22 +156,15 @@ export default function App() {
     }
   };
 
-  /*
-   * IMPORTANT:
-   * Connect this to your EXISTING authentication
-   * function if your real project already has one.
-   *
-   * Do not replace your real API/authentication logic.
-   */
   const handleHomeLogin = (event) => {
     event.preventDefault();
 
     /*
-     * Keep your existing authentication call here.
-     *
-     * For the current prototype this opens the
-     * professional dashboard.
-     */
+      If you already have real authentication,
+      replace only this line with your existing
+      authentication function.
+    */
+
     setScreen("dashboard");
   };
 
@@ -180,14 +180,14 @@ export default function App() {
     >
       <main className="phone-stage">
 
-        {/* =====================================
+        {/* ======================================
             HOME
-        ===================================== */}
+        ====================================== */}
 
         {screen === "home" && (
           <section className="screen home-screen">
 
-            {/* APP CONNECTION STATUS */}
+            {/* Wi-Fi / connection state */}
 
             <div className="home-status-row">
               <NetworkBadge
@@ -200,7 +200,7 @@ export default function App() {
               />
             </div>
 
-            {/* MEDAUTH LOGO */}
+            {/* MedAuth logo */}
 
             <div className="home-brand">
               <img
@@ -210,7 +210,7 @@ export default function App() {
               />
             </div>
 
-            {/* SCAN */}
+            {/* Scan Medicine stays on Home */}
 
             <PrimaryButton
               onClick={() =>
@@ -220,13 +220,15 @@ export default function App() {
               Scan Medicine
             </PrimaryButton>
 
-            {/* DIVIDER */}
+            {/* Divider */}
 
             <div className="home-divider">
-              <span>Professional Access</span>
+              <span>
+                Professional Access
+              </span>
             </div>
 
-            {/* HOME LOGIN FORM */}
+            {/* Sign-in form */}
 
             <form
               className="home-login-form"
@@ -318,16 +320,11 @@ export default function App() {
                 <button
                   type="button"
                   className="forgot-password"
-                  onClick={() => {
-                    /*
-                     * Replace this with your
-                     * existing forgot-password
-                     * navigation/handler.
-                     */
+                  onClick={() =>
                     alert(
-                      "Connect this button to your existing password recovery flow."
-                    );
-                  }}
+                      "Connect this to your existing password recovery flow."
+                    )
+                  }
                 >
                   Forgot password?
                 </button>
@@ -346,7 +343,7 @@ export default function App() {
 
             </form>
 
-            {/* SECURITY FOOTER */}
+            {/* Security footer */}
 
             <div className="security-footer">
               <LockIcon />
@@ -363,9 +360,9 @@ export default function App() {
           </section>
         )}
 
-        {/* =====================================
+        {/* ======================================
             SCAN
-        ===================================== */}
+        ====================================== */}
 
         {screen === "scan" && (
           <section className="screen">
@@ -466,9 +463,9 @@ export default function App() {
           </section>
         )}
 
-        {/* =====================================
+        {/* ======================================
             MANUAL ENTRY
-        ===================================== */}
+        ====================================== */}
 
         {screen === "manual" && (
           <section className="screen">
@@ -528,9 +525,9 @@ export default function App() {
           </section>
         )}
 
-        {/* =====================================
+        {/* ======================================
             CHECKING
-        ===================================== */}
+        ====================================== */}
 
         {screen === "checking" && (
           <section className="screen center-screen">
@@ -550,9 +547,9 @@ export default function App() {
           </section>
         )}
 
-        {/* =====================================
+        {/* ======================================
             RESULT
-        ===================================== */}
+        ====================================== */}
 
         {screen === "result" &&
           result && (
@@ -680,9 +677,9 @@ export default function App() {
             </section>
           )}
 
-        {/* =====================================
+        {/* ======================================
             MEDICINE DETAILS
-        ===================================== */}
+        ====================================== */}
 
         {screen === "details" &&
           result?.product && (
@@ -763,9 +760,9 @@ export default function App() {
             </section>
           )}
 
-        {/* =====================================
+        {/* ======================================
             REPORT
-        ===================================== */}
+        ====================================== */}
 
         {screen === "report" && (
           <section className="screen">
@@ -842,9 +839,9 @@ export default function App() {
           </section>
         )}
 
-        {/* =====================================
+        {/* ======================================
             CONFIRMATION
-        ===================================== */}
+        ====================================== */}
 
         {screen === "confirmation" && (
           <section className="screen center-screen">
@@ -873,80 +870,9 @@ export default function App() {
           </section>
         )}
 
-        {/* =====================================
-            LOGIN
-        ===================================== */}
-
-        {screen === "login" && (
-          <section className="screen">
-
-            <BackButton onClick={goBack} />
-
-            <div className="eyebrow">
-              Professional access
-            </div>
-
-            <h1>
-              Log In
-            </h1>
-
-            <label className="field">
-              Role
-
-              <select
-                value={role}
-                onChange={(event) =>
-                  setRole(
-                    event.target.value
-                  )
-                }
-              >
-                <option value="manufacturer">
-                  Manufacturer
-                </option>
-
-                <option value="pharmacist">
-                  Pharmacist
-                </option>
-
-                <option value="admin">
-                  Admin
-                </option>
-              </select>
-            </label>
-
-            <label className="field">
-              Email
-
-              <input
-                value={`${role}@demo.com`}
-                readOnly
-              />
-            </label>
-
-            <label className="field">
-              Password
-
-              <input
-                value="demo123"
-                readOnly
-              />
-            </label>
-
-            <PrimaryButton
-              onClick={() =>
-                setScreen("dashboard")
-              }
-            >
-              Log In
-            </PrimaryButton>
-
-          </section>
-        )}
-
-        {/* =====================================
+        {/* ======================================
             DASHBOARD
-        ===================================== */}
+        ====================================== */}
 
         {screen === "dashboard" && (
           <section className="screen">
@@ -1008,10 +934,6 @@ export default function App() {
   );
 }
 
-/* =========================================
-   BACK BUTTON
-========================================= */
-
 function BackButton({ onClick }) {
   return (
     <button
@@ -1034,10 +956,6 @@ function BackButton({ onClick }) {
   );
 }
 
-/* =========================================
-   PASSWORD ICONS
-========================================= */
-
 function EyeIcon() {
   return (
     <svg
@@ -1045,6 +963,7 @@ function EyeIcon() {
       aria-hidden="true"
     >
       <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+
       <circle
         cx="12"
         cy="12"
@@ -1069,10 +988,6 @@ function EyeOffIcon() {
   );
 }
 
-/* =========================================
-   LOCK ICON
-========================================= */
-
 function LockIcon() {
   return (
     <svg
@@ -1093,10 +1008,6 @@ function LockIcon() {
   );
 }
 
-/* =========================================
-   DETAILS ROW
-========================================= */
-
 function Row({
   label,
   value,
@@ -1115,10 +1026,6 @@ function Row({
     </div>
   );
 }
-
-/* =========================================
-   MANUFACTURER
-========================================= */
 
 function ManufacturerDashboard({
   totals,
@@ -1191,10 +1098,6 @@ function ManufacturerDashboard({
   );
 }
 
-/* =========================================
-   PHARMACIST
-========================================= */
-
 function PharmacistDashboard({
   onVerify,
 }) {
@@ -1246,10 +1149,6 @@ function PharmacistDashboard({
   );
 }
 
-/* =========================================
-   ADMIN
-========================================= */
-
 function AdminDashboard() {
   return (
     <>
@@ -1291,10 +1190,6 @@ function AdminDashboard() {
     </>
   );
 }
-
-/* =========================================
-   METRIC
-========================================= */
 
 function Metric({
   label,
