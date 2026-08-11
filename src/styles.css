@@ -1,8 +1,3 @@
-/* =========================================================
-   MEDAUTH COMPLETE STYLES
-   MOBILE APP + ADMIN DESKTOP WORKSPACE
-========================================================= */
-
 :root {
   font-family:
     Inter,
@@ -15,8 +10,6 @@
 
   color: #17324d;
   background: #eef5f9;
-
-  font-synthesis: none;
 
   --brand-blue: #0b63b6;
   --brand-deep: #084b99;
@@ -34,7 +27,6 @@ body,
   width: 100%;
   min-width: 320px;
   min-height: 100%;
-
   margin: 0;
 }
 
@@ -75,9 +67,8 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-
 /* =========================================================
-   NORMAL MEDAUTH MOBILE APP
+   MAIN APP
 ========================================================= */
 
 .app-shell {
@@ -87,7 +78,6 @@ select:focus-visible {
   min-height: 100dvh;
 
   display: flex;
-
   justify-content: center;
   align-items: flex-start;
 
@@ -100,7 +90,6 @@ select:focus-visible {
       #edf5f9 100%
     );
 }
-
 
 /* =========================================================
    PHONE SIZE
@@ -129,9 +118,8 @@ select:focus-visible {
     rgba(18, 55, 84, 0.09);
 }
 
-
 /* =========================================================
-   PHONE SCREEN
+   SCREENS
 ========================================================= */
 
 .screen {
@@ -143,15 +131,9 @@ select:focus-visible {
   flex: 1 1 auto;
 
   padding:
-    max(
-      17px,
-      env(safe-area-inset-top)
-    )
+    max(17px, env(safe-area-inset-top))
     25px
-    max(
-      17px,
-      env(safe-area-inset-bottom)
-    );
+    max(17px, env(safe-area-inset-bottom));
 
   overflow-y: auto;
   overflow-x: hidden;
@@ -164,7 +146,6 @@ select:focus-visible {
 .screen::-webkit-scrollbar {
   display: none;
 }
-
 
 /* =========================================================
    TYPOGRAPHY
@@ -216,7 +197,6 @@ p {
   font-weight: 800;
 
   text-transform: uppercase;
-
   letter-spacing: 0.12em;
 }
 
@@ -226,9 +206,8 @@ p {
   font-size: 0.8rem;
 }
 
-
 /* =========================================================
-   SHARED BUTTONS
+   PRIMARY / SECONDARY BUTTONS
 ========================================================= */
 
 .btn,
@@ -239,7 +218,6 @@ p {
   min-height: 54px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -297,27 +275,20 @@ p {
   cursor: not-allowed;
 }
 
-
 /* =========================================================
    BACK BUTTON
 ========================================================= */
 
 .back-button {
   width: auto;
-
   min-height: 40px;
 
   display: inline-flex;
-
   align-items: center;
 
   gap: 4px;
 
-  margin:
-    -4px
-    0
-    10px
-    -8px;
+  margin: -4px 0 10px -8px;
 
   padding: 7px 9px;
 
@@ -330,8 +301,6 @@ p {
 
   font-size: 0.88rem;
   font-weight: 700;
-
-  flex-shrink: 0;
 }
 
 .back-button:hover,
@@ -339,16 +308,14 @@ p {
   background: #edf6fb;
 }
 
-
 /* =========================================================
-   NETWORK BADGE
+   NETWORK STATUS
 ========================================================= */
 
 .network-badge {
   min-height: 34px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
@@ -361,7 +328,6 @@ p {
 
   font-size: 0.74rem;
   font-weight: 800;
-  line-height: 1;
 
   transition:
     color 0.18s ease,
@@ -390,29 +356,24 @@ p {
   height: 18px;
 
   fill: none;
-
   stroke: currentColor;
 
   stroke-width: 1.9;
-
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .wifi-dot {
   fill: currentColor;
-
   stroke: none;
 }
 
-
 /* =========================================================
-   HOME
+   HOME SCREEN
 ========================================================= */
 
 .home-screen {
   display: flex;
-
   flex-direction: column;
 }
 
@@ -422,18 +383,14 @@ p {
   min-height: 38px;
 
   display: flex;
-
   justify-content: flex-end;
   align-items: flex-start;
-
-  flex-shrink: 0;
 }
 
 .home-brand {
   width: 100%;
 
   display: flex;
-
   justify-content: center;
   align-items: center;
 
@@ -444,9 +401,9 @@ p {
   width: 245px;
 
   max-width: 78%;
+  max-height: 215px;
 
   height: auto;
-  max-height: 215px;
 
   object-fit: contain;
 }
@@ -457,7 +414,6 @@ p {
   min-height: 58px;
 
   display: flex;
-
   justify-content: center;
   align-items: center;
 
@@ -483,28 +439,16 @@ p {
   box-shadow:
     0 6px 16px
     rgba(11, 99, 182, 0.13);
-
-  transition:
-    transform 0.12s ease,
-    opacity 0.15s ease;
-}
-
-.home-scan-button:active {
-  transform: scale(0.985);
 }
 
 .home-scan-icon {
   width: 23px;
   height: 23px;
 
-  flex: 0 0 23px;
-
   fill: none;
-
   stroke: currentColor;
 
   stroke-width: 1.8;
-
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -513,7 +457,6 @@ p {
   width: 100%;
 
   display: flex;
-
   align-items: center;
 
   gap: 14px;
@@ -537,7 +480,6 @@ p {
   background: #cad9e3;
 }
 
-
 /* =========================================================
    LOGIN
 ========================================================= */
@@ -546,7 +488,6 @@ p {
   width: 100%;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 13px;
@@ -556,7 +497,6 @@ p {
   width: 100%;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 7px;
@@ -588,10 +528,6 @@ p {
   color: #17324d;
 
   font-size: 0.88rem;
-
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
 }
 
 .home-login-field input::placeholder {
@@ -620,7 +556,6 @@ p {
   position: absolute;
 
   right: 4px;
-
   top: 50%;
 
   width: 42px;
@@ -629,7 +564,6 @@ p {
   transform: translateY(-50%);
 
   display: grid;
-
   place-items: center;
 
   padding: 0;
@@ -650,9 +584,6 @@ p {
   stroke: currentColor;
 
   stroke-width: 1.7;
-
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .login-options {
@@ -691,7 +622,6 @@ p {
   min-height: 36px;
 
   display: inline-flex;
-
   align-items: center;
 
   padding: 5px 0;
@@ -706,21 +636,14 @@ p {
   font-weight: 750;
 }
 
-.forgot-password:hover {
-  text-decoration: underline;
-}
-
 .home-signin-button {
   width: 100%;
 
   min-height: 56px;
 
   display: flex;
-
   justify-content: center;
   align-items: center;
-
-  gap: 8px;
 
   padding: 14px 18px;
 
@@ -738,10 +661,6 @@ p {
 
   font-size: 0.94rem;
   font-weight: 800;
-
-  box-shadow:
-    0 5px 14px
-    rgba(11, 99, 182, 0.12);
 }
 
 .login-error {
@@ -757,14 +676,16 @@ p {
   color: #a43d3d;
 
   font-size: 0.7rem;
-  line-height: 1.4;
 }
+
+/* =========================================================
+   SECURITY FOOTER
+========================================================= */
 
 .security-footer {
   width: 100%;
 
   display: flex;
-
   justify-content: center;
   align-items: center;
 
@@ -777,7 +698,6 @@ p {
   color: #647e92;
 
   font-size: 0.57rem;
-  line-height: 1.35;
 
   text-align: center;
 }
@@ -786,8 +706,6 @@ p {
   width: 13px;
   height: 13px;
 
-  min-width: 13px;
-
   flex: 0 0 13px;
 
   fill: none;
@@ -795,11 +713,7 @@ p {
   stroke: var(--brand-teal);
 
   stroke-width: 1.8;
-
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
-
 
 /* =========================================================
    FORGOT PASSWORD
@@ -807,7 +721,6 @@ p {
 
 .forgot-screen {
   display: flex;
-
   flex-direction: column;
 }
 
@@ -815,7 +728,6 @@ p {
   width: 100%;
 
   display: flex;
-
   justify-content: center;
 
   margin: 5px 0 22px;
@@ -835,16 +747,12 @@ p {
   margin: 0 0 24px;
 
   color: #617a8e;
-
-  font-size: 0.86rem;
-  line-height: 1.6;
 }
 
 .forgot-form {
   width: 100%;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 18px;
@@ -854,7 +762,6 @@ p {
   flex: 1;
 
   display: flex;
-
   flex-direction: column;
 
   justify-content: center;
@@ -868,7 +775,6 @@ p {
   height: 72px;
 
   display: grid;
-
   place-items: center;
 
   margin-bottom: 16px;
@@ -889,9 +795,8 @@ p {
   stroke: currentColor;
 }
 
-
 /* =========================================================
-   FORM FIELDS
+   INPUT FIELDS
 ========================================================= */
 
 .field {
@@ -924,10 +829,6 @@ p {
   background: #fbfdff;
 
   color: #17324d;
-
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
 }
 
 .field input:focus,
@@ -944,7 +845,6 @@ p {
   resize: vertical;
 }
 
-
 /* =========================================================
    SCANNER
 ========================================================= */
@@ -955,7 +855,6 @@ p {
   position: relative;
 
   display: grid;
-
   place-items: center;
 
   overflow: hidden;
@@ -1022,7 +921,6 @@ p {
   height: 58px;
 
   border-color: var(--brand-blue);
-
   border-style: solid;
 }
 
@@ -1092,13 +990,8 @@ p {
   font-size: 0.74rem;
 }
 
-.sample-box button:hover {
-  background: #eef7fb;
-}
-
-
 /* =========================================================
-   CHECKING
+   LOADING
 ========================================================= */
 
 .center-screen {
@@ -1135,9 +1028,8 @@ p {
   }
 }
 
-
 /* =========================================================
-   RESULT STATUS
+   STATUS RESULT CARDS
 ========================================================= */
 
 .status-card {
@@ -1145,7 +1037,9 @@ p {
 
   display: grid;
 
-  grid-template-columns: 56px 1fr;
+  grid-template-columns:
+    56px
+    1fr;
 
   gap: 13px;
 
@@ -1154,6 +1048,7 @@ p {
   padding: 15px;
 
   border: 1px solid;
+
   border-radius: 17px;
 }
 
@@ -1188,7 +1083,6 @@ p {
   border-color: #b9d5e7;
 }
 
-
 /* =========================================================
    RESULT DETAILS
 ========================================================= */
@@ -1217,7 +1111,9 @@ p {
 .detail-row {
   display: grid;
 
-  grid-template-columns: 1fr 1.35fr;
+  grid-template-columns:
+    1fr
+    1.35fr;
 
   gap: 14px;
 
@@ -1239,11 +1135,6 @@ p {
 
   word-break: break-word;
 }
-
-
-/* =========================================================
-   RESULT INFORMATION
-========================================================= */
 
 .verification-info-box,
 .verification-warning-box {
@@ -1286,14 +1177,12 @@ p {
   color: #667b89;
 
   font-size: 0.67rem;
-  line-height: 1.5;
 }
 
 .offline-result-notice {
   width: 100%;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 4px;
@@ -1307,19 +1196,6 @@ p {
 
   background: #f5f7f8;
 }
-
-.offline-result-notice strong {
-  color: #526976;
-
-  font-size: 0.68rem;
-}
-
-.offline-result-notice span {
-  color: #7b8c95;
-
-  font-size: 0.62rem;
-}
-
 
 /* =========================================================
    SUPPLY CHAIN
@@ -1339,7 +1215,7 @@ p {
 }
 
 .supply-chain-card h3 {
-  margin: 0 0 12px;
+  margin: 0;
 
   font-size: 0.9rem;
 }
@@ -1380,7 +1256,6 @@ p {
   position: absolute;
 
   left: 12px;
-
   top: 23px;
   bottom: 0;
 
@@ -1398,14 +1273,13 @@ p {
   z-index: 1;
 
   display: grid;
-
   place-items: center;
 
   border-radius: 50%;
 
-  color: #ffffff;
-
   background: #2e8a69;
+
+  color: #ffffff;
 
   font-size: 0.68rem;
   font-weight: 900;
@@ -1420,10 +1294,24 @@ p {
   min-width: 0;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 3px;
+}
+
+.supply-stage-heading {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 8px;
+}
+
+.supply-stage-heading strong {
+  color: #294b61;
+
+  font-size: 0.68rem;
 }
 
 .supply-stage-content > span,
@@ -1431,6 +1319,69 @@ p {
   color: #82929c;
 
   font-size: 0.55rem;
+}
+
+.supply-stage-content p {
+  margin: 4px 0 0;
+
+  color: #795f3f;
+
+  font-size: 0.56rem;
+}
+
+.supply-stage-status {
+  flex-shrink: 0;
+
+  padding: 3px 6px;
+
+  border-radius: 999px;
+
+  font-size: 0.46rem;
+  font-weight: 850;
+}
+
+.supply-stage-status.verified {
+  color: #247055;
+
+  background: #e9f7f0;
+}
+
+.supply-stage-status.current {
+  color: #17698b;
+
+  background: #eaf6fb;
+}
+
+.supply-stage-status.pending {
+  color: #77858d;
+
+  background: #f0f3f4;
+}
+
+.supply-stage-status.mismatch {
+  color: #98640b;
+
+  background: #fff4dc;
+}
+
+.supply-chain-warning {
+  padding: 9px;
+
+  border-radius: 9px;
+
+  color: #765c38;
+
+  background: #fff7e8;
+
+  font-size: 0.56rem;
+}
+
+.supply-chain-note {
+  margin: 9px 0 0;
+
+  color: #8a989f;
+
+  font-size: 0.52rem;
 }
 
 .supply-unavailable-row {
@@ -1458,9 +1409,8 @@ p {
   font-size: 0.62rem;
 }
 
-
 /* =========================================================
-   ACTION STACK
+   COMMON PANELS
 ========================================================= */
 
 .action-stack {
@@ -1472,11 +1422,6 @@ p {
 
   margin-top: 18px;
 }
-
-
-/* =========================================================
-   PANELS
-========================================================= */
 
 .product-card,
 .panel,
@@ -1512,7 +1457,6 @@ p {
   height: 76px;
 
   display: grid;
-
   place-items: center;
 
   border-radius: 50%;
@@ -1530,9 +1474,8 @@ p {
     );
 }
 
-
 /* =========================================================
-   DASHBOARD
+   STANDARD DASHBOARD
 ========================================================= */
 
 .dashboard-head {
@@ -1569,10 +1512,7 @@ p {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+    repeat(2, minmax(0, 1fr));
 
   gap: 10px;
 
@@ -1580,8 +1520,6 @@ p {
 }
 
 .metric {
-  min-width: 0;
-
   padding: 14px;
 
   border: 1px solid #d5e8f1;
@@ -1613,9 +1551,8 @@ p {
   font-size: 1.45rem;
 }
 
-
 /* =========================================================
-   PROFILE ICON BUTTONS
+   PROFILE / SETTINGS ICON BUTTONS
 ========================================================= */
 
 .profile-icon-button {
@@ -1623,7 +1560,6 @@ p {
   height: 40px;
 
   display: grid;
-
   place-items: center;
 
   padding: 0;
@@ -1645,21 +1581,18 @@ p {
   stroke: currentColor;
 
   stroke-width: 1.8;
-
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-
 /* =========================================================
-   PHARMACIST
+   PHARMACIST DASHBOARD
 ========================================================= */
 
 .pharmacist-screen {
   height: 100%;
 
   display: flex;
-
   flex-direction: column;
 
   overflow: hidden;
@@ -1684,7 +1617,6 @@ p {
   min-width: 0;
 
   display: flex;
-
   align-items: center;
 
   gap: 12px;
@@ -1699,7 +1631,6 @@ p {
   flex: 0 0 58px;
 
   object-fit: cover;
-
   object-position: center 20%;
 
   border: 2px solid #d7e9f3;
@@ -1718,7 +1649,6 @@ p {
   color: #73899c;
 
   font-size: 0.68rem;
-  font-weight: 650;
 }
 
 .pharmacist-greeting h1 {
@@ -1727,7 +1657,6 @@ p {
   color: #082f5a;
 
   font-size: 1.5rem;
-  line-height: 1.04;
 }
 
 .pharmacist-greeting p {
@@ -1762,6 +1691,22 @@ p {
   padding: 9px 13px;
 
   border-radius: 14px;
+}
+
+.pharmacist-system-status > div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.pharmacist-system-status strong {
+  font-size: 0.72rem;
+}
+
+.pharmacist-system-status span {
+  font-size: 0.56rem;
 }
 
 .pharmacist-system-status.is-online {
@@ -1809,21 +1754,6 @@ p {
   color: #ffffff;
 
   text-align: left;
-
-  box-shadow:
-    0 5px 14px
-    rgba(11, 99, 182, 0.11);
-}
-
-.pharmacist-primary-action > svg {
-  width: 24px;
-  height: 24px;
-
-  fill: none;
-
-  stroke: currentColor;
-
-  stroke-width: 1.8;
 }
 
 .pharmacist-primary-action > div {
@@ -1848,10 +1778,7 @@ p {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+    repeat(2, minmax(0, 1fr));
 
   gap: 9px;
 
@@ -1860,8 +1787,6 @@ p {
 
 .pharmacist-action-card {
   width: 100%;
-
-  min-width: 0;
 
   min-height: 92px;
 
@@ -1899,8 +1824,6 @@ p {
 }
 
 .pharmacist-action-copy {
-  min-width: 0;
-
   display: flex;
 
   flex-direction: column;
@@ -1926,10 +1849,7 @@ p {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      4,
-      minmax(0, 1fr)
-    );
+    repeat(4, minmax(0, 1fr));
 
   gap: 7px;
 
@@ -1940,10 +1860,10 @@ p {
   min-height: 68px;
 
   display: flex;
-
   flex-direction: column;
 
   justify-content: center;
+  align-items: center;
 
   padding: 7px 4px;
 
@@ -2027,8 +1947,6 @@ p {
 }
 
 .recent-event-row > div {
-  min-width: 0;
-
   display: flex;
 
   flex-direction: column;
@@ -2052,21 +1970,13 @@ p {
   text-align: right;
 }
 
-
-/* =========================================================
-   PHARMACIST NAV
-========================================================= */
-
 .pharmacist-nav {
   width: 100%;
 
   display: grid;
 
   grid-template-columns:
-    repeat(
-      5,
-      minmax(0, 1fr)
-    );
+    repeat(5, minmax(0, 1fr));
 
   gap: 4px;
 
@@ -2096,24 +2006,37 @@ p {
   background: #edf6fb;
 }
 
-
 /* =========================================================
-   SHORTAGES
+   SHORTAGES / RECALLS / HISTORY
 ========================================================= */
 
-.shortage-list {
+.shortage-list,
+.recall-list,
+.history-list {
   width: 100%;
 
   display: grid;
 
-  gap: 11px;
+  gap: 10px;
 
-  margin-top: 18px;
+  margin-top: 14px;
+}
+
+.shortage-card,
+.recall-list-card,
+.history-card,
+.batch-result-card {
+  width: 100%;
+
+  padding: 14px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 15px;
+
+  background: #fbfdfe;
 }
 
 .shortage-card {
-  width: 100%;
-
   min-height: 78px;
 
   display: flex;
@@ -2122,13 +2045,6 @@ p {
   align-items: center;
 
   gap: 12px;
-
-  padding: 14px;
-
-  border: 1px solid #dce7ed;
-  border-radius: 14px;
-
-  background: #fbfdfe;
 }
 
 .shortage-card > div {
@@ -2180,41 +2096,36 @@ p {
   color: #b24b40;
 }
 
-
-/* =========================================================
-   BATCH / RECALL / HISTORY
-========================================================= */
-
-.batch-result-card,
-.history-card {
-  width: 100%;
-
-  padding: 14px;
-
-  border: 1px solid #dce7ed;
-  border-radius: 15px;
-
-  background: #fbfdfe;
-}
-
 .batch-result-card {
   margin-top: 16px;
 }
 
-.recall-status {
+.recall-list-card {
+  display: grid;
+
+  gap: 7px;
+
+  color: inherit;
+
+  text-align: left;
+}
+
+.recall-status,
+.recall-pill {
   display: inline-flex;
 
-  margin-bottom: 12px;
+  width: max-content;
 
-  padding: 6px 9px;
+  padding: 5px 8px;
 
   border-radius: 999px;
 
-  font-size: 0.66rem;
+  font-size: 0.58rem;
   font-weight: 800;
 }
 
-.recall-status.active {
+.recall-status.active,
+.recall-pill {
   background: #fff0ee;
 
   color: #b84d3d;
@@ -2237,51 +2148,6 @@ p {
   border-radius: 12px;
 
   background: #fff6f1;
-}
-
-.recall-list,
-.history-list {
-  width: 100%;
-
-  display: grid;
-
-  gap: 10px;
-
-  margin-top: 14px;
-}
-
-.recall-list-card {
-  width: 100%;
-
-  display: grid;
-
-  gap: 7px;
-
-  padding: 14px;
-
-  border: 1px solid #dce7ed;
-  border-radius: 15px;
-
-  background: #fbfdfe;
-
-  color: inherit;
-
-  text-align: left;
-}
-
-.recall-pill {
-  width: max-content;
-
-  padding: 5px 8px;
-
-  border-radius: 999px;
-
-  background: #fff0ee;
-
-  color: #b84d3d;
-
-  font-size: 0.58rem;
-  font-weight: 800;
 }
 
 .history-card-head {
@@ -2324,9 +2190,8 @@ p {
   color: #546c7d;
 }
 
-
 /* =========================================================
-   PROFILE PAGES
+   PROFILE
 ========================================================= */
 
 .profile-page-header {
@@ -2346,7 +2211,6 @@ p {
   height: 110px;
 
   object-fit: cover;
-
   object-position: center 20%;
 
   margin: 0 auto 12px;
@@ -2436,7 +2300,6 @@ p {
   font-size: 0.62rem;
 }
 
-
 /* =========================================================
    SETTINGS
 ========================================================= */
@@ -2497,6 +2360,7 @@ p {
   color: var(--brand-blue) !important;
 
   font-size: 0.84rem !important;
+
   font-weight: 800;
 }
 
@@ -2533,19 +2397,846 @@ p {
   text-align: left;
 }
 
-.settings-link-row:last-child {
-  border-bottom: 0;
+/* =========================================================
+   ADMIN MODE CHOICE
+========================================================= */
+
+.admin-mode-choice-screen {
+  display: flex;
+  flex-direction: column;
 }
 
+.admin-mobile-choice-profile {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  margin-top: 18px;
+
+  text-align: center;
+}
+
+.admin-mobile-choice-avatar {
+  width: 92px;
+  height: 92px;
+
+  object-fit: cover;
+  object-position: center 25%;
+
+  border: 3px solid #dbeaf3;
+  border-radius: 50%;
+
+  margin-bottom: 12px;
+}
+
+.admin-mobile-choice-welcome {
+  color: #788c9d;
+
+  font-size: 0.68rem;
+}
+
+.admin-mobile-choice-profile h1 {
+  margin: 3px 0;
+
+  font-size: 1.6rem;
+}
+
+.admin-mobile-choice-profile p {
+  margin: 0;
+
+  color: var(--brand-teal);
+
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.admin-choice-copy {
+  margin: 28px 0 14px;
+
+  text-align: center;
+}
+
+.admin-choice-copy h2 {
+  margin-bottom: 6px;
+
+  font-size: 1.1rem;
+}
+
+.admin-choice-copy p {
+  max-width: 290px;
+
+  margin: 0 auto;
+
+  font-size: 0.72rem;
+}
+
+.admin-mode-choice-grid {
+  display: grid;
+
+  gap: 11px;
+}
+
+.admin-mode-choice-card {
+  width: 100%;
+
+  min-height: 94px;
+
+  display: grid;
+
+  grid-template-columns:
+    44px
+    minmax(0, 1fr)
+    20px;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 13px;
+
+  border: 1px solid #cfe0eb;
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  color: #17324d;
+
+  text-align: left;
+
+  box-shadow:
+    0 4px 13px
+    rgba(16, 67, 102, 0.05);
+}
+
+.admin-mode-choice-card.web {
+  border-color: #b9d8de;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f7fbff,
+      #f3fbfa
+    );
+}
+
+.admin-mode-choice-icon {
+  width: 44px;
+  height: 44px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 12px;
+
+  background: #edf6fb;
+
+  color: var(--brand-blue);
+}
+
+.admin-mode-choice-icon svg {
+  width: 23px;
+  height: 23px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.7;
+}
+
+.admin-mode-choice-card > div:nth-child(2) {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.admin-mode-choice-card strong {
+  color: #123b60;
+
+  font-size: 0.84rem;
+}
+
+.admin-mode-choice-card div span {
+  color: #758997;
+
+  font-size: 0.61rem;
+  line-height: 1.4;
+}
+
+.admin-mode-arrow {
+  color: var(--brand-blue);
+
+  font-size: 1rem;
+}
+
+.admin-choice-note {
+  margin: 14px 0;
+
+  color: #82929e;
+
+  font-size: 0.6rem;
+
+  text-align: center;
+}
 
 /* =========================================================
-   ADMIN DESKTOP APP
+   ADMIN MOBILE DASHBOARD
+========================================================= */
+
+.admin-mobile-screen {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  padding: 18px 17px 9px;
+}
+
+.admin-mobile-profile-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 11px;
+}
+
+.admin-mobile-profile-main {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+}
+
+.admin-mobile-avatar {
+  width: 56px;
+  height: 56px;
+
+  min-width: 56px;
+
+  object-fit: cover;
+  object-position: center 25%;
+
+  border: 2px solid #d6e7f1;
+  border-radius: 50%;
+}
+
+.admin-mobile-greeting {
+  min-width: 0;
+}
+
+.admin-mobile-greeting > span {
+  display: block;
+
+  color: #778c9e;
+
+  font-size: 0.64rem;
+}
+
+.admin-mobile-greeting h1 {
+  margin: 1px 0 3px;
+
+  color: #082f5a;
+
+  font-size: 1.45rem;
+}
+
+.admin-mobile-greeting p {
+  margin: 0;
+
+  color: var(--brand-teal);
+
+  font-size: 0.59rem;
+  font-weight: 750;
+}
+
+.admin-mobile-profile-actions {
+  display: flex;
+
+  gap: 6px;
+}
+
+.admin-mobile-access-row {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 10px;
+}
+
+.admin-access-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 28px;
+
+  padding: 5px 11px;
+
+  border: 1px solid #cfe1f0;
+  border-radius: 999px;
+
+  background: #eef7fd;
+
+  color: #075ca7;
+
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.admin-mobile-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 6px;
+
+  margin-bottom: 10px;
+}
+
+.admin-mobile-metric {
+  min-height: 64px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  padding: 6px 3px;
+
+  border: 1px solid #d8e5ed;
+  border-radius: 11px;
+
+  background: #f7fbfd;
+
+  text-align: center;
+}
+
+.admin-mobile-metric span {
+  color: #6d8090;
+
+  font-size: 0.48rem;
+}
+
+.admin-mobile-metric strong {
+  color: #082f59;
+
+  font-size: 1.08rem;
+}
+
+.admin-mobile-action-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 8px;
+
+  margin-bottom: 10px;
+}
+
+.admin-mobile-action-card {
+  min-height: 84px;
+
+  display: grid;
+
+  grid-template-columns:
+    28px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 10px;
+
+  border: 1px solid #d5e3ec;
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  color: #193953;
+
+  text-align: left;
+}
+
+.admin-mobile-action-card.primary {
+  border-color: #bcd9e6;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f4faff,
+      #f3fcfa
+    );
+}
+
+.admin-mobile-action-card > svg {
+  width: 22px;
+  height: 22px;
+
+  fill: none;
+
+  stroke: var(--brand-blue);
+
+  stroke-width: 1.7;
+}
+
+.admin-mobile-action-card > div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.admin-mobile-action-card strong {
+  color: #0c3459;
+
+  font-size: 0.72rem;
+}
+
+.admin-mobile-action-card span {
+  color: #768895;
+
+  font-size: 0.52rem;
+}
+
+.admin-mobile-recent {
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+.admin-mobile-report-row {
+  width: 100%;
+
+  min-height: 48px;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 6px 0;
+
+  border: 0;
+
+  border-bottom: 1px solid #e5edf2;
+
+  background: transparent;
+
+  color: inherit;
+
+  text-align: left;
+}
+
+.admin-mobile-report-row > div {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.admin-mobile-report-row strong {
+  color: #203e55;
+
+  font-size: 0.64rem;
+}
+
+.admin-mobile-report-row div span {
+  color: #7a8d9a;
+
+  font-size: 0.51rem;
+}
+
+.admin-mobile-status {
+  flex-shrink: 0;
+
+  padding: 4px 6px;
+
+  border-radius: 999px;
+
+  font-size: 0.46rem;
+  font-weight: 800;
+}
+
+.admin-mobile-status.warning {
+  background: #fff2dc;
+
+  color: #966409;
+}
+
+.admin-mobile-status.info {
+  background: #eaf4fb;
+
+  color: #20719c;
+}
+
+.admin-mobile-status.success {
+  background: #eaf8f2;
+
+  color: #237458;
+}
+
+/* =========================================================
+   ADMIN MOBILE PAGES
+========================================================= */
+
+.admin-mobile-sub-screen {
+  padding-bottom: 72px;
+}
+
+.admin-mobile-filter-row {
+  margin: 13px 0;
+}
+
+.admin-mobile-filter-row select,
+.admin-mobile-filter-row input {
+  width: 100%;
+
+  min-height: 43px;
+
+  padding: 0 11px;
+
+  border: 1px solid #ccdde7;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  color: #29475f;
+
+  font-size: 0.7rem;
+}
+
+.admin-mobile-list {
+  display: grid;
+
+  gap: 8px;
+}
+
+.admin-mobile-list-card {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  padding: 11px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 12px;
+
+  background: #fbfdfe;
+
+  color: inherit;
+
+  text-align: left;
+}
+
+.admin-mobile-list-card-head {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 10px;
+}
+
+.admin-mobile-list-card strong {
+  color: #193a56;
+
+  font-size: 0.69rem;
+}
+
+.admin-mobile-list-card > span {
+  color: #768997;
+
+  font-size: 0.55rem;
+}
+
+.admin-mobile-result {
+  padding: 4px 6px;
+
+  border-radius: 999px;
+
+  font-size: 0.45rem;
+  font-weight: 800;
+}
+
+.admin-mobile-result.match {
+  color: #267459;
+
+  background: #e9f8f2;
+}
+
+.admin-mobile-result.no_match {
+  color: #a85a22;
+
+  background: #fff3e5;
+}
+
+.admin-mobile-result.not_covered {
+  color: #5b7080;
+
+  background: #eef3f6;
+}
+
+.admin-mobile-detail-card {
+  margin: 14px 0;
+
+  padding: 0 12px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 13px;
+
+  background: #fbfdfe;
+}
+
+.admin-mobile-comment {
+  margin: 13px 0;
+
+  padding: 11px;
+
+  border-radius: 11px;
+
+  background: #f3f8fb;
+}
+
+.admin-mobile-comment strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #28485f;
+
+  font-size: 0.65rem;
+}
+
+.admin-mobile-comment p {
+  margin: 0;
+
+  font-size: 0.61rem;
+}
+
+.admin-mobile-status-actions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 7px;
+
+  margin: 13px 0;
+}
+
+.admin-mobile-status-actions button {
+  min-height: 38px;
+
+  padding: 5px;
+
+  border: 1px solid #a9c8dc;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #1c5b89;
+
+  font-size: 0.58rem;
+  font-weight: 750;
+}
+
+.admin-mobile-escalate {
+  min-height: 48px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 10px;
+
+  padding: 10px;
+
+  border-radius: 10px;
+
+  background: #fff8ec;
+
+  color: #795b32;
+
+  font-size: 0.62rem;
+}
+
+.admin-mobile-escalate input {
+  accent-color: #c07922;
+}
+
+.admin-mobile-investigation-selected {
+  margin-top: 14px;
+
+  padding: 12px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 12px;
+
+  background: #f7fbfd;
+}
+
+.admin-mobile-investigation-selected h3 {
+  margin-bottom: 6px;
+}
+
+/* =========================================================
+   ADMIN MOBILE NAV
+========================================================= */
+
+.admin-mobile-nav {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 3px;
+
+  margin-top: 7px;
+
+  padding-top: 7px;
+
+  border-top: 1px solid #dae7ee;
+
+  background: #ffffff;
+}
+
+.admin-mobile-nav button {
+  min-height: 38px;
+
+  padding: 4px 2px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #718390;
+
+  font-size: 0.5rem;
+  font-weight: 700;
+}
+
+.admin-mobile-nav button.active {
+  color: var(--brand-blue);
+
+  background: #edf6fb;
+}
+
+/* =========================================================
+   ADMIN MOBILE SWITCH
+========================================================= */
+
+.admin-switch-web-button {
+  width: 100%;
+
+  min-height: 72px;
+
+  display: grid;
+
+  grid-template-columns:
+    28px
+    1fr
+    18px;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin: 15px 0 10px;
+
+  padding: 12px;
+
+  border: 1px solid #bad9e3;
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f5faff,
+      #f0fbf9
+    );
+
+  color: #153a56;
+
+  text-align: left;
+}
+
+.admin-switch-web-button svg {
+  width: 23px;
+  height: 23px;
+
+  fill: none;
+
+  stroke: var(--brand-blue);
+
+  stroke-width: 1.7;
+}
+
+.admin-switch-web-button > div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.admin-switch-web-button strong {
+  font-size: 0.7rem;
+}
+
+.admin-switch-web-button div span {
+  color: #718795;
+
+  font-size: 0.54rem;
+}
+
+/* =========================================================
+   ADMIN WEB
 ========================================================= */
 
 .admin-app-shell {
   width: 100%;
-
-  min-width: 100%;
 
   min-height: 100vh;
   min-height: 100dvh;
@@ -2569,11 +3260,6 @@ p {
 
   background: #081525;
 }
-
-
-/* =========================================================
-   ADMIN SIDEBAR
-========================================================= */
 
 .admin-sidebar {
   position: sticky;
@@ -2615,8 +3301,6 @@ p {
   display: flex;
 
   flex-direction: column;
-
-  gap: 1px;
 }
 
 .admin-sidebar-brand strong {
@@ -2631,11 +3315,6 @@ p {
   font-size: 11px;
   font-weight: 700;
 }
-
-
-/* =========================================================
-   ADMIN NAV
-========================================================= */
 
 .admin-nav {
   display: grid;
@@ -2661,11 +3340,6 @@ p {
   font-weight: 650;
 
   text-align: left;
-
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
 }
 
 .admin-nav-button:hover {
@@ -2686,11 +3360,6 @@ p {
 
   color: #ffffff;
 }
-
-
-/* =========================================================
-   ADMIN SIDEBAR PROFILE
-========================================================= */
 
 .admin-sidebar-footer {
   margin-top: auto;
@@ -2713,7 +3382,6 @@ p {
   height: 38px;
 
   object-fit: cover;
-
   object-position: center 25%;
 
   border: 1px solid #31536d;
@@ -2721,13 +3389,9 @@ p {
 }
 
 .admin-profile-mini div {
-  min-width: 0;
-
   display: flex;
 
   flex-direction: column;
-
-  gap: 2px;
 }
 
 .admin-profile-mini strong {
@@ -2742,10 +3406,11 @@ p {
   font-size: 9px;
 }
 
+.admin-switch-mobile-button,
 .admin-signout {
   width: 100%;
 
-  margin-top: 13px;
+  margin-top: 10px;
 
   padding: 9px;
 
@@ -2759,31 +3424,18 @@ p {
   font-size: 11px;
 }
 
-.admin-signout:hover {
-  border-color: #44647d;
+.admin-switch-mobile-button {
+  color: #84c6e7;
 
-  background: #0c2132;
-
-  color: #ffffff;
+  background: #0a1e2f;
 }
-
-
-/* =========================================================
-   ADMIN MAIN
-========================================================= */
 
 .admin-main {
   min-width: 0;
 
   display: flex;
-
   flex-direction: column;
 }
-
-
-/* =========================================================
-   ADMIN TOOLBAR
-========================================================= */
 
 .admin-toolbar {
   position: sticky;
@@ -2797,7 +3449,6 @@ p {
   display: flex;
 
   align-items: center;
-
   justify-content: space-between;
 
   gap: 20px;
@@ -2806,23 +3457,13 @@ p {
 
   border-bottom: 1px solid #173149;
 
-  background:
-    rgba(
-      7,
-      20,
-      36,
-      0.96
-    );
+  background: rgba(7, 20, 36, 0.96);
 
   backdrop-filter: blur(12px);
 }
 
 .admin-search-box {
-  width:
-    min(
-      560px,
-      55vw
-    );
+  width: min(560px, 55vw);
 
   height: 42px;
 
@@ -2855,6 +3496,7 @@ p {
   width: 100%;
 
   border: 0;
+
   outline: 0;
 
   background: transparent;
@@ -2864,10 +3506,6 @@ p {
   font-size: 12px;
 }
 
-.admin-search-box input::placeholder {
-  color: #627e93;
-}
-
 .admin-toolbar-actions {
   display: flex;
 
@@ -2875,11 +3513,6 @@ p {
 
   gap: 10px;
 }
-
-
-/* =========================================================
-   ADMIN EXPORT
-========================================================= */
 
 .admin-export-wrap {
   position: relative;
@@ -2901,14 +3534,11 @@ p {
   font-weight: 700;
 }
 
-.admin-export-button:hover {
-  background: #10667f;
-}
-
 .admin-export-menu {
   position: absolute;
 
   top: calc(100% + 8px);
+
   right: 0;
 
   z-index: 100;
@@ -2969,31 +3599,16 @@ p {
   height: 100%;
 
   object-fit: cover;
-
   object-position: center 25%;
 }
 
-
-/* =========================================================
-   ADMIN CONTENT
-========================================================= */
-
 .admin-content {
-  width:
-    min(
-      100%,
-      1500px
-    );
+  width: min(100%, 1500px);
 
   margin: 0 auto;
 
   padding: 28px;
 }
-
-
-/* =========================================================
-   ADMIN PAGE HEADER
-========================================================= */
 
 .admin-page-header {
   display: flex;
@@ -3035,24 +3650,13 @@ p {
   letter-spacing: 0.12em;
 }
 
+.admin-app-shell
 .admin-access-badge {
-  display: inline-flex;
-
-  align-items: center;
-
-  min-height: 29px;
-
-  padding: 0 10px;
-
-  border: 1px solid #245572;
-  border-radius: 999px;
+  border-color: #245572;
 
   background: #0c293c;
 
   color: #75d3d6;
-
-  font-size: 10px;
-  font-weight: 800;
 }
 
 .admin-back-link {
@@ -3071,19 +3675,11 @@ p {
   font-size: 11px;
 }
 
-
-/* =========================================================
-   ADMIN SUMMARY
-========================================================= */
-
 .admin-summary-strip {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      5,
-      minmax(0, 1fr)
-    );
+    repeat(5, minmax(0, 1fr));
 
   gap: 10px;
 
@@ -3091,8 +3687,6 @@ p {
 }
 
 .admin-summary-card {
-  min-width: 0;
-
   min-height: 84px;
 
   padding: 14px;
@@ -3117,13 +3711,7 @@ p {
   color: #f5fbff;
 
   font-size: 24px;
-  line-height: 1;
 }
-
-
-/* =========================================================
-   ADMIN PANELS
-========================================================= */
 
 .admin-panel {
   min-width: 0;
@@ -3152,6 +3740,10 @@ p {
   font-size: 10px;
 }
 
+.admin-map-panel {
+  margin-top: 16px;
+}
+
 .admin-overview-grid {
   display: grid;
 
@@ -3168,10 +3760,7 @@ p {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+    repeat(2, minmax(0, 1fr));
 
   gap: 16px;
 }
@@ -3208,21 +3797,10 @@ p {
   font-weight: 700;
 }
 
-.admin-link-button:hover {
-  color: #a1d8fa;
-}
-
-
-/* =========================================================
-   ADMIN TABLES
-========================================================= */
-
 .admin-table-wrap {
   width: 100%;
 
   overflow-x: auto;
-
-  scrollbar-width: thin;
 }
 
 .admin-table {
@@ -3236,12 +3814,6 @@ p {
 }
 
 .admin-table thead th {
-  position: sticky;
-
-  top: 0;
-
-  z-index: 1;
-
   padding: 10px 9px;
 
   border-bottom: 1px solid #29435a;
@@ -3264,14 +3836,7 @@ p {
 
   color: #bdd0dd;
 
-  vertical-align: middle;
-
   white-space: nowrap;
-}
-
-.admin-table tbody tr {
-  transition:
-    background 0.12s ease;
 }
 
 .admin-table tbody tr:hover {
@@ -3292,17 +3857,6 @@ p {
   font-weight: 700;
 }
 
-.admin-table-action:hover {
-  background: #123851;
-
-  color: #ffffff;
-}
-
-
-/* =========================================================
-   ADMIN STATUS BADGES
-========================================================= */
-
 .admin-status {
   display: inline-flex;
 
@@ -3312,8 +3866,6 @@ p {
 
   font-size: 8px;
   font-weight: 800;
-
-  white-space: nowrap;
 }
 
 .admin-status.warning {
@@ -3333,11 +3885,6 @@ p {
 
   color: #73d6af;
 }
-
-
-/* =========================================================
-   ADMIN FILTERS
-========================================================= */
 
 .admin-filter-row {
   display: flex;
@@ -3365,11 +3912,6 @@ p {
   color: #c7d8e4;
 
   font-size: 10px;
-}
-
-.admin-filter-row input:focus,
-.admin-filter-row select:focus {
-  border-color: #2f7da1;
 }
 
 .admin-filter-pills {
@@ -3401,11 +3943,6 @@ p {
   color: #76d0d3;
 }
 
-
-/* =========================================================
-   ADMIN SUSPECT ACTIVITY
-========================================================= */
-
 .suspect-list {
   display: grid;
 }
@@ -3422,6 +3959,7 @@ p {
   padding: 12px 0;
 
   border: 0;
+
   border-bottom: 1px solid #183148;
 
   background: transparent;
@@ -3431,16 +3969,10 @@ p {
   text-align: left;
 }
 
-.suspect-item:hover {
-  background: #0c2234;
-}
-
 .suspect-item > div {
   display: flex;
 
   flex-direction: column;
-
-  gap: 3px;
 }
 
 .suspect-item strong {
@@ -3454,11 +3986,6 @@ p {
 
   font-size: 8px;
 }
-
-
-/* =========================================================
-   ADMIN REGION MAP
-========================================================= */
 
 .admin-region-map {
   height: 370px;
@@ -3516,13 +4043,7 @@ p {
 
   align-items: flex-start;
 
-  gap: 2px;
-
-  transform:
-    translate(
-      -50%,
-      -50%
-    );
+  transform: translate(-50%, -50%);
 
   padding: 0;
 
@@ -3540,15 +4061,11 @@ p {
   height: 32px;
 
   display: grid;
-
   place-items: center;
 
   margin-bottom: 4px;
 
-  border:
-    3px solid
-    rgba(62, 197, 203, 0.18);
-
+  border: 3px solid rgba(62, 197, 203, 0.18);
   border-radius: 50%;
 
   background: #18a4ad;
@@ -3557,10 +4074,6 @@ p {
 
   font-size: 10px;
   font-weight: 800;
-
-  box-shadow:
-    0 0 0 6px
-    rgba(22, 163, 173, 0.08);
 }
 
 .map-region-marker strong {
@@ -3572,11 +4085,6 @@ p {
 
   font-size: 7px;
 }
-
-
-/* =========================================================
-   ADMIN REPORT DETAIL
-========================================================= */
 
 .admin-detail-row {
   min-height: 42px;
@@ -3616,7 +4124,6 @@ p {
   color: #9fb4c3;
 
   font-size: 10px;
-  line-height: 1.55;
 }
 
 .admin-status-actions {
@@ -3642,12 +4149,6 @@ p {
   font-size: 9px;
 }
 
-.admin-status-actions button:hover {
-  background: #103650;
-
-  color: #ffffff;
-}
-
 .admin-escalate-toggle {
   display: flex;
 
@@ -3661,15 +4162,6 @@ p {
 
   font-size: 10px;
 }
-
-.admin-escalate-toggle input {
-  accent-color: #17a5aa;
-}
-
-
-/* =========================================================
-   ADMIN INVESTIGATION TIMELINE
-========================================================= */
 
 .investigation-timeline {
   position: relative;
@@ -3697,7 +4189,6 @@ p {
   position: absolute;
 
   left: 6px;
-
   top: 13px;
   bottom: -3px;
 
@@ -3750,12 +4241,8 @@ p {
   font-size: 9px;
 }
 
-
-/* =========================================================
-   ADMIN NETWORK BADGE OVERRIDE
-========================================================= */
-
-.admin-toolbar .network-badge.online {
+.admin-toolbar
+.network-badge.online {
   border: 1px solid #1c5d51;
 
   background: #0d302d;
@@ -3763,7 +4250,8 @@ p {
   color: #75d6b3;
 }
 
-.admin-toolbar .network-badge.offline {
+.admin-toolbar
+.network-badge.offline {
   border: 1px solid #425364;
 
   background: #172536;
@@ -3771,24 +4259,24 @@ p {
   color: #9caebb;
 }
 
-
 /* =========================================================
-   MOBILE PHONE
+   PHONE RESPONSIVE
 ========================================================= */
 
 @media (max-width: 393px) {
-
   .app-shell {
     padding: 0;
   }
 
   .phone-stage {
     width: 100vw;
+
     height: 100dvh;
 
     max-width: none;
 
     border: 0;
+
     border-radius: 0;
 
     box-shadow: none;
@@ -3796,23 +4284,20 @@ p {
 
   .screen {
     padding-left: 20px;
+
     padding-right: 20px;
   }
 
-  .pharmacist-screen {
+  .pharmacist-screen,
+  .admin-mobile-screen {
     padding: 18px 17px 10px;
   }
 }
 
-
-/* =========================================================
-   SMALL PHONE
-========================================================= */
-
 @media (max-width: 360px) {
-
   .screen {
     padding-left: 17px;
+
     padding-right: 17px;
   }
 
@@ -3824,50 +4309,32 @@ p {
     gap: 2px;
   }
 
-  .pharmacist-avatar {
+  .pharmacist-avatar,
+  .admin-mobile-avatar {
     width: 52px;
+
     height: 52px;
 
     min-width: 52px;
-
-    flex-basis: 52px;
   }
 
-  .pharmacist-greeting h1 {
+  .pharmacist-greeting h1,
+  .admin-mobile-greeting h1 {
     font-size: 1.3rem;
   }
 
   .profile-icon-button {
     width: 36px;
+
     height: 36px;
-  }
-
-  .pharmacist-action-card {
-    min-height: 84px;
-
-    padding: 10px 9px;
   }
 }
 
-
-/* =========================================================
-   SHORT PHONE HEIGHT
-========================================================= */
-
 @media (max-height: 760px) {
-
-  .home-brand {
-    margin-bottom: 9px;
-  }
-
   .hero-logo {
     width: 180px;
 
     max-height: 142px;
-  }
-
-  .home-scan-button {
-    min-height: 52px;
   }
 
   .home-divider {
@@ -3886,67 +4353,33 @@ p {
     min-height: 50px;
   }
 
-  .pharmacist-screen {
-    padding-top: 12px;
-
+  .pharmacist-screen,
+  .admin-mobile-screen {
     overflow-y: auto;
+
+    padding-top: 12px;
   }
 
-  .pharmacist-avatar {
+  .pharmacist-avatar,
+  .admin-mobile-avatar {
     width: 50px;
+
     height: 50px;
 
     min-width: 50px;
-
-    flex-basis: 50px;
   }
 
-  .pharmacist-greeting h1 {
-    font-size: 1.3rem;
-  }
-
-  .pharmacist-system-status {
-    min-height: 45px;
-
-    margin-bottom: 8px;
-  }
-
-  .pharmacist-primary-action {
-    min-height: 58px;
-
-    margin-bottom: 8px;
-  }
-
-  .pharmacist-action-grid {
-    gap: 7px;
-
-    margin-bottom: 8px;
-  }
-
-  .pharmacist-action-card {
+  .pharmacist-action-card,
+  .admin-mobile-action-card {
     min-height: 76px;
-  }
-
-  .pharmacist-summary {
-    margin-bottom: 8px;
-  }
-
-  .pharmacist-metric {
-    min-height: 57px;
-  }
-
-  .recent-event-row {
-    min-height: 42px;
   }
 }
 
-
 /* =========================================================
-   ADMIN TABLET
+   ADMIN WEB RESPONSIVE
 ========================================================= */
 
 @media (max-width: 1100px) {
-
   .admin-desktop {
     grid-template-columns:
       190px
@@ -3960,29 +4393,15 @@ p {
 
   .admin-summary-strip {
     grid-template-columns:
-      repeat(
-        3,
-        minmax(0, 1fr)
-      );
+      repeat(3, minmax(0, 1fr));
   }
 
   .admin-content {
     padding: 22px;
   }
-
-  .admin-toolbar {
-    padding-left: 22px;
-    padding-right: 22px;
-  }
 }
 
-
-/* =========================================================
-   ADMIN SMALL SCREEN
-========================================================= */
-
 @media (max-width: 760px) {
-
   .admin-desktop {
     display: block;
   }
@@ -3991,25 +4410,15 @@ p {
     position: static;
 
     width: 100%;
+
     height: auto;
 
     padding: 16px;
   }
 
-  .admin-sidebar-brand {
-    padding-bottom: 14px;
-  }
-
   .admin-nav {
     grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
-  }
-
-  .admin-sidebar-footer {
-    margin-top: 18px;
+      repeat(2, minmax(0, 1fr));
   }
 
   .admin-toolbar {
@@ -4038,10 +4447,7 @@ p {
 
   .admin-summary-strip {
     grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+      repeat(2, minmax(0, 1fr));
   }
 
   .admin-detail-grid {
@@ -4059,13 +4465,7 @@ p {
   }
 }
 
-
-/* =========================================================
-   VERY SMALL ADMIN
-========================================================= */
-
 @media (max-width: 480px) {
-
   .admin-nav {
     grid-template-columns: 1fr;
   }
@@ -4080,6 +4480,7 @@ p {
 
   .admin-export-menu {
     left: 0;
+
     right: auto;
   }
 
@@ -4092,16 +4493,11 @@ p {
   }
 }
 
-
 /* =========================================================
    REDUCED MOTION
 ========================================================= */
 
-@media (
-  prefers-reduced-motion:
-  reduce
-) {
-
+@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
