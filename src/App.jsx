@@ -65,6 +65,32 @@ const prototypeRecalls = [
   },
 ];
 
+const shortageData = [
+  {
+    id: "SHORT-001",
+    medicineName: "Amoxicillin 500mg",
+    availability: "Available",
+    status: "available",
+    note: "Normal prototype availability",
+  },
+
+  {
+    id: "SHORT-002",
+    medicineName: "Ibuprofen 400mg",
+    availability: "Low Stock",
+    status: "low",
+    note: "Limited prototype availability",
+  },
+
+  {
+    id: "SHORT-003",
+    medicineName: "Paracetamol 1g",
+    availability: "Unavailable",
+    status: "unavailable",
+    note: "Currently unavailable in prototype data",
+  },
+];
+
 function getMedicineName(product, fallback = "Medicine") {
   return (
     product?.medicineName ||
@@ -418,6 +444,7 @@ export default function App() {
       setLoginError(
         "Account not found. Check your email address."
       );
+
       return;
     }
 
@@ -428,6 +455,7 @@ export default function App() {
       setLoginError(
         "Incorrect password. Please try again."
       );
+
       return;
     }
 
@@ -668,16 +696,22 @@ export default function App() {
       id: reference,
       code,
       batch,
+
       comment:
         reportComment,
+
       location:
         reportLocation,
+
       imageName:
         reportImageName,
+
       createdAt:
         new Date()
           .toISOString(),
+
       status: "New",
+
       role:
         role || "guest",
     };
@@ -772,6 +806,7 @@ export default function App() {
       case "pharmacistBatchLookup":
       case "pharmacistRecalls":
       case "pharmacistHistory":
+      case "pharmacistShortages":
       case "pharmacistProfile":
       case "pharmacistSettings":
         setScreen(
@@ -1915,25 +1950,26 @@ export default function App() {
                 </div>
               </button>
 
+              {/* UPDATED CARD */}
+
               <button
                 type="button"
                 className="pharmacist-action-card"
                 onClick={() =>
                   setScreen(
-                    "pharmacistHistory"
+                    "pharmacistShortages"
                   )
                 }
               >
-                <HistoryIcon />
+                <ShortagesIcon />
 
                 <div className="pharmacist-action-copy">
                   <strong>
-                    Verification History
+                    Shortages
                   </strong>
 
                   <span>
-                    Review recent
-                    checks
+                    Current availability
                   </span>
                 </div>
               </button>
@@ -2067,6 +2103,80 @@ export default function App() {
                     </div>
                   )
                 )}
+
+            </div>
+
+            <PharmacistNav
+              screen={screen}
+              setScreen={
+                setScreen
+              }
+            />
+
+          </section>
+        )}
+
+        {/* SHORTAGES */}
+
+        {screen ===
+          "pharmacistShortages" && (
+          <section className="screen">
+
+            <BackButton
+              onClick={goBack}
+            />
+
+            <div className="eyebrow">
+              Pharmacist workflow
+            </div>
+
+            <h1>
+              Shortages
+            </h1>
+
+            <p>
+              Current medicine
+              availability from the
+              MedAuth prototype data.
+            </p>
+
+            <div className="shortage-list">
+
+              {shortageData.map(
+                (item) => (
+                  <div
+                    className="shortage-card"
+                    key={
+                      item.id
+                    }
+                  >
+                    <div>
+
+                      <strong>
+                        {
+                          item.medicineName
+                        }
+                      </strong>
+
+                      <span>
+                        {
+                          item.note
+                        }
+                      </span>
+
+                    </div>
+
+                    <span
+                      className={`availability-badge ${item.status}`}
+                    >
+                      {
+                        item.availability
+                      }
+                    </span>
+
+                  </div>
+                )
+              )}
 
             </div>
 
@@ -2797,6 +2907,10 @@ export default function App() {
   );
 }
 
+/* ==================================================
+   COMPONENTS
+================================================== */
+
 function BackButton({
   onClick,
 }) {
@@ -3055,7 +3169,9 @@ function AdminDashboard() {
   );
 }
 
-/* ICONS */
+/* ==================================================
+   ICONS
+================================================== */
 
 function ScanIcon() {
   return (
@@ -3143,6 +3259,29 @@ function HistoryIcon() {
       <path d="M3 4v5h5" />
 
       <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+function ShortagesIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="6"
+        y="3"
+        width="12"
+        height="18"
+        rx="2"
+      />
+
+      <path d="M9 7h6" />
+
+      <path d="M9 11h6" />
+
+      <path d="M9 15h3" />
     </svg>
   );
 }
