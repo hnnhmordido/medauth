@@ -83,6 +83,48 @@ const shortageData = [
   },
 ];
 
+const initialAdminReports = [
+  {
+    id: "MA-2026-00125",
+    eventId: "VE-0002",
+    medicine: "HealthMed 20mg",
+    productId: "09312345678902",
+    code: "MED-002",
+    batch: "B2045",
+    verificationResult: "NO_MATCH",
+    region: "Adelaide SA",
+    reporterType: "Pharmacist",
+    comment: "Batch information does not match the prototype record.",
+    createdAt: "2026-08-11T10:10:00",
+    status: "NEW",
+    escalated: false,
+    imageName: "",
+  },
+];
+
+const initialAuditEvents = [
+  {
+    id: "AUD-0001",
+    timestamp: "2026-08-11T10:10:00",
+    actor: "Pharmacist",
+    action: "Report created",
+    recordType: "Suspicious Report",
+    recordId: "MA-2026-00125",
+    previousState: "—",
+    newState: "NEW",
+  },
+  {
+    id: "AUD-0002",
+    timestamp: "2026-08-11T10:08:00",
+    actor: "Pharmacist",
+    action: "Verification completed",
+    recordType: "Verification Event",
+    recordId: "VE-0002",
+    previousState: "—",
+    newState: "NO_MATCH",
+  },
+];
+
 function normaliseEvent(event, index = 0) {
   const timestamp =
     event.timestamp ||
@@ -91,88 +133,44 @@ function normaliseEvent(event, index = 0) {
     new Date().toISOString();
 
   return {
-    id:
-      event.id ||
-      `EVENT-${index}-${timestamp}`,
-
-    code:
-      event.code ||
-      event.productCode ||
-      event.productId ||
-      "",
-
-    productId:
-      event.productId || "",
-
+    id: event.id || `EVENT-${index}-${timestamp}`,
+    code: event.code || event.productCode || "",
+    productId: event.productId || "",
     medicine:
       event.medicine ||
       event.medicineName ||
-      event.product ||
       event.productName ||
       "Medicine",
-
-    batch:
-      event.batch ||
-      event.batchNumber ||
-      "—",
-
-    result:
-      event.result ||
-      event.status ||
-      "NOT_COVERED",
-
+    batch: event.batch || event.batchNumber || "—",
+    result: event.result || event.status || "NOT_COVERED",
     timestamp,
-
-    offline: Boolean(
-      event.offline ||
-      event.cached
-    ),
-
-    pendingSync:
-      Boolean(event.pendingSync),
-
-    region:
-      event.region ||
-      event.location ||
-      "",
-
-    type:
-      event.type ||
-      "verification",
-
-    channel:
-      event.channel ||
-      "PHARMACIST",
+    offline: Boolean(event.offline || event.cached),
+    pendingSync: Boolean(event.pendingSync),
+    region: event.region || event.location || "",
+    type: event.type || "verification",
+    channel: event.channel || "PHARMACIST",
   };
 }
 
 function formatEventTime(timestamp) {
-  const date =
-    new Date(timestamp);
+  const date = new Date(timestamp);
 
-  if (
-    Number.isNaN(
-      date.getTime()
-    )
-  ) {
+  if (Number.isNaN(date.getTime())) {
     return timestamp || "—";
   }
 
-  return date.toLocaleString(
-    [],
-    {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    }
-  );
+  return date.toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 
 function resultLabel(result) {
   switch (result) {
     case "MATCH":
-      return "Data match found";
+      return "Match";
 
     case "NO_MATCH":
       return "No Match";
@@ -185,66 +183,44 @@ function resultLabel(result) {
   }
 }
 
-function verifyMedicine(
-  identifier,
-  batch,
-  offline
-) {
+function verifyMedicine(identifier, batch, offline) {
   const normalizedIdentifier =
-    identifier
-      ?.trim()
-      .toUpperCase();
+    identifier?.trim().toUpperCase();
 
   const normalizedBatch =
-    batch
-      ?.trim()
-      .toUpperCase();
+    batch?.trim().toUpperCase();
 
   const product =
-    findMedicine(
-      normalizedIdentifier
-    );
+    findMedicine(normalizedIdentifier);
 
   if (!product) {
     return {
       status: "NOT_COVERED",
       product: null,
-      scannedCode:
-        normalizedIdentifier,
-      scannedBatch:
-        normalizedBatch,
+      scannedCode: normalizedIdentifier,
+      scannedBatch: normalizedBatch,
       offline,
       mismatchField: null,
     };
   }
 
-  if (
-    offline &&
-    !product.cached
-  ) {
+  if (offline && !product.cached) {
     return {
       status: "NOT_COVERED",
       product,
-      scannedCode:
-        normalizedIdentifier,
-      scannedBatch:
-        normalizedBatch,
+      scannedCode: normalizedIdentifier,
+      scannedBatch: normalizedBatch,
       offline: true,
       mismatchField: null,
     };
   }
 
-  if (
-    product.coverageStatus !==
-    "ENROLLED"
-  ) {
+  if (product.coverageStatus !== "ENROLLED") {
     return {
       status: "NOT_COVERED",
       product,
-      scannedCode:
-        normalizedIdentifier,
-      scannedBatch:
-        normalizedBatch,
+      scannedCode: normalizedIdentifier,
+      scannedBatch: normalizedBatch,
       offline,
       mismatchField: null,
     };
@@ -252,18 +228,14 @@ function verifyMedicine(
 
   if (
     normalizedBatch &&
-    normalizedBatch !==
-      product.batch.toUpperCase()
+    normalizedBatch !== product.batch.toUpperCase()
   ) {
     return {
       status: "NO_MATCH",
       product,
-      scannedCode:
-        normalizedIdentifier,
-      scannedBatch:
-        normalizedBatch,
-      registeredBatch:
-        product.batch,
+      scannedCode: normalizedIdentifier,
+      scannedBatch: normalizedBatch,
+      registeredBatch: product.batch,
       offline,
       mismatchField: "batch",
     };
@@ -272,14 +244,59 @@ function verifyMedicine(
   return {
     status: "MATCH",
     product,
-    scannedCode:
-      normalizedIdentifier,
+    scannedCode: normalizedIdentifier,
     scannedBatch:
-      normalizedBatch ||
-      product.batch,
+      normalizedBatch || product.batch,
     offline,
     mismatchField: null,
   };
+}
+
+function downloadCsv(filename, rows) {
+  if (!rows.length) {
+    return;
+  }
+
+  const headers = Object.keys(rows[0]);
+
+  const escapeValue = (value) => {
+    const text =
+      value === null || value === undefined
+        ? ""
+        : String(value);
+
+    return `"${text.replaceAll('"', '""')}"`;
+  };
+
+  const csv = [
+    headers.map(escapeValue).join(","),
+    ...rows.map((row) =>
+      headers
+        .map((header) =>
+          escapeValue(row[header])
+        )
+        .join(",")
+    ),
+  ].join("\n");
+
+  const blob = new Blob([csv], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const anchor =
+    document.createElement("a");
+
+  anchor.href = url;
+  anchor.download = filename;
+
+  document.body.appendChild(anchor);
+
+  anchor.click();
+  anchor.remove();
+
+  URL.revokeObjectURL(url);
 }
 
 export default function App() {
@@ -292,18 +309,14 @@ export default function App() {
   const [syncing, setSyncing] =
     useState(false);
 
-  const [
-    pendingSync,
-    setPendingSync,
-  ] = useState(0);
+  const [pendingSync, setPendingSync] =
+    useState(0);
 
   const [role, setRole] =
     useState("");
 
-  const [
-    currentUser,
-    setCurrentUser,
-  ] = useState(null);
+  const [currentUser, setCurrentUser] =
+    useState(null);
 
   const [email, setEmail] =
     useState("");
@@ -331,10 +344,8 @@ export default function App() {
     setResetEmail,
   ] = useState("");
 
-  const [
-    resetSent,
-    setResetSent,
-  ] = useState(false);
+  const [resetSent, setResetSent] =
+    useState(false);
 
   const [code, setCode] =
     useState("MED-001");
@@ -372,10 +383,8 @@ export default function App() {
     setSelectedRecall,
   ] = useState(null);
 
-  const [
-    reportRef,
-    setReportRef,
-  ] = useState("");
+  const [reportRef, setReportRef] =
+    useState("");
 
   const [
     reportComment,
@@ -392,15 +401,55 @@ export default function App() {
     setReportImageName,
   ] = useState("");
 
-  const [
-    reports,
-    setReports,
-  ] = useState([]);
+  const [reports, setReports] =
+    useState(initialAdminReports);
 
   const [
     reportOrigin,
     setReportOrigin,
   ] = useState("result");
+
+  const [
+    selectedAdminReport,
+    setSelectedAdminReport,
+  ] = useState(null);
+
+  const [
+    selectedInvestigation,
+    setSelectedInvestigation,
+  ] = useState(null);
+
+  const [
+    auditEvents,
+    setAuditEvents,
+  ] = useState(
+    initialAuditEvents
+  );
+
+  const [
+    adminSearch,
+    setAdminSearch,
+  ] = useState("");
+
+  const [
+    reportStatusFilter,
+    setReportStatusFilter,
+  ] = useState("ALL");
+
+  const [
+    scanResultFilter,
+    setScanResultFilter,
+  ] = useState("ALL");
+
+  const [
+    auditSearch,
+    setAuditSearch,
+  ] = useState("");
+
+  const [
+    mapFilter,
+    setMapFilter,
+  ] = useState("ALL");
 
   const activeRecalls =
     useMemo(
@@ -411,12 +460,11 @@ export default function App() {
   const pharmacistEvents =
     useMemo(() => {
       return verificationEvents
-        .map(
-          (event, index) =>
-            normaliseEvent(
-              event,
-              index
-            )
+        .map((event, index) =>
+          normaliseEvent(
+            event,
+            index
+          )
         )
         .sort(
           (a, b) =>
@@ -469,6 +517,367 @@ export default function App() {
       ]
     );
 
+  const adminSummary =
+    useMemo(() => {
+      const openReports =
+        reports.filter(
+          (report) =>
+            report.status ===
+            "NEW"
+        ).length;
+
+      const underReview =
+        reports.filter(
+          (report) =>
+            report.status ===
+            "UNDER_REVIEW"
+        ).length;
+
+      const noMatch =
+        pharmacistEvents.filter(
+          (event) =>
+            event.result ===
+            "NO_MATCH"
+        ).length;
+
+      const unable =
+        pharmacistEvents.filter(
+          (event) =>
+            event.result ===
+            "NOT_COVERED"
+        ).length;
+
+      return {
+        openReports,
+        underReview,
+        noMatch,
+        unable,
+        recalls:
+          activeRecalls.length,
+      };
+    }, [
+      reports,
+      pharmacistEvents,
+      activeRecalls,
+    ]);
+
+  const filteredReports =
+    useMemo(() => {
+      const search =
+        adminSearch
+          .trim()
+          .toLowerCase();
+
+      return reports.filter(
+        (report) => {
+          const matchesStatus =
+            reportStatusFilter ===
+              "ALL" ||
+            report.status ===
+              reportStatusFilter;
+
+          const haystack = [
+            report.id,
+            report.medicine,
+            report.productId,
+            report.batch,
+            report.region,
+            report.reporterType,
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          return (
+            matchesStatus &&
+            (!search ||
+              haystack.includes(
+                search
+              ))
+          );
+        }
+      );
+    }, [
+      reports,
+      adminSearch,
+      reportStatusFilter,
+    ]);
+
+  const filteredScanEvents =
+    useMemo(() => {
+      const search =
+        adminSearch
+          .trim()
+          .toLowerCase();
+
+      return pharmacistEvents.filter(
+        (event) => {
+          const resultMatches =
+            scanResultFilter ===
+              "ALL" ||
+            event.result ===
+              scanResultFilter;
+
+          const haystack = [
+            event.id,
+            event.medicine,
+            event.productId,
+            event.batch,
+            event.region,
+            event.channel,
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          return (
+            resultMatches &&
+            (!search ||
+              haystack.includes(
+                search
+              ))
+          );
+        }
+      );
+    }, [
+      pharmacistEvents,
+      adminSearch,
+      scanResultFilter,
+    ]);
+
+  const regionSummary =
+    useMemo(() => {
+      const groups = {};
+
+      pharmacistEvents.forEach(
+        (event) => {
+          const region =
+            event.region ||
+            "Unknown Region";
+
+          if (!groups[region]) {
+            groups[region] = {
+              region,
+              total: 0,
+              match: 0,
+              noMatch: 0,
+              unable: 0,
+              reports: 0,
+            };
+          }
+
+          groups[region].total +=
+            1;
+
+          if (
+            event.result ===
+            "MATCH"
+          ) {
+            groups[region].match +=
+              1;
+          }
+
+          if (
+            event.result ===
+            "NO_MATCH"
+          ) {
+            groups[
+              region
+            ].noMatch += 1;
+          }
+
+          if (
+            event.result ===
+            "NOT_COVERED"
+          ) {
+            groups[
+              region
+            ].unable += 1;
+          }
+        }
+      );
+
+      reports.forEach(
+        (report) => {
+          const region =
+            report.region ||
+            report.location ||
+            "Unknown Region";
+
+          if (!groups[region]) {
+            groups[region] = {
+              region,
+              total: 0,
+              match: 0,
+              noMatch: 0,
+              unable: 0,
+              reports: 0,
+            };
+          }
+
+          groups[
+            region
+          ].reports += 1;
+        }
+      );
+
+      return Object.values(
+        groups
+      );
+    }, [
+      pharmacistEvents,
+      reports,
+    ]);
+
+  const filteredRegions =
+    useMemo(() => {
+      if (
+        mapFilter === "ALL"
+      ) {
+        return regionSummary;
+      }
+
+      return regionSummary.filter(
+        (region) => {
+          if (
+            mapFilter === "MATCH"
+          ) {
+            return (
+              region.match > 0
+            );
+          }
+
+          if (
+            mapFilter ===
+            "NO_MATCH"
+          ) {
+            return (
+              region.noMatch > 0
+            );
+          }
+
+          if (
+            mapFilter ===
+            "NOT_COVERED"
+          ) {
+            return (
+              region.unable > 0
+            );
+          }
+
+          if (
+            mapFilter ===
+            "REPORTED"
+          ) {
+            return (
+              region.reports > 0
+            );
+          }
+
+          return true;
+        }
+      );
+    }, [
+      regionSummary,
+      mapFilter,
+    ]);
+
+  const suspectClusters =
+    useMemo(() => {
+      const batches = {};
+
+      pharmacistEvents.forEach(
+        (event) => {
+          if (!batches[event.batch]) {
+            batches[
+              event.batch
+            ] = {
+              batch: event.batch,
+              region:
+                event.region ||
+                "Unknown",
+              scans: 0,
+              noMatch: 0,
+              reports: 0,
+            };
+          }
+
+          batches[
+            event.batch
+          ].scans += 1;
+
+          if (
+            event.result ===
+            "NO_MATCH"
+          ) {
+            batches[
+              event.batch
+            ].noMatch += 1;
+          }
+        }
+      );
+
+      reports.forEach(
+        (report) => {
+          if (
+            batches[
+              report.batch
+            ]
+          ) {
+            batches[
+              report.batch
+            ].reports += 1;
+          }
+        }
+      );
+
+      return Object.values(
+        batches
+      )
+        .filter(
+          (item) =>
+            item.noMatch > 0 ||
+            item.reports > 0
+        )
+        .sort(
+          (a, b) =>
+            b.noMatch -
+            a.noMatch
+        );
+    }, [
+      pharmacistEvents,
+      reports,
+    ]);
+
+  const filteredAudit =
+    useMemo(() => {
+      const search =
+        auditSearch
+          .trim()
+          .toLowerCase();
+
+      if (!search) {
+        return auditEvents;
+      }
+
+      return auditEvents.filter(
+        (event) =>
+          [
+            event.id,
+            event.actor,
+            event.action,
+            event.recordType,
+            event.recordId,
+            event.previousState,
+            event.newState,
+          ]
+            .join(" ")
+            .toLowerCase()
+            .includes(search)
+      );
+    }, [
+      auditEvents,
+      auditSearch,
+    ]);
+
   const handleNetworkToggle =
     () => {
       if (!offline) {
@@ -488,9 +897,36 @@ export default function App() {
                 current.map(
                   (event) => ({
                     ...event,
-                    pendingSync: false,
+                    pendingSync:
+                      false,
                   })
                 )
+            );
+
+            setAuditEvents(
+              (current) => [
+                {
+                  id:
+                    `AUD-${Date.now()}`,
+                  timestamp:
+                    new Date().toISOString(),
+                  actor:
+                    currentUser
+                      ?.fullName ||
+                    "System",
+                  action:
+                    "Offline event synced",
+                  recordType:
+                    "Verification Event",
+                  recordId:
+                    "SYNC",
+                  previousState:
+                    "PENDING",
+                  newState:
+                    "SYNCED",
+                },
+                ...current,
+              ]
             );
 
             setPendingSync(0);
@@ -521,7 +957,6 @@ export default function App() {
         setLoginError(
           "Account not found. Check your email address."
         );
-
         return;
       }
 
@@ -532,7 +967,6 @@ export default function App() {
         setLoginError(
           "Incorrect password. Please try again."
         );
-
         return;
       }
 
@@ -560,7 +994,7 @@ export default function App() {
 
         case "admin":
           setScreen(
-            "adminDashboard"
+            "adminOverview"
           );
           break;
 
@@ -598,18 +1032,21 @@ export default function App() {
               offline
             );
 
-          setResult(verification);
+          setResult(
+            verification
+          );
 
           const product =
             verification.product;
 
+          const eventId =
+            `VE-${Date.now()}`;
+
           const event = {
-            id:
-              `VE-${Date.now()}`,
+            id: eventId,
 
             timestamp:
-              new Date()
-                .toISOString(),
+              new Date().toISOString(),
 
             code:
               product?.code ||
@@ -640,8 +1077,6 @@ export default function App() {
               role ===
               "pharmacist"
                 ? "PHARMACIST"
-                : role === "admin"
-                ? "ADMIN"
                 : "CONSUMER",
 
             offline,
@@ -661,6 +1096,33 @@ export default function App() {
           setVerificationEvents(
             (current) => [
               event,
+              ...current,
+            ]
+          );
+
+          setAuditEvents(
+            (current) => [
+              {
+                id:
+                  `AUD-${Date.now()}`,
+                timestamp:
+                  new Date().toISOString(),
+                actor:
+                  role ===
+                  "pharmacist"
+                    ? "Pharmacist"
+                    : "Consumer",
+                action:
+                  "Verification completed",
+                recordType:
+                  "Verification Event",
+                recordId:
+                  eventId,
+                previousState:
+                  "—",
+                newState:
+                  verification.status,
+              },
               ...current,
             ]
           );
@@ -713,30 +1175,24 @@ export default function App() {
           ?.recall?.active
           ? {
               active: true,
-
               medicineName:
                 registeredProduct
                   .medicineName,
-
               batch:
                 registeredProduct
                   .batch,
-
               recallDate:
                 registeredProduct
                   .recall
                   .recallDate,
-
               severity:
                 registeredProduct
                   .recall
                   .severity,
-
               status:
                 registeredProduct
                   .recall
                   .status,
-
               reason:
                 registeredProduct
                   .recall
@@ -745,7 +1201,8 @@ export default function App() {
           : null;
 
       setBatchResult({
-        batch: normalizedBatch,
+        batch:
+          normalizedBatch,
         medicine:
           registeredProduct,
         recall,
@@ -760,8 +1217,14 @@ export default function App() {
             89999
       )}`;
 
+    const event =
+      pharmacistEvents[0];
+
     const newReport = {
       id: reference,
+
+      eventId:
+        event?.id || "",
 
       code:
         result?.product?.code ||
@@ -787,20 +1250,27 @@ export default function App() {
       comment:
         reportComment,
 
-      location:
-        reportLocation,
+      region:
+        reportLocation ||
+        result?.product
+          ?.coarseRegion ||
+        "",
+
+      reporterType:
+        role ===
+        "pharmacist"
+          ? "Pharmacist"
+          : "Consumer",
 
       imageName:
         reportImageName,
 
       createdAt:
-        new Date()
-          .toISOString(),
+        new Date().toISOString(),
 
-      status: "New",
+      status: "NEW",
 
-      role:
-        role || "guest",
+      escalated: false,
     };
 
     setReportRef(reference);
@@ -812,20 +1282,182 @@ export default function App() {
       ]
     );
 
-    if (
-      role === "pharmacist" &&
-      offline
-    ) {
-      setPendingSync(
-        (current) =>
-          current + 1
-      );
-    }
+    setAuditEvents(
+      (current) => [
+        {
+          id:
+            `AUD-${Date.now()}`,
+          timestamp:
+            new Date().toISOString(),
+          actor:
+            role ===
+            "pharmacist"
+              ? "Pharmacist"
+              : "Consumer",
+          action:
+            "Report created",
+          recordType:
+            "Suspicious Report",
+          recordId:
+            reference,
+          previousState:
+            "—",
+          newState:
+            "NEW",
+        },
+        ...current,
+      ]
+    );
 
     setScreen(
       "confirmation"
     );
   };
+
+  const updateReportStatus =
+    (
+      reportId,
+      nextStatus
+    ) => {
+      const report =
+        reports.find(
+          (item) =>
+            item.id === reportId
+        );
+
+      if (!report) {
+        return;
+      }
+
+      const previous =
+        report.status;
+
+      setReports(
+        (current) =>
+          current.map(
+            (item) =>
+              item.id ===
+              reportId
+                ? {
+                    ...item,
+                    status:
+                      nextStatus,
+                  }
+                : item
+          )
+      );
+
+      setSelectedAdminReport(
+        (current) =>
+          current?.id ===
+          reportId
+            ? {
+                ...current,
+                status:
+                  nextStatus,
+              }
+            : current
+      );
+
+      setAuditEvents(
+        (current) => [
+          {
+            id:
+              `AUD-${Date.now()}`,
+            timestamp:
+              new Date().toISOString(),
+            actor:
+              currentUser
+                ?.fullName ||
+              "Admin",
+            action:
+              "Report status changed",
+            recordType:
+              "Suspicious Report",
+            recordId:
+              reportId,
+            previousState:
+              previous,
+            newState:
+              nextStatus,
+          },
+          ...current,
+        ]
+      );
+    };
+
+  const toggleEscalation =
+    (reportId) => {
+      const report =
+        reports.find(
+          (item) =>
+            item.id === reportId
+        );
+
+      if (!report) {
+        return;
+      }
+
+      const next =
+        !report.escalated;
+
+      setReports(
+        (current) =>
+          current.map(
+            (item) =>
+              item.id ===
+              reportId
+                ? {
+                    ...item,
+                    escalated:
+                      next,
+                  }
+                : item
+          )
+      );
+
+      setSelectedAdminReport(
+        (current) =>
+          current?.id ===
+          reportId
+            ? {
+                ...current,
+                escalated:
+                  next,
+              }
+            : current
+      );
+
+      setAuditEvents(
+        (current) => [
+          {
+            id:
+              `AUD-${Date.now()}`,
+            timestamp:
+              new Date().toISOString(),
+            actor:
+              currentUser
+                ?.fullName ||
+              "Admin",
+            action:
+              next
+                ? "Report escalated"
+                : "Escalation removed",
+            recordType:
+              "Suspicious Report",
+            recordId:
+              reportId,
+            previousState:
+              String(
+                report.escalated
+              ),
+            newState:
+              String(next),
+          },
+          ...current,
+        ]
+      );
+    };
 
   const reset = () => {
     setScreen("home");
@@ -845,10 +1477,6 @@ export default function App() {
     setReportLocation("");
     setReportImageName("");
 
-    setReportOrigin(
-      "result"
-    );
-
     setResetEmail("");
     setResetSent(false);
 
@@ -857,93 +1485,154 @@ export default function App() {
     setBatchResult(null);
 
     setSelectedRecall(null);
+    setSelectedAdminReport(null);
+    setSelectedInvestigation(null);
   };
 
-  const goBack = () => {
-    switch (screen) {
-      case "scan":
-      case "manual":
-      case "result":
-        if (
-          role === "pharmacist"
-        ) {
-          setScreen(
-            "pharmacistDashboard"
-          );
-        } else {
-          setScreen("home");
-        }
-        break;
+  const isAdminScreen =
+    screen.startsWith(
+      "admin"
+    );
 
-      case "details":
-        setScreen("result");
-        break;
+  if (
+    role === "admin" &&
+    isAdminScreen
+  ) {
+    return (
+      <div
+        className="admin-app-shell"
+        style={{
+          "--brand-blue":
+            palette.blue,
+          "--brand-deep":
+            palette.deepBlue,
+          "--brand-teal":
+            palette.teal,
+          "--brand-aqua":
+            palette.aqua,
+        }}
+      >
+        <AdminWorkspace
+          screen={screen}
+          setScreen={setScreen}
+          currentUser={currentUser}
+          search={adminSearch}
+          setSearch={setAdminSearch}
+          reports={reports}
+          filteredReports={
+            filteredReports
+          }
+          reportStatusFilter={
+            reportStatusFilter
+          }
+          setReportStatusFilter={
+            setReportStatusFilter
+          }
+          selectedReport={
+            selectedAdminReport
+          }
+          setSelectedReport={
+            setSelectedAdminReport
+          }
+          updateReportStatus={
+            updateReportStatus
+          }
+          toggleEscalation={
+            toggleEscalation
+          }
+          scanEvents={
+            filteredScanEvents
+          }
+          scanResultFilter={
+            scanResultFilter
+          }
+          setScanResultFilter={
+            setScanResultFilter
+          }
+          summary={adminSummary}
+          regions={
+            filteredRegions
+          }
+          mapFilter={
+            mapFilter
+          }
+          setMapFilter={
+            setMapFilter
+          }
+          clusters={
+            suspectClusters
+          }
+          selectedInvestigation={
+            selectedInvestigation
+          }
+          setSelectedInvestigation={
+            setSelectedInvestigation
+          }
+          auditEvents={
+            filteredAudit
+          }
+          auditSearch={
+            auditSearch
+          }
+          setAuditSearch={
+            setAuditSearch
+          }
+          offline={offline}
+          syncing={syncing}
+          handleNetworkToggle={
+            handleNetworkToggle
+          }
+          activeRecalls={
+            activeRecalls
+          }
+          onExport={(
+            type
+          ) => {
+            if (
+              type ===
+              "events"
+            ) {
+              downloadCsv(
+                "medauth-verification-events.csv",
+                pharmacistEvents
+              );
+            }
 
-      case "report":
-        if (
-          role === "pharmacist" &&
-          reportOrigin ===
-            "pharmacistDashboard"
-        ) {
-          setScreen(
-            "pharmacistDashboard"
-          );
-        } else {
-          setScreen("result");
-        }
-        break;
+            if (
+              type ===
+              "reports"
+            ) {
+              downloadCsv(
+                "medauth-suspicious-reports.csv",
+                reports
+              );
+            }
 
-      case "pharmacistBatchLookup":
-      case "pharmacistRecalls":
-      case "pharmacistHistory":
-      case "pharmacistShortages":
-      case "pharmacistProfile":
-      case "pharmacistSettings":
-        setScreen(
-          "pharmacistDashboard"
-        );
-        break;
+            if (
+              type ===
+              "audit"
+            ) {
+              downloadCsv(
+                "medauth-audit-trail.csv",
+                auditEvents
+              );
+            }
 
-      case "pharmacistRecallDetail":
-        setScreen(
-          "pharmacistRecalls"
-        );
-        break;
-
-      case "adminProfile":
-      case "adminSettings":
-        setScreen(
-          "adminDashboard"
-        );
-        break;
-
-      case "forgotPassword":
-        if (role === "admin") {
-          setScreen(
-            "adminSettings"
-          );
-        } else if (
-          role === "pharmacist"
-        ) {
-          setScreen(
-            "pharmacistSettings"
-          );
-        } else {
-          setScreen("home");
-        }
-        break;
-
-      case "manufacturerDashboard":
-      case "consumerDashboard":
-      case "adminDashboard":
-      case "pharmacistDashboard":
-        setScreen("home");
-        break;
-
-      default:
-        setScreen("home");
-    }
-  };
+            if (
+              type ===
+              "investigation"
+            ) {
+              downloadCsv(
+                "medauth-investigation.csv",
+                suspectClusters
+              );
+            }
+          }}
+          onSignOut={reset}
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -951,43 +1640,34 @@ export default function App() {
       style={{
         "--brand-blue":
           palette.blue,
-
         "--brand-deep":
           palette.deepBlue,
-
         "--brand-teal":
           palette.teal,
-
         "--brand-aqua":
           palette.aqua,
       }}
     >
       <main className="phone-stage">
 
-        {/* ================= HOME ================= */}
-
         {screen === "home" && (
           <section className="screen home-screen">
 
             <div className="home-status-row">
-
               <NetworkBadge
                 offline={offline}
                 onToggle={
                   handleNetworkToggle
                 }
               />
-
             </div>
 
             <div className="home-brand">
-
               <img
                 className="hero-logo"
                 src={`${import.meta.env.BASE_URL}medauth-logo.png`}
                 alt="MedAuth"
               />
-
             </div>
 
             <button
@@ -1002,7 +1682,6 @@ export default function App() {
               <span>
                 Scan Medicine
               </span>
-
             </button>
 
             <div className="home-divider">
@@ -1016,7 +1695,6 @@ export default function App() {
               }
             >
               <label className="home-login-field">
-
                 <span>
                   EMAIL ADDRESS
                 </span>
@@ -1024,9 +1702,7 @@ export default function App() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(
-                    event
-                  ) => {
+                  onChange={(event) => {
                     setEmail(
                       event.target
                         .value
@@ -1035,20 +1711,16 @@ export default function App() {
                     setLoginError("");
                   }}
                   placeholder="e.g. pharmacist@medauth.com"
-                  autoComplete="email"
                   required
                 />
-
               </label>
 
               <label className="home-login-field">
-
                 <span>
                   PASSWORD
                 </span>
 
                 <div className="password-input-wrap">
-
                   <input
                     type={
                       showPassword
@@ -1056,9 +1728,7 @@ export default function App() {
                         : "password"
                     }
                     value={password}
-                    onChange={(
-                      event
-                    ) => {
+                    onChange={(event) => {
                       setPassword(
                         event.target
                           .value
@@ -1067,7 +1737,6 @@ export default function App() {
                       setLoginError("");
                     }}
                     placeholder="••••••••"
-                    autoComplete="current-password"
                     required
                   />
 
@@ -1080,11 +1749,6 @@ export default function App() {
                           !current
                       )
                     }
-                    aria-label={
-                      showPassword
-                        ? "Hide password"
-                        : "Show password"
-                    }
                   >
                     {showPassword ? (
                       <EyeOffIcon />
@@ -1092,15 +1756,11 @@ export default function App() {
                       <EyeIcon />
                     )}
                   </button>
-
                 </div>
-
               </label>
 
               <div className="login-options">
-
                 <label className="remember-device">
-
                   <input
                     type="checkbox"
                     checked={
@@ -1119,19 +1779,14 @@ export default function App() {
                   <span>
                     Remember this device
                   </span>
-
                 </label>
 
                 <button
                   type="button"
                   className="forgot-password"
                   onClick={() => {
-                    setResetEmail(
-                      email
-                    );
-
+                    setResetEmail(email);
                     setResetSent(false);
-
                     setScreen(
                       "forgotPassword"
                     );
@@ -1139,14 +1794,10 @@ export default function App() {
                 >
                   Forgot password?
                 </button>
-
               </div>
 
               {loginError && (
-                <div
-                  className="login-error"
-                  role="alert"
-                >
+                <div className="login-error">
                   {loginError}
                 </div>
               )}
@@ -1157,168 +1808,97 @@ export default function App() {
               >
                 Sign In →
               </button>
-
             </form>
 
             <div className="security-footer">
-
               <LockIcon />
 
               <span>
-                Protected by AES-256 encryption
-                {" · "}
-                TLS 1.3
-                {" · "}
-                ISO 27001
+                Protected by AES-256 encryption · TLS 1.3 · ISO 27001
               </span>
-
             </div>
 
           </section>
         )}
 
-        {/* ================= FORGOT PASSWORD ================= */}
-
-        {screen ===
-          "forgotPassword" && (
-          <section className="screen forgot-screen">
+        {screen === "forgotPassword" && (
+          <section className="screen">
 
             <BackButton
-              onClick={goBack}
+              onClick={() =>
+                setScreen("home")
+              }
             />
 
-            <div className="forgot-brand">
-
-              <img
-                className="forgot-logo"
-                src={`${import.meta.env.BASE_URL}medauth-logo.png`}
-                alt="MedAuth"
-              />
-
+            <div className="eyebrow">
+              Account recovery
             </div>
 
+            <h1>
+              Forgot password?
+            </h1>
+
             {!resetSent ? (
-              <>
-                <div className="eyebrow">
-                  Account recovery
-                </div>
+              <form
+                onSubmit={
+                  handleForgotPassword
+                }
+              >
+                <label className="field">
+                  Email address
 
-                <h1>
-                  Forgot password?
-                </h1>
+                  <input
+                    type="email"
+                    value={
+                      resetEmail
+                    }
+                    onChange={(
+                      event
+                    ) =>
+                      setResetEmail(
+                        event.target
+                          .value
+                      )
+                    }
+                    required
+                  />
+                </label>
 
-                <p className="forgot-description">
-                  Enter the email address linked to your MedAuth account.
-                </p>
-
-                <form
-                  className="forgot-form"
-                  onSubmit={
-                    handleForgotPassword
-                  }
-                >
-                  <label className="home-login-field">
-
-                    <span>
-                      EMAIL ADDRESS
-                    </span>
-
-                    <input
-                      type="email"
-                      value={
-                        resetEmail
-                      }
-                      onChange={(
-                        event
-                      ) =>
-                        setResetEmail(
-                          event.target
-                            .value
-                        )
-                      }
-                      placeholder="e.g. pharmacist@medauth.com"
-                      required
-                    />
-
-                  </label>
-
-                  <button
-                    type="submit"
-                    className="home-signin-button"
-                  >
-                    Send Reset Instructions
-                  </button>
-
-                </form>
-              </>
+                <PrimaryButton type="submit">
+                  Send Reset Instructions
+                </PrimaryButton>
+              </form>
             ) : (
-              <div className="reset-success">
-
-                <div className="reset-success-icon">
-                  <MailIcon />
-                </div>
-
-                <h1>
+              <div className="panel">
+                <h3>
                   Check your email
-                </h1>
+                </h3>
 
                 <p>
-                  If an account exists for{" "}
-                  <strong>
-                    {resetEmail}
-                  </strong>
-                  , reset instructions have been requested.
+                  Reset instructions have been requested for {resetEmail}.
                 </p>
-
-                <PrimaryButton
-                  onClick={() => {
-                    setResetSent(
-                      false
-                    );
-
-                    if (
-                      role === "admin"
-                    ) {
-                      setScreen(
-                        "adminSettings"
-                      );
-                    } else if (
-                      role ===
-                      "pharmacist"
-                    ) {
-                      setScreen(
-                        "pharmacistSettings"
-                      );
-                    } else {
-                      setScreen(
-                        "home"
-                      );
-                    }
-                  }}
-                >
-                  Return
-                </PrimaryButton>
-
               </div>
             )}
 
           </section>
         )}
 
-        {/* ================= SCAN ================= */}
-
         {screen === "scan" && (
           <section className="screen">
 
             <BackButton
-              onClick={goBack}
+              onClick={() =>
+                setScreen(
+                  role ===
+                    "pharmacist"
+                    ? "pharmacistDashboard"
+                    : "home"
+                )
+              }
             />
 
             <div className="eyebrow">
-              {role ===
-              "pharmacist"
-                ? "Pharmacist verification"
-                : "Guest verification"}
+              Pharmacist verification
             </div>
 
             <h1>
@@ -1330,7 +1910,6 @@ export default function App() {
             </p>
 
             <div className="scanner-panel">
-
               <div className="scan-corners">
                 <span />
                 <span />
@@ -1343,60 +1922,44 @@ export default function App() {
               <small>
                 Camera simulation
               </small>
-
             </div>
 
             <div className="sample-box">
-
-              <strong>
-                Simulate scan
-              </strong>
-
               <button
                 type="button"
-                onClick={() => {
-                  setCode("MED-001");
-                  setBatch("B1001");
-
+                onClick={() =>
                   runVerification(
                     "MED-001",
                     "B1001"
-                  );
-                }}
+                  )
+                }
               >
-                MED-001 / B1001 — Data match found
+                MED-001 / B1001 — Match
               </button>
 
               <button
                 type="button"
-                onClick={() => {
-                  setCode("MED-002");
-                  setBatch("B2045");
-
+                onClick={() =>
                   runVerification(
                     "MED-002",
                     "B2045"
-                  );
-                }}
+                  )
+                }
               >
                 MED-002 / B2045 — No Match
               </button>
 
               <button
                 type="button"
-                onClick={() => {
-                  setCode("MED-003");
-                  setBatch("B9912");
-
+                onClick={() =>
                   runVerification(
                     "MED-003",
                     "B9912"
-                  );
-                }}
+                  )
+                }
               >
-                MED-003 — Not Yet Covered
+                MED-003 — Unable to Verify
               </button>
-
             </div>
 
             <SecondaryButton
@@ -1410,25 +1973,20 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= MANUAL ================= */}
-
         {screen === "manual" && (
           <section className="screen">
 
             <BackButton
-              onClick={goBack}
+              onClick={() =>
+                setScreen("scan")
+              }
             />
-
-            <div className="eyebrow">
-              Manual verification
-            </div>
 
             <h1>
               Enter medicine code
             </h1>
 
             <label className="field">
-
               Product identifier
 
               <input
@@ -1441,14 +1999,11 @@ export default function App() {
                       .value
                   )
                 }
-                placeholder="e.g. MED-001"
               />
-
             </label>
 
             <label className="field">
-
-              Batch (optional)
+              Batch
 
               <input
                 value={batch}
@@ -1460,9 +2015,7 @@ export default function App() {
                       .value
                   )
                 }
-                placeholder="e.g. B1001"
               />
-
             </label>
 
             <PrimaryButton
@@ -1476,172 +2029,85 @@ export default function App() {
           </section>
         )}
 
-        {/* ================= CHECKING ================= */}
-
         {screen === "checking" && (
           <section className="screen center-screen">
-
             <div className="loader" />
 
             <h1>
               Checking medicine…
             </h1>
-
-            <p>
-              Comparing product and batch information with the MedAuth prototype dataset.
-            </p>
-
           </section>
         )}
-
-        {/* ================= RESULT ================= */}
 
         {screen === "result" &&
           result && (
             <section className="screen">
 
               <BackButton
-                onClick={goBack}
+                onClick={() =>
+                  setScreen(
+                    role ===
+                      "pharmacist"
+                      ? "pharmacistDashboard"
+                      : "home"
+                  )
+                }
+              />
+
+              <StatusCard
+                status={
+                  result.status
+                }
+                title={
+                  result.status ===
+                  "MATCH"
+                    ? "Data match found"
+                    : result.status ===
+                      "NO_MATCH"
+                    ? "No Match"
+                    : "Unable to Verify"
+                }
+                text={
+                  result.status ===
+                  "MATCH"
+                    ? "The scanned code and batch match information registered in MedAuth."
+                    : result.status ===
+                      "NO_MATCH"
+                    ? "The scanned information does not fully match the registered prototype record."
+                    : "MedAuth does not currently have enough prototype information to verify this medicine."
+                }
               />
 
               {result.status ===
-                "MATCH" && (
-                <>
-                  <StatusCard
-                    status="MATCH"
-                    title={
-                      result.offline
-                        ? "Data match found — Offline"
-                        : "Data match found"
-                    }
-                    text="The scanned code and batch match information registered in MedAuth."
-                  />
-
-                  <MedicineResultDetails
-                    product={
-                      result.product
-                    }
-                    scannedBatch={
-                      result.scannedBatch
-                    }
-                  />
-
-                  <div className="verification-info-box">
-
-                    <strong>
-                      What this means
-                    </strong>
-
-                    <p>
-                      This result confirms that the scanned information matches the registered prototype record. It does not guarantee that the medicine is authentic or safe to use.
-                    </p>
-
-                  </div>
-
-                  <SupplyChainSnapshot
-                    product={
-                      result.product
-                    }
-                    result={result}
-                  />
-
-                  {result.offline && (
-                    <div className="offline-result-notice">
-
-                      <strong>
-                        Offline Mode — Cached Data
-                      </strong>
-
-                      <span>
-                        Pending Sync. This verification will synchronise when the prototype returns online.
-                      </span>
-
-                    </div>
-                  )}
-
-                  <div className="action-stack">
-
-                    <PrimaryButton
-                      onClick={() =>
-                        setScreen(
-                          "details"
-                        )
-                      }
-                    >
-                      View Medicine Details
-                    </PrimaryButton>
-
-                    {role ===
-                      "pharmacist" && (
-                      <SecondaryButton
-                        onClick={() =>
-                          setScreen(
-                            "pharmacistDashboard"
-                          )
-                        }
-                      >
-                        Back to Pharmacist Dashboard
-                      </SecondaryButton>
-                    )}
-
-                  </div>
-                </>
+                "NO_MATCH" && (
+                <div className="verification-warning-box">
+                  A No Match result does not confirm that this medicine is counterfeit.
+                </div>
               )}
 
-              {result.status ===
-                "NO_MATCH" && (
-                <>
-                  <StatusCard
-                    status="NO_MATCH"
-                    title="No Match"
-                    text="The scanned information does not fully match the product or batch information registered in MedAuth."
-                  />
+              <SupplyChainSnapshot
+                product={
+                  result.product
+                }
+                result={result}
+              />
 
-                  <MedicineResultDetails
-                    product={
-                      result.product
-                    }
-                    scannedBatch={
-                      result.scannedBatch
-                    }
-                  />
+              <div className="action-stack">
 
-                  <div className="verification-warning-box">
-
-                    <strong>
-                      Important
-                    </strong>
-
-                    <p>
-                      A No Match result does not confirm that this medicine is counterfeit.
-                    </p>
-
-                  </div>
-
-                  <SupplyChainSnapshot
-                    product={
-                      result.product
-                    }
-                    result={result}
-                  />
-
-                  <div className="action-stack">
-
+                {result.status ===
+                  "NO_MATCH" && (
+                  <>
                     <PrimaryButton
                       onClick={() => {
                         setBatchSearch(
                           result.scannedBatch ||
                             ""
                         );
-
                         setBatchProductCode(
                           result.product
                             ?.code ||
                             ""
                         );
-
-                        setBatchResult(null);
-
                         setScreen(
                           "pharmacistBatchLookup"
                         );
@@ -1651,317 +2117,53 @@ export default function App() {
                     </PrimaryButton>
 
                     <SecondaryButton
-                      onClick={() => {
-                        setReportOrigin(
-                          "result"
-                        );
-
+                      onClick={() =>
                         setScreen(
                           "report"
-                        );
-                      }}
+                        )
+                      }
                     >
                       Report Concern
                     </SecondaryButton>
+                  </>
+                )}
 
-                    {role ===
-                      "pharmacist" && (
-                      <SecondaryButton
-                        onClick={() => {
-                          setReportOrigin(
-                            "result"
-                          );
-
-                          setScreen(
-                            "report"
-                          );
-                        }}
-                      >
-                        Escalate
-                      </SecondaryButton>
-                    )}
-
-                    {role ===
-                      "pharmacist" && (
-                      <SecondaryButton
-                        onClick={() =>
-                          setScreen(
-                            "pharmacistDashboard"
-                          )
-                        }
-                      >
-                        Back to Pharmacist Dashboard
-                      </SecondaryButton>
-                    )}
-
-                  </div>
-                </>
-              )}
-
-              {result.status ===
-                "NOT_COVERED" && (
-                <>
-                  <StatusCard
-                    status="NOT_COVERED"
-                    title="Unable to Verify"
-                    text="MedAuth does not currently have enough prototype information to verify this medicine."
-                  />
-
-                  <div className="verification-info-box">
-
-                    <strong>
-                      What this means
-                    </strong>
-
-                    <p>
-                      This does not mean the medicine is counterfeit.
-                    </p>
-
-                  </div>
-
-                  <SupplyChainSnapshot
-                    product={
-                      result.product
-                    }
-                    result={result}
-                  />
-
-                  <div className="action-stack">
-
-                    <PrimaryButton
-                      onClick={() =>
-                        setScreen("scan")
-                      }
-                    >
-                      Try Another Scan
-                    </PrimaryButton>
-
-                    <SecondaryButton
-                      onClick={() =>
-                        setScreen("manual")
-                      }
-                    >
-                      Enter Code Manually
-                    </SecondaryButton>
-
-                    <SecondaryButton
-                      onClick={() => {
-                        setReportOrigin(
-                          "result"
-                        );
-
-                        setScreen(
-                          "report"
-                        );
-                      }}
-                    >
-                      Report Concern
-                    </SecondaryButton>
-
-                    {role ===
-                      "pharmacist" && (
-                      <SecondaryButton
-                        onClick={() =>
-                          setScreen(
-                            "pharmacistDashboard"
-                          )
-                        }
-                      >
-                        Back to Pharmacist Dashboard
-                      </SecondaryButton>
-                    )}
-
-                  </div>
-                </>
-              )}
-
-            </section>
-          )}
-
-        {/* ================= DETAILS ================= */}
-
-        {screen === "details" &&
-          result?.product && (
-            <section className="screen">
-
-              <BackButton
-                onClick={goBack}
-              />
-
-              <div className="eyebrow">
-                Medicine details
-              </div>
-
-              <h1>
-                {
-                  result.product
-                    .medicineName
-                }
-              </h1>
-
-              <div className="details-list">
-
-                <Row
-                  label="Manufacturer"
-                  value={
-                    result.product
-                      .manufacturer
-                  }
-                />
-
-                <Row
-                  label="Product identifier"
-                  value={
-                    result.product
-                      .productId
-                  }
-                />
-
-                <Row
-                  label="Batch"
-                  value={
-                    result.product
-                      .batch
-                  }
-                />
-
-                <Row
-                  label="Expiry"
-                  value={
-                    result.product
-                      .expiry
-                  }
-                />
-
-                <Row
-                  label="Country"
-                  value={
-                    result.product
-                      .countryOfOrigin
-                  }
-                />
-
-                <Row
-                  label="Source"
-                  value={
-                    result.product
-                      .source
-                  }
-                />
-
-                <Row
-                  label="Last updated"
-                  value={
-                    result.product
-                      .lastUpdated
-                      ?.replace(
-                        "T",
-                        " "
+                {role ===
+                  "pharmacist" && (
+                  <SecondaryButton
+                    onClick={() =>
+                      setScreen(
+                        "pharmacistDashboard"
                       )
-                  }
-                />
+                    }
+                  >
+                    Back to Pharmacist Dashboard
+                  </SecondaryButton>
+                )}
 
               </div>
 
-              <SecondaryButton
-                onClick={() =>
-                  setScreen("result")
-                }
-              >
-                Back to Result
-              </SecondaryButton>
-
             </section>
           )}
-
-        {/* ================= REPORT ================= */}
 
         {screen === "report" && (
           <section className="screen">
 
             <BackButton
-              onClick={goBack}
+              onClick={() =>
+                setScreen("result")
+              }
             />
-
-            <div className="eyebrow">
-              Suspicious medicine report
-            </div>
 
             <h1>
               Report a concern
             </h1>
 
-            <p>
-              Prototype only. This report is saved locally in the MedAuth demo.
-            </p>
-
             <label className="field">
-
-              Medicine
-
-              <input
-                value={
-                  result?.product
-                    ?.medicineName ||
-                  "Unknown medicine"
-                }
-                readOnly
-              />
-
-            </label>
-
-            <label className="field">
-
-              Product ID
-
-              <input
-                value={
-                  result?.product
-                    ?.productId ||
-                  code
-                }
-                readOnly
-              />
-
-            </label>
-
-            <label className="field">
-
-              Batch
-
-              <input
-                value={
-                  result
-                    ?.scannedBatch ||
-                  batch
-                }
-                readOnly
-              />
-
-            </label>
-
-            <label className="field">
-
-              Verification result
-
-              <input
-                value={
-                  result
-                    ? resultLabel(
-                        result.status
-                      )
-                    : ""
-                }
-                readOnly
-              />
-
-            </label>
-
-            <label className="field">
-
               Comment
 
               <textarea
+                rows="4"
                 value={
                   reportComment
                 }
@@ -1973,36 +2175,11 @@ export default function App() {
                       .value
                   )
                 }
-                rows="4"
-                placeholder="Example: Packaging or batch information looks different."
               />
-
             </label>
 
             <label className="field">
-
-              Image (optional)
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(
-                  event
-                ) =>
-                  setReportImageName(
-                    event.target
-                      .files?.[0]
-                      ?.name ||
-                      ""
-                  )
-                }
-              />
-
-            </label>
-
-            <label className="field">
-
-              Coarse location (optional)
+              Coarse location
 
               <input
                 value={
@@ -2018,7 +2195,6 @@ export default function App() {
                 }
                 placeholder="e.g. Adelaide SA"
               />
-
             </label>
 
             <PrimaryButton
@@ -2031,8 +2207,6 @@ export default function App() {
 
           </section>
         )}
-
-        {/* ================= CONFIRMATION ================= */}
 
         {screen ===
           "confirmation" && (
@@ -2047,35 +2221,27 @@ export default function App() {
             </h1>
 
             <p>
-              Prototype reference:{" "}
+              Reference:{" "}
               <strong>
                 {reportRef}
               </strong>
             </p>
 
-            {role ===
-            "pharmacist" ? (
-              <PrimaryButton
-                onClick={() =>
-                  setScreen(
-                    "pharmacistDashboard"
-                  )
-                }
-              >
-                Back to Pharmacist Dashboard
-              </PrimaryButton>
-            ) : (
-              <PrimaryButton
-                onClick={reset}
-              >
-                Return Home
-              </PrimaryButton>
-            )}
+            <PrimaryButton
+              onClick={() =>
+                setScreen(
+                  role ===
+                    "pharmacist"
+                    ? "pharmacistDashboard"
+                    : "home"
+                )
+              }
+            >
+              Continue
+            </PrimaryButton>
 
           </section>
         )}
-
-        {/* ================= PHARMACIST ================= */}
 
         {screen ===
           "pharmacistDashboard" && (
@@ -2092,56 +2258,43 @@ export default function App() {
                 />
 
                 <div className="pharmacist-greeting">
-
                   <span className="pharmacist-welcome">
                     Welcome back
                   </span>
 
                   <h1>
-                    Hi,{" "}
-                    {currentUser
-                      ?.name ||
-                      "Marie"}
+                    Hi, Marie
                   </h1>
 
                   <p>
                     Registered Pharmacist
                   </p>
-
                 </div>
-
               </div>
 
               <div className="pharmacist-profile-actions">
-
                 <button
-                  type="button"
                   className="profile-icon-button"
                   onClick={() =>
                     setScreen(
                       "pharmacistProfile"
                     )
                   }
-                  aria-label="My Profile"
                 >
                   <ProfileIcon />
                 </button>
 
                 <button
-                  type="button"
                   className="profile-icon-button"
                   onClick={() =>
                     setScreen(
                       "pharmacistSettings"
                     )
                   }
-                  aria-label="Settings"
                 >
                   <SettingsIcon />
                 </button>
-
               </div>
-
             </div>
 
             <div
@@ -2151,24 +2304,11 @@ export default function App() {
                   : "is-online"
               }`}
             >
-              <div>
-
-                <strong>
-                  {offline
-                    ? "Offline Mode — Cached Data"
-                    : syncing
-                    ? "Synchronising…"
-                    : "System Online"}
-                </strong>
-
-                {pendingSync > 0 && (
-                  <span>
-                    Pending Sync:{" "}
-                    {pendingSync}
-                  </span>
-                )}
-
-              </div>
+              <strong>
+                {offline
+                  ? "Offline Mode — Cached Data"
+                  : "System Online"}
+              </strong>
 
               <NetworkBadge
                 offline={offline}
@@ -2176,11 +2316,9 @@ export default function App() {
                   handleNetworkToggle
                 }
               />
-
             </div>
 
             <button
-              type="button"
               className="pharmacist-primary-action"
               onClick={() =>
                 setScreen("scan")
@@ -2189,7 +2327,6 @@ export default function App() {
               <ScanIcon />
 
               <div>
-
                 <strong>
                   Verify Medicine
                 </strong>
@@ -2197,32 +2334,24 @@ export default function App() {
                 <span>
                   Scan or enter a medicine code
                 </span>
-
               </div>
 
               <span>→</span>
-
             </button>
 
             <div className="pharmacist-action-grid">
 
               <button
-                type="button"
                 className="pharmacist-action-card"
-                onClick={() => {
-                  setBatchSearch("");
-                  setBatchProductCode("");
-                  setBatchResult(null);
-
+                onClick={() =>
                   setScreen(
                     "pharmacistBatchLookup"
-                  );
-                }}
+                  )
+                }
               >
                 <BatchLookupIcon />
 
                 <div className="pharmacist-action-copy">
-
                   <strong>
                     Batch Lookup
                   </strong>
@@ -2230,13 +2359,10 @@ export default function App() {
                   <span>
                     Check batch and recall status
                   </span>
-
                 </div>
-
               </button>
 
               <button
-                type="button"
                 className="pharmacist-action-card"
                 onClick={() =>
                   setScreen(
@@ -2247,7 +2373,6 @@ export default function App() {
                 <RecallIcon />
 
                 <div className="pharmacist-action-copy">
-
                   <strong>
                     Recalls & Alerts
                   </strong>
@@ -2255,13 +2380,10 @@ export default function App() {
                   <span>
                     Review active notices
                   </span>
-
                 </div>
-
               </button>
 
               <button
-                type="button"
                 className="pharmacist-action-card"
                 onClick={() =>
                   setScreen(
@@ -2272,7 +2394,6 @@ export default function App() {
                 <ShortagesIcon />
 
                 <div className="pharmacist-action-copy">
-
                   <strong>
                     Shortages
                   </strong>
@@ -2280,26 +2401,18 @@ export default function App() {
                   <span>
                     Current availability
                   </span>
-
                 </div>
-
               </button>
 
               <button
-                type="button"
-                className="pharmacist-action-card pharmacist-escalate-card"
-                onClick={() => {
-                  setReportOrigin(
-                    "pharmacistDashboard"
-                  );
-
-                  setScreen("report");
-                }}
+                className="pharmacist-action-card"
+                onClick={() =>
+                  setScreen("report")
+                }
               >
                 <EscalateIcon />
 
                 <div className="pharmacist-action-copy">
-
                   <strong>
                     Escalate / Report
                   </strong>
@@ -2307,15 +2420,12 @@ export default function App() {
                   <span>
                     Report suspicious medicine
                   </span>
-
                 </div>
-
               </button>
 
             </div>
 
             <div className="pharmacist-summary">
-
               <PharmacistMetric
                 label="Scans Today"
                 value={
@@ -2343,19 +2453,16 @@ export default function App() {
                   totals.noMatch
                 }
               />
-
             </div>
 
             <div className="pharmacist-recent">
 
               <div className="section-heading-row">
-
                 <h3>
                   Recent Activity
                 </h3>
 
                 <button
-                  type="button"
                   className="text-action"
                   onClick={() =>
                     setScreen(
@@ -2365,7 +2472,6 @@ export default function App() {
                 >
                   View All
                 </button>
-
               </div>
 
               {pharmacistEvents
@@ -2373,11 +2479,12 @@ export default function App() {
                 .map(
                   (event) => (
                     <div
+                      key={
+                        event.id
+                      }
                       className="recent-event-row"
-                      key={event.id}
                     >
                       <div>
-
                         <strong>
                           {
                             event.medicine
@@ -2390,11 +2497,9 @@ export default function App() {
                             event.batch
                           }
                         </span>
-
                       </div>
 
                       <div className="recent-event-result">
-
                         <strong>
                           {resultLabel(
                             event.result
@@ -2406,49 +2511,30 @@ export default function App() {
                             event.timestamp
                           )}
                         </span>
-
                       </div>
-
                     </div>
                   )
                 )}
-
             </div>
-
-            <PharmacistNav
-              screen={screen}
-              setScreen={setScreen}
-            />
 
           </section>
         )}
-
-        {/* ================= BATCH LOOKUP ================= */}
 
         {screen ===
           "pharmacistBatchLookup" && (
           <section className="screen">
 
             <BackButton
-              onClick={goBack}
+              onClick={() =>
+                setScreen(
+                  "pharmacistDashboard"
+                )
+              }
             />
-
-            <div className="eyebrow">
-              Pharmacist workflow
-            </div>
 
             <h1>
               Batch Lookup
             </h1>
-
-            {batchProductCode && (
-              <div className="notice">
-                Product:{" "}
-                <strong>
-                  {batchProductCode}
-                </strong>
-              </div>
-            )}
 
             <form
               onSubmit={
@@ -2456,7 +2542,6 @@ export default function App() {
               }
             >
               <label className="field">
-
                 Batch number
 
                 <input
@@ -2471,1092 +2556,151 @@ export default function App() {
                         .value
                     )
                   }
-                  placeholder="e.g. B2000"
-                  required
                 />
-
               </label>
 
-              <PrimaryButton
-                type="submit"
-              >
+              <PrimaryButton type="submit">
                 Search Batch
               </PrimaryButton>
-
             </form>
 
             {batchResult && (
               <div className="batch-result-card">
-
-                <div
-                  className={`recall-status ${
-                    batchResult
-                      .recall
-                      ? "active"
-                      : "clear"
-                  }`}
-                >
-                  {batchResult
-                    .recall
+                <strong>
+                  {batchResult.recall
                     ? "Active Recall"
                     : "No Active Recall"}
-                </div>
-
-                <Row
-                  label="Scanned batch"
-                  value={
-                    batchResult
-                      .batch
-                  }
-                />
-
-                <Row
-                  label="Medicine"
-                  value={
-                    batchResult
-                      .medicine
-                      ? batchResult
-                          .medicine
-                          .medicineName
-                      : "No prototype medicine found"
-                  }
-                />
-
-                {batchResult
-                  .medicine && (
-                  <Row
-                    label="Registered batch"
-                    value={
-                      batchResult
-                        .medicine
-                        .batch
-                    }
-                  />
-                )}
-
-                {batchResult
-                  .recall && (
-                  <>
-                    <Row
-                      label="Recall date"
-                      value={
-                        batchResult
-                          .recall
-                          .recallDate
-                      }
-                    />
-
-                    <Row
-                      label="Severity"
-                      value={
-                        batchResult
-                          .recall
-                          .severity
-                      }
-                    />
-
-                    <div className="recall-notice">
-
-                      <strong>
-                        Safety notice
-                      </strong>
-
-                      <p>
-                        {
-                          batchResult
-                            .recall
-                            .reason
-                        }
-                      </p>
-
-                    </div>
-                  </>
-                )}
-
+                </strong>
               </div>
             )}
 
-            <PharmacistNav
-              screen={screen}
-              setScreen={
-                setScreen
-              }
-            />
-
           </section>
         )}
-
-        {/* ================= RECALLS ================= */}
 
         {screen ===
           "pharmacistRecalls" && (
           <section className="screen">
 
             <BackButton
-              onClick={goBack}
+              onClick={() =>
+                setScreen(
+                  "pharmacistDashboard"
+                )
+              }
             />
-
-            <div className="eyebrow">
-              Pharmacist workflow
-            </div>
 
             <h1>
               Recalls & Alerts
             </h1>
 
-            <div className="recall-list">
-
-              {activeRecalls.map(
-                (recall) => (
-                  <button
-                    key={
-                      recall.id
-                    }
-                    type="button"
-                    className="recall-list-card"
-                    onClick={() => {
-                      setSelectedRecall(
-                        recall
-                      );
-
-                      setScreen(
-                        "pharmacistRecallDetail"
-                      );
-                    }}
-                  >
-                    <strong>
-                      {
-                        recall.medicineName
-                      }
-                    </strong>
-
-                    <span>
-                      Batch{" "}
-                      {
-                        recall.batch
-                      }
-                    </span>
-
-                    <span className="recall-pill">
-                      {
-                        recall.status
-                      }
-                    </span>
-
-                    <small>
-                      {
-                        recall.recallDate
-                      }
-                    </small>
-
-                  </button>
-                )
-              )}
-
-            </div>
-
-            <PharmacistNav
-              screen={screen}
-              setScreen={
-                setScreen
-              }
-            />
+            {activeRecalls.map(
+              (recall) => (
+                <button
+                  key={recall.id}
+                  className="recall-list-card"
+                  onClick={() => {
+                    setSelectedRecall(
+                      recall
+                    );
+                    setScreen(
+                      "pharmacistRecallDetail"
+                    );
+                  }}
+                >
+                  {
+                    recall.medicineName
+                  }
+                </button>
+              )
+            )}
 
           </section>
         )}
-
-        {/* ================= RECALL DETAIL ================= */}
-
-        {screen ===
-          "pharmacistRecallDetail" &&
-          selectedRecall && (
-            <section className="screen">
-
-              <BackButton
-                onClick={goBack}
-              />
-
-              <div className="eyebrow">
-                Recall details
-              </div>
-
-              <h1>
-                {
-                  selectedRecall
-                    .medicineName
-                }
-              </h1>
-
-              <div className="recall-status active">
-                Active Recall
-              </div>
-
-              <div className="details-list">
-
-                <Row
-                  label="Batch"
-                  value={
-                    selectedRecall
-                      .batch
-                  }
-                />
-
-                <Row
-                  label="Recall date"
-                  value={
-                    selectedRecall
-                      .recallDate
-                  }
-                />
-
-                <Row
-                  label="Severity"
-                  value={
-                    selectedRecall
-                      .severity
-                  }
-                />
-
-                <Row
-                  label="Status"
-                  value={
-                    selectedRecall
-                      .status
-                  }
-                />
-
-              </div>
-
-              <div className="recall-notice">
-
-                <strong>
-                  Safety notice
-                </strong>
-
-                <p>
-                  {
-                    selectedRecall
-                      .reason
-                  }
-                </p>
-
-              </div>
-
-            </section>
-          )}
-
-        {/* ================= SHORTAGES ================= */}
 
         {screen ===
           "pharmacistShortages" && (
           <section className="screen">
 
             <BackButton
-              onClick={goBack}
+              onClick={() =>
+                setScreen(
+                  "pharmacistDashboard"
+                )
+              }
             />
-
-            <div className="eyebrow">
-              Pharmacist workflow
-            </div>
 
             <h1>
               Shortages
             </h1>
 
-            <p>
-              Current medicine availability from the MedAuth prototype data.
-            </p>
+            {shortageData.map(
+              (item) => (
+                <div
+                  className="shortage-card"
+                  key={item.id}
+                >
+                  <strong>
+                    {
+                      item.medicineName
+                    }
+                  </strong>
 
-            <div className="shortage-list">
-
-              {shortageData.map(
-                (item) => (
-                  <div
-                    className="shortage-card"
-                    key={item.id}
-                  >
-                    <div>
-
-                      <strong>
-                        {
-                          item.medicineName
-                        }
-                      </strong>
-
-                      <span>
-                        {
-                          item.note
-                        }
-                      </span>
-
-                    </div>
-
-                    <span
-                      className={`availability-badge ${item.status}`}
-                    >
-                      {
-                        item.availability
-                      }
-                    </span>
-
-                  </div>
-                )
-              )}
-
-            </div>
-
-            <PharmacistNav
-              screen={screen}
-              setScreen={
-                setScreen
-              }
-            />
+                  <span>
+                    {
+                      item.availability
+                    }
+                  </span>
+                </div>
+              )
+            )}
 
           </section>
         )}
-
-        {/* ================= HISTORY ================= */}
 
         {screen ===
           "pharmacistHistory" && (
           <section className="screen">
 
             <BackButton
-              onClick={goBack}
+              onClick={() =>
+                setScreen(
+                  "pharmacistDashboard"
+                )
+              }
             />
-
-            <div className="eyebrow">
-              Pharmacist workflow
-            </div>
 
             <h1>
               Verification History
             </h1>
 
-            <div className="history-list">
+            {pharmacistEvents.map(
+              (event) => (
+                <div
+                  className="history-card"
+                  key={event.id}
+                >
+                  <strong>
+                    {
+                      event.medicine
+                    }
+                  </strong>
 
-              {pharmacistEvents.map(
-                (event) => (
-                  <div
-                    className="history-card"
-                    key={event.id}
-                  >
-                    <div className="history-card-head">
-
-                      <strong>
-                        {
-                          event.medicine
-                        }
-                      </strong>
-
-                      <span
-                        className={`history-status history-${event.result.toLowerCase()}`}
-                      >
-                        {resultLabel(
-                          event.result
-                        )}
-                      </span>
-
-                    </div>
-
-                    <Row
-                      label="Product"
-                      value={
-                        event.productId ||
-                        event.code
-                      }
-                    />
-
-                    <Row
-                      label="Batch"
-                      value={
-                        event.batch
-                      }
-                    />
-
-                    <Row
-                      label="Time"
-                      value={
-                        formatEventTime(
-                          event.timestamp
-                        )
-                      }
-                    />
-
-                    <Row
-                      label="Channel"
-                      value={
-                        event.channel
-                      }
-                    />
-
-                    <Row
-                      label="Connection"
-                      value={
-                        event.offline
-                          ? event.pendingSync
-                            ? "Offline · Pending Sync"
-                            : "Offline · Synced"
-                          : "Online"
-                      }
-                    />
-
-                    {event.region && (
-                      <Row
-                        label="Region"
-                        value={
-                          event.region
-                        }
-                      />
+                  <Row
+                    label="Result"
+                    value={resultLabel(
+                      event.result
                     )}
+                  />
 
-                  </div>
-                )
-              )}
-
-            </div>
-
-            <PharmacistNav
-              screen={screen}
-              setScreen={
-                setScreen
-              }
-            />
-
-          </section>
-        )}
-
-        {/* ================= PHARMACIST PROFILE ================= */}
-
-        {screen ===
-          "pharmacistProfile" && (
-          <section className="screen pharmacist-sub-screen">
-
-            <BackButton
-              onClick={goBack}
-            />
-
-            <div className="profile-page-header">
-
-              <img
-                className="profile-page-avatar"
-                src={`${import.meta.env.BASE_URL}pharmacist-marie.png`}
-                alt="Marie Nguyen"
-              />
-
-              <h1>
-                {currentUser
-                  ?.fullName ||
-                  "Marie Nguyen"}
-              </h1>
-
-              <p>
-                {currentUser
-                  ?.title ||
-                  "Registered Pharmacist"}
-              </p>
-
-              <span className="professional-status">
-                Professional Account
-              </span>
-
-            </div>
-
-            <div className="profile-information-card">
-
-              <ProfileRow
-                label="Name"
-                value={
-                  currentUser
-                    ?.fullName ||
-                  "Marie Nguyen"
-                }
-              />
-
-              <ProfileRow
-                label="Role"
-                value="Pharmacist"
-              />
-
-              <ProfileRow
-                label="Email"
-                value={
-                  currentUser
-                    ?.email ||
-                  "pharmacist@medauth.com"
-                }
-              />
-
-              <ProfileRow
-                label="Organisation"
-                value={
-                  currentUser
-                    ?.organisation ||
-                  "MedAuth Pharmacy Demo"
-                }
-              />
-
-            </div>
-
-            <div className="profile-note">
-
-              <LockIcon />
-
-              <span>
-                Demo professional profile. No patient health information is stored.
-              </span>
-
-            </div>
-
-          </section>
-        )}
-
-        {/* ================= PHARMACIST SETTINGS ================= */}
-
-        {screen ===
-          "pharmacistSettings" && (
-          <section className="screen pharmacist-sub-screen">
-
-            <BackButton
-              onClick={goBack}
-            />
-
-            <div className="eyebrow">
-              Pharmacist account
-            </div>
-
-            <h1>
-              Settings
-            </h1>
-
-            <div className="settings-card">
-
-              <div className="settings-row">
-
-                <div>
-
-                  <strong>
-                    Connection mode
-                  </strong>
-
-                  <span>
-                    {offline
-                      ? "Offline — cached data"
-                      : "Online"}
-                  </span>
-
+                  <Row
+                    label="Batch"
+                    value={
+                      event.batch
+                    }
+                  />
                 </div>
-
-                <NetworkBadge
-                  offline={offline}
-                  onToggle={
-                    handleNetworkToggle
-                  }
-                />
-
-              </div>
-
-              <div className="settings-row">
-
-                <div>
-
-                  <strong>
-                    Pending sync
-                  </strong>
-
-                  <span>
-                    Activity waiting to synchronise
-                  </span>
-
-                </div>
-
-                <span className="settings-value">
-                  {pendingSync}
-                </span>
-
-              </div>
-
-              <div className="settings-row">
-
-                <div>
-
-                  <strong>
-                    Remember this device
-                  </strong>
-
-                  <span>
-                    Keep demo sign-in preference
-                  </span>
-
-                </div>
-
-                <input
-                  className="settings-checkbox"
-                  type="checkbox"
-                  checked={
-                    rememberDevice
-                  }
-                  onChange={(
-                    event
-                  ) =>
-                    setRememberDevice(
-                      event.target
-                        .checked
-                    )
-                  }
-                />
-
-              </div>
-
-            </div>
-
-            <div className="settings-card">
-
-              <button
-                type="button"
-                className="settings-link-row"
-                onClick={() =>
-                  setScreen(
-                    "pharmacistProfile"
-                  )
-                }
-              >
-                <span>
-                  My Profile
-                </span>
-
-                <span>→</span>
-              </button>
-
-              <button
-                type="button"
-                className="settings-link-row"
-                onClick={() => {
-                  setResetEmail(
-                    currentUser
-                      ?.email ||
-                    email
-                  );
-
-                  setResetSent(false);
-
-                  setScreen(
-                    "forgotPassword"
-                  );
-                }}
-              >
-                <span>
-                  Change Password
-                </span>
-
-                <span>→</span>
-              </button>
-
-            </div>
-
-            <SecondaryButton
-              onClick={reset}
-            >
-              Sign Out
-            </SecondaryButton>
-
-          </section>
-        )}
-
-        {/* ================= MANUFACTURER ================= */}
-
-        {screen ===
-          "manufacturerDashboard" && (
-          <section className="screen">
-
-            <BackButton
-              onClick={goBack}
-            />
-
-            <DashboardHeader
-              title="Manufacturer"
-              role="Manufacturer"
-            />
-
-            <ManufacturerDashboard
-              totals={totals}
-            />
-
-            <SecondaryButton
-              onClick={reset}
-            >
-              Sign Out
-            </SecondaryButton>
-
-          </section>
-        )}
-
-        {/* ================= CONSUMER ================= */}
-
-        {screen ===
-          "consumerDashboard" && (
-          <section className="screen">
-
-            <BackButton
-              onClick={goBack}
-            />
-
-            <DashboardHeader
-              title="My MedAuth"
-              role="Consumer"
-            />
-
-            <div className="panel">
-
-              <h3>
-                Verify a medicine
-              </h3>
-
-              <PrimaryButton
-                onClick={() =>
-                  setScreen("scan")
-                }
-              >
-                Scan Medicine
-              </PrimaryButton>
-
-            </div>
-
-            <SecondaryButton
-              onClick={reset}
-            >
-              Sign Out
-            </SecondaryButton>
-
-          </section>
-        )}
-
-        {/* ================= ADMIN DASHBOARD ================= */}
-
-        {screen ===
-          "adminDashboard" && (
-          <section className="screen admin-screen">
-
-            <div className="admin-profile-header">
-
-              <div className="admin-profile-main">
-
-                <img
-                  className="admin-avatar"
-                  src={`${import.meta.env.BASE_URL}admin-luna.png`}
-                  alt="Luna"
-                />
-
-                <div className="admin-greeting">
-
-                  <span className="admin-welcome">
-                    Welcome back
-                  </span>
-
-                  <h1>
-                    Hi,{" "}
-                    {currentUser
-                      ?.name ||
-                      "Luna"}
-                  </h1>
-
-                  <p>
-                    MedAuth Administrator
-                  </p>
-
-                </div>
-
-              </div>
-
-              <div className="admin-profile-actions">
-
-                <button
-                  type="button"
-                  className="profile-icon-button"
-                  onClick={() =>
-                    setScreen(
-                      "adminProfile"
-                    )
-                  }
-                  aria-label="My Profile"
-                >
-                  <ProfileIcon />
-                </button>
-
-                <button
-                  type="button"
-                  className="profile-icon-button"
-                  onClick={() =>
-                    setScreen(
-                      "adminSettings"
-                    )
-                  }
-                  aria-label="Settings"
-                >
-                  <SettingsIcon />
-                </button>
-
-              </div>
-
-            </div>
-
-            <div className="admin-access-row">
-
-              <span className="admin-access-badge">
-                Admin Access
-              </span>
-
-            </div>
-
-            <AdminDashboard
-              reports={reports}
-              totals={totals}
-            />
-
-            <SecondaryButton
-              onClick={reset}
-            >
-              Sign Out
-            </SecondaryButton>
-
-          </section>
-        )}
-
-        {/* ================= ADMIN PROFILE ================= */}
-
-        {screen ===
-          "adminProfile" && (
-          <section className="screen admin-sub-screen">
-
-            <BackButton
-              onClick={goBack}
-            />
-
-            <div className="profile-page-header">
-
-              <img
-                className="profile-page-avatar admin-profile-photo"
-                src={`${import.meta.env.BASE_URL}admin-luna.png`}
-                alt="Luna"
-              />
-
-              <h1>
-                {currentUser
-                  ?.fullName ||
-                  "Luna Chen"}
-              </h1>
-
-              <p>
-                {currentUser
-                  ?.title ||
-                  "MedAuth Administrator"}
-              </p>
-
-              <span className="admin-access-badge">
-                Admin Access
-              </span>
-
-            </div>
-
-            <div className="profile-information-card">
-
-              <ProfileRow
-                label="Name"
-                value={
-                  currentUser
-                    ?.fullName ||
-                  "Luna Chen"
-                }
-              />
-
-              <ProfileRow
-                label="Role"
-                value="Admin / Regulator"
-              />
-
-              <ProfileRow
-                label="Email"
-                value={
-                  currentUser
-                    ?.email ||
-                  "admin@medauth.com"
-                }
-              />
-
-              <ProfileRow
-                label="Organisation"
-                value={
-                  currentUser
-                    ?.organisation ||
-                  "MedAuth Administration"
-                }
-              />
-
-            </div>
-
-            <div className="profile-note">
-
-              <LockIcon />
-
-              <span>
-                Authorised MedAuth prototype administrator account.
-              </span>
-
-            </div>
-
-          </section>
-        )}
-
-        {/* ================= ADMIN SETTINGS ================= */}
-
-        {screen ===
-          "adminSettings" && (
-          <section className="screen admin-sub-screen">
-
-            <BackButton
-              onClick={goBack}
-            />
-
-            <div className="eyebrow">
-              Admin account
-            </div>
-
-            <h1>
-              Settings
-            </h1>
-
-            <div className="settings-card">
-
-              <div className="settings-row">
-
-                <div>
-
-                  <strong>
-                    Account
-                  </strong>
-
-                  <span>
-                    {currentUser
-                      ?.fullName ||
-                      "Luna Chen"}
-                  </span>
-
-                </div>
-
-                <span className="admin-access-badge">
-                  Admin
-                </span>
-
-              </div>
-
-              <div className="settings-row">
-
-                <div>
-
-                  <strong>
-                    Connection mode
-                  </strong>
-
-                  <span>
-                    {offline
-                      ? "Offline — cached data"
-                      : "Online"}
-                  </span>
-
-                </div>
-
-                <NetworkBadge
-                  offline={offline}
-                  onToggle={
-                    handleNetworkToggle
-                  }
-                />
-
-              </div>
-
-              <div className="settings-row">
-
-                <div>
-
-                  <strong>
-                    Remember this device
-                  </strong>
-
-                  <span>
-                    Keep demo sign-in preference
-                  </span>
-
-                </div>
-
-                <input
-                  className="settings-checkbox"
-                  type="checkbox"
-                  checked={
-                    rememberDevice
-                  }
-                  onChange={(
-                    event
-                  ) =>
-                    setRememberDevice(
-                      event.target
-                        .checked
-                    )
-                  }
-                />
-
-              </div>
-
-            </div>
-
-            <div className="settings-card">
-
-              <button
-                type="button"
-                className="settings-link-row"
-                onClick={() =>
-                  setScreen(
-                    "adminProfile"
-                  )
-                }
-              >
-                <span>
-                  My Profile
-                </span>
-
-                <span>→</span>
-              </button>
-
-              <button
-                type="button"
-                className="settings-link-row"
-                onClick={() => {
-                  setResetEmail(
-                    currentUser
-                      ?.email ||
-                    "admin@medauth.com"
-                  );
-
-                  setResetSent(false);
-
-                  setScreen(
-                    "forgotPassword"
-                  );
-                }}
-              >
-                <span>
-                  Change Password
-                </span>
-
-                <span>→</span>
-              </button>
-
-            </div>
-
-            <SecondaryButton
-              onClick={reset}
-            >
-              Sign Out
-            </SecondaryButton>
+              )
+            )}
 
           </section>
         )}
@@ -3566,90 +2710,1808 @@ export default function App() {
   );
 }
 
-/* ==================================================
-   RESULT DETAILS
-================================================== */
-
-function MedicineResultDetails({
-  product,
-  scannedBatch,
+function AdminWorkspace({
+  screen,
+  setScreen,
+  currentUser,
+  search,
+  setSearch,
+  reports,
+  filteredReports,
+  reportStatusFilter,
+  setReportStatusFilter,
+  selectedReport,
+  setSelectedReport,
+  updateReportStatus,
+  toggleEscalation,
+  scanEvents,
+  scanResultFilter,
+  setScanResultFilter,
+  summary,
+  regions,
+  mapFilter,
+  setMapFilter,
+  clusters,
+  selectedInvestigation,
+  setSelectedInvestigation,
+  auditEvents,
+  auditSearch,
+  setAuditSearch,
+  offline,
+  syncing,
+  handleNetworkToggle,
+  activeRecalls,
+  onExport,
+  onSignOut,
 }) {
-  if (!product) {
-    return null;
-  }
+  const [exportOpen, setExportOpen] =
+    useState(false);
 
   return (
-    <div className="verification-details-card">
+    <div className="admin-desktop">
 
-      <Row
-        label="Medicine"
-        value={
-          product.medicineName
-        }
-      />
+      <aside className="admin-sidebar">
 
-      <Row
-        label="Manufacturer"
-        value={
-          product.manufacturer
-        }
-      />
+        <div className="admin-sidebar-brand">
+          <img
+            src={`${import.meta.env.BASE_URL}medauth-logo.png`}
+            alt="MedAuth"
+          />
 
-      <Row
-        label="Product identifier"
-        value={
-          product.productId
-        }
-      />
+          <div>
+            <strong>
+              MedAuth
+            </strong>
 
-      <Row
-        label="Batch"
-        value={
-          scannedBatch ||
-          product.batch
-        }
-      />
+            <span>
+              Admin
+            </span>
+          </div>
+        </div>
 
-      <Row
-        label="Expiry"
-        value={
-          product.expiry
-        }
-      />
+        <nav className="admin-nav">
 
-      <Row
-        label="Country"
-        value={
-          product.countryOfOrigin
-        }
-      />
+          <AdminNavButton
+            label="Overview"
+            active={
+              screen ===
+              "adminOverview"
+            }
+            onClick={() =>
+              setScreen(
+                "adminOverview"
+              )
+            }
+          />
 
-      <Row
-        label="Source"
-        value={
-          product.source ||
-          "MedAuth prototype dataset"
-        }
-      />
+          <AdminNavButton
+            label="Reports"
+            active={
+              screen ===
+              "adminReports"
+            }
+            onClick={() =>
+              setScreen(
+                "adminReports"
+              )
+            }
+          />
 
-      <Row
-        label="Last updated"
-        value={
-          product.lastUpdated
-            ?.replace(
-              "T",
-              " "
-            )
-        }
-      />
+          <AdminNavButton
+            label="Scan Monitor"
+            active={
+              screen ===
+              "adminScanMonitor"
+            }
+            onClick={() =>
+              setScreen(
+                "adminScanMonitor"
+              )
+            }
+          />
+
+          <AdminNavButton
+            label="Investigation"
+            active={
+              screen ===
+              "adminInvestigation"
+            }
+            onClick={() =>
+              setScreen(
+                "adminInvestigation"
+              )
+            }
+          />
+
+          <AdminNavButton
+            label="Audit Trail"
+            active={
+              screen ===
+              "adminAudit"
+            }
+            onClick={() =>
+              setScreen(
+                "adminAudit"
+              )
+            }
+          />
+
+          <AdminNavButton
+            label="Users & Access"
+            active={
+              screen ===
+              "adminUsers"
+            }
+            onClick={() =>
+              setScreen(
+                "adminUsers"
+              )
+            }
+          />
+
+        </nav>
+
+        <div className="admin-sidebar-footer">
+
+          <div className="admin-profile-mini">
+            <img
+              src={`${import.meta.env.BASE_URL}admin-luna.png`}
+              alt="Luna"
+            />
+
+            <div>
+              <strong>
+                {currentUser
+                  ?.name ||
+                  "Luna"}
+              </strong>
+
+              <span>
+                Admin / Regulator
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="admin-signout"
+            onClick={
+              onSignOut
+            }
+          >
+            Sign Out
+          </button>
+
+        </div>
+
+      </aside>
+
+      <div className="admin-main">
+
+        <header className="admin-toolbar">
+
+          <div className="admin-search-box">
+            <SearchIcon />
+
+            <input
+              value={search}
+              onChange={(
+                event
+              ) =>
+                setSearch(
+                  event.target
+                    .value
+                )
+              }
+              placeholder="Search product, barcode, batch, report ID..."
+            />
+          </div>
+
+          <div className="admin-toolbar-actions">
+
+            <NetworkBadge
+              offline={offline}
+              onToggle={
+                handleNetworkToggle
+              }
+            />
+
+            <div className="admin-export-wrap">
+
+              <button
+                type="button"
+                className="admin-export-button"
+                onClick={() =>
+                  setExportOpen(
+                    (current) =>
+                      !current
+                  )
+                }
+              >
+                Export Data
+              </button>
+
+              {exportOpen && (
+                <div className="admin-export-menu">
+
+                  <button
+                    onClick={() =>
+                      onExport(
+                        "events"
+                      )
+                    }
+                  >
+                    Verification Events CSV
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      onExport(
+                        "reports"
+                      )
+                    }
+                  >
+                    Suspicious Reports CSV
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      onExport(
+                        "audit"
+                      )
+                    }
+                  >
+                    Audit Trail CSV
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      onExport(
+                        "investigation"
+                      )
+                    }
+                  >
+                    Filtered Investigation CSV
+                  </button>
+
+                </div>
+              )}
+
+            </div>
+
+            <button
+              type="button"
+              className="admin-avatar-button"
+              onClick={() =>
+                setScreen(
+                  "adminUsers"
+                )
+              }
+            >
+              <img
+                src={`${import.meta.env.BASE_URL}admin-luna.png`}
+                alt="Luna"
+              />
+            </button>
+
+          </div>
+
+        </header>
+
+        <main className="admin-content">
+
+          {screen ===
+            "adminOverview" && (
+            <>
+              <AdminPageHeader
+                eyebrow="Admin Monitoring"
+                title="Investigation Overview"
+                subtitle="Review suspicious medicine activity, verification provenance, and investigation status"
+              />
+
+              <div className="admin-summary-strip">
+                <AdminSummary
+                  label="Open Reports"
+                  value={
+                    summary.openReports
+                  }
+                />
+
+                <AdminSummary
+                  label="Under Review"
+                  value={
+                    summary.underReview
+                  }
+                />
+
+                <AdminSummary
+                  label="No Match Events"
+                  value={
+                    summary.noMatch
+                  }
+                />
+
+                <AdminSummary
+                  label="Unable to Verify"
+                  value={
+                    summary.unable
+                  }
+                />
+
+                <AdminSummary
+                  label="Active Recall Matches"
+                  value={
+                    summary.recalls
+                  }
+                />
+              </div>
+
+              <div className="admin-overview-grid">
+
+                <section className="admin-panel admin-panel-large">
+
+                  <div className="admin-section-head">
+                    <div>
+                      <h2>
+                        Suspicious Reports
+                      </h2>
+
+                      <p>
+                        Recent reports requiring investigation.
+                      </p>
+                    </div>
+
+                    <button
+                      className="admin-link-button"
+                      onClick={() =>
+                        setScreen(
+                          "adminReports"
+                        )
+                      }
+                    >
+                      View all
+                    </button>
+                  </div>
+
+                  <ReportsTable
+                    reports={
+                      filteredReports.slice(
+                        0,
+                        5
+                      )
+                    }
+                    onOpen={(
+                      report
+                    ) => {
+                      setSelectedReport(
+                        report
+                      );
+
+                      setScreen(
+                        "adminReportDetail"
+                      );
+                    }}
+                  />
+
+                </section>
+
+                <aside className="admin-panel">
+
+                  <div className="admin-section-head">
+                    <div>
+                      <h2>
+                        Suspect Activity
+                      </h2>
+
+                      <p>
+                        Prototype clusters requiring review.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="suspect-list">
+
+                    {clusters
+                      .slice(0, 5)
+                      .map(
+                        (cluster) => (
+                          <button
+                            key={
+                              cluster.batch
+                            }
+                            className="suspect-item"
+                            onClick={() => {
+                              setSelectedInvestigation(
+                                cluster
+                              );
+
+                              setScreen(
+                                "adminInvestigation"
+                              );
+                            }}
+                          >
+                            <div>
+                              <strong>
+                                Batch{" "}
+                                {
+                                  cluster.batch
+                                }
+                              </strong>
+
+                              <span>
+                                {
+                                  cluster.region
+                                }
+                              </span>
+                            </div>
+
+                            <div>
+                              <strong>
+                                {
+                                  cluster.noMatch
+                                }{" "}
+                                No Match
+                              </strong>
+
+                              <span>
+                                Review recommended
+                              </span>
+                            </div>
+                          </button>
+                        )
+                      )}
+
+                  </div>
+
+                </aside>
+
+              </div>
+
+              <section className="admin-panel">
+
+                <div className="admin-section-head">
+                  <div>
+                    <h2>
+                      Verification Activity Map
+                    </h2>
+
+                    <p>
+                      Coarse prototype regions only.
+                    </p>
+                  </div>
+
+                  <MapFilters
+                    value={
+                      mapFilter
+                    }
+                    onChange={
+                      setMapFilter
+                    }
+                  />
+                </div>
+
+                <RegionMap
+                  regions={
+                    regions
+                  }
+                />
+
+              </section>
+            </>
+          )}
+
+          {screen ===
+            "adminReports" && (
+            <>
+              <AdminPageHeader
+                eyebrow="Reports"
+                title="Suspicious Medicine Reports"
+                subtitle="Review submitted reports and manage investigation status"
+              />
+
+              <div className="admin-filter-row">
+
+                <select
+                  value={
+                    reportStatusFilter
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setReportStatusFilter(
+                      event.target
+                        .value
+                    )
+                  }
+                >
+                  <option value="ALL">
+                    All statuses
+                  </option>
+
+                  <option value="NEW">
+                    New
+                  </option>
+
+                  <option value="UNDER_REVIEW">
+                    Under Review
+                  </option>
+
+                  <option value="RESOLVED">
+                    Resolved
+                  </option>
+                </select>
+
+              </div>
+
+              <section className="admin-panel">
+
+                <ReportsTable
+                  reports={
+                    filteredReports
+                  }
+                  onOpen={(
+                    report
+                  ) => {
+                    setSelectedReport(
+                      report
+                    );
+
+                    setScreen(
+                      "adminReportDetail"
+                    );
+                  }}
+                />
+
+              </section>
+            </>
+          )}
+
+          {screen ===
+            "adminReportDetail" &&
+            selectedReport && (
+            <>
+              <AdminPageHeader
+                eyebrow="Report Review"
+                title={
+                  selectedReport.id
+                }
+                subtitle="Connected report, verification and investigation context"
+                backAction={() =>
+                  setScreen(
+                    "adminReports"
+                  )
+                }
+              />
+
+              <div className="admin-detail-grid">
+
+                <section className="admin-panel">
+
+                  <h2>
+                    Report Information
+                  </h2>
+
+                  <AdminDetailRow
+                    label="Medicine"
+                    value={
+                      selectedReport.medicine
+                    }
+                  />
+
+                  <AdminDetailRow
+                    label="Product ID"
+                    value={
+                      selectedReport.productId
+                    }
+                  />
+
+                  <AdminDetailRow
+                    label="Batch"
+                    value={
+                      selectedReport.batch
+                    }
+                  />
+
+                  <AdminDetailRow
+                    label="Reporter"
+                    value={
+                      selectedReport.reporterType
+                    }
+                  />
+
+                  <AdminDetailRow
+                    label="Region"
+                    value={
+                      selectedReport.region ||
+                      "—"
+                    }
+                  />
+
+                  <AdminDetailRow
+                    label="Submitted"
+                    value={formatEventTime(
+                      selectedReport.createdAt
+                    )}
+                  />
+
+                  <div className="admin-comment-box">
+                    {
+                      selectedReport.comment ||
+                      "No comment supplied."
+                    }
+                  </div>
+
+                </section>
+
+                <section className="admin-panel">
+
+                  <h2>
+                    Verification Context
+                  </h2>
+
+                  <AdminDetailRow
+                    label="Result"
+                    value={resultLabel(
+                      selectedReport.verificationResult
+                    )}
+                  />
+
+                  <AdminDetailRow
+                    label="Event ID"
+                    value={
+                      selectedReport.eventId ||
+                      "—"
+                    }
+                  />
+
+                  <AdminDetailRow
+                    label="Status"
+                    value={
+                      selectedReport.status
+                    }
+                  />
+
+                  <div className="admin-status-actions">
+
+                    <button
+                      onClick={() =>
+                        updateReportStatus(
+                          selectedReport.id,
+                          "NEW"
+                        )
+                      }
+                    >
+                      New
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateReportStatus(
+                          selectedReport.id,
+                          "UNDER_REVIEW"
+                        )
+                      }
+                    >
+                      Under Review
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateReportStatus(
+                          selectedReport.id,
+                          "RESOLVED"
+                        )
+                      }
+                    >
+                      Resolved
+                    </button>
+
+                  </div>
+
+                  <label className="admin-escalate-toggle">
+
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedReport.escalated
+                      }
+                      onChange={() =>
+                        toggleEscalation(
+                          selectedReport.id
+                        )
+                      }
+                    />
+
+                    <span>
+                      Escalate for Investigation
+                    </span>
+
+                  </label>
+
+                </section>
+
+              </div>
+            </>
+          )}
+
+          {screen ===
+            "adminScanMonitor" && (
+            <>
+              <AdminPageHeader
+                eyebrow="Scan Provenance"
+                title="Scan Monitor"
+                subtitle="Review where prototype verification activity came from"
+              />
+
+              <div className="admin-filter-row">
+
+                <select
+                  value={
+                    scanResultFilter
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setScanResultFilter(
+                      event.target
+                        .value
+                    )
+                  }
+                >
+                  <option value="ALL">
+                    All results
+                  </option>
+
+                  <option value="MATCH">
+                    Match
+                  </option>
+
+                  <option value="NO_MATCH">
+                    No Match
+                  </option>
+
+                  <option value="NOT_COVERED">
+                    Unable to Verify
+                  </option>
+                </select>
+
+              </div>
+
+              <section className="admin-panel">
+
+                <ScanTable
+                  events={
+                    scanEvents
+                  }
+                  reports={
+                    reports
+                  }
+                />
+
+              </section>
+
+              <section className="admin-panel">
+
+                <div className="admin-section-head">
+                  <div>
+                    <h2>
+                      Verification Activity Map
+                    </h2>
+                  </div>
+
+                  <MapFilters
+                    value={
+                      mapFilter
+                    }
+                    onChange={
+                      setMapFilter
+                    }
+                  />
+                </div>
+
+                <RegionMap
+                  regions={
+                    regions
+                  }
+                />
+
+              </section>
+            </>
+          )}
+
+          {screen ===
+            "adminInvestigation" && (
+            <>
+              <AdminPageHeader
+                eyebrow="Investigation"
+                title={
+                  selectedInvestigation
+                    ? `Investigation — Batch ${selectedInvestigation.batch}`
+                    : "Suspect Activity"
+                }
+                subtitle="Review verification provenance and related prototype activity"
+              />
+
+              <div className="admin-investigation-grid">
+
+                <section className="admin-panel">
+
+                  <h2>
+                    Suspect Activity
+                  </h2>
+
+                  <div className="admin-table-wrap">
+
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            Batch
+                          </th>
+                          <th>
+                            Region
+                          </th>
+                          <th>
+                            Scans
+                          </th>
+                          <th>
+                            No Match
+                          </th>
+                          <th>
+                            Reports
+                          </th>
+                          <th>
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+
+                        {clusters.map(
+                          (cluster) => (
+                            <tr
+                              key={
+                                cluster.batch
+                              }
+                              onClick={() =>
+                                setSelectedInvestigation(
+                                  cluster
+                                )
+                              }
+                            >
+                              <td>
+                                {
+                                  cluster.batch
+                                }
+                              </td>
+
+                              <td>
+                                {
+                                  cluster.region
+                                }
+                              </td>
+
+                              <td>
+                                {
+                                  cluster.scans
+                                }
+                              </td>
+
+                              <td>
+                                {
+                                  cluster.noMatch
+                                }
+                              </td>
+
+                              <td>
+                                {
+                                  cluster.reports
+                                }
+                              </td>
+
+                              <td>
+                                <span className="admin-status warning">
+                                  Review Recommended
+                                </span>
+                              </td>
+                            </tr>
+                          )
+                        )}
+
+                      </tbody>
+                    </table>
+
+                  </div>
+
+                </section>
+
+                <section className="admin-panel">
+
+                  <h2>
+                    Investigation Timeline
+                  </h2>
+
+                  {!selectedInvestigation ? (
+                    <p className="admin-muted">
+                      Select a suspect batch to view its timeline.
+                    </p>
+                  ) : (
+                    <InvestigationTimeline
+                      batch={
+                        selectedInvestigation.batch
+                      }
+                      events={
+                        scanEvents
+                      }
+                      reports={
+                        reports
+                      }
+                      audits={
+                        auditEvents
+                      }
+                    />
+                  )}
+
+                </section>
+
+              </div>
+            </>
+          )}
+
+          {screen ===
+            "adminAudit" && (
+            <>
+              <AdminPageHeader
+                eyebrow="Audit Trail"
+                title="Administrative Audit Trail"
+                subtitle="Prototype audit history for verification, reports and administrative actions"
+              />
+
+              <div className="admin-filter-row">
+
+                <input
+                  value={
+                    auditSearch
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setAuditSearch(
+                      event.target
+                        .value
+                    )
+                  }
+                  placeholder="Search action, actor or record ID..."
+                />
+
+              </div>
+
+              <section className="admin-panel">
+
+                <AuditTable
+                  events={
+                    auditEvents
+                  }
+                />
+
+              </section>
+            </>
+          )}
+
+          {screen ===
+            "adminUsers" && (
+            <>
+              <AdminPageHeader
+                eyebrow="Role-Based Access"
+                title="Users & Access"
+                subtitle="Demo identities and role permissions"
+              />
+
+              <section className="admin-panel">
+
+                <div className="admin-table-wrap">
+
+                  <table className="admin-table">
+
+                    <thead>
+                      <tr>
+                        <th>
+                          Name
+                        </th>
+                        <th>
+                          Email
+                        </th>
+                        <th>
+                          Role
+                        </th>
+                        <th>
+                          MFA
+                        </th>
+                        <th>
+                          Last Active
+                        </th>
+                        <th>
+                          Status
+                        </th>
+                        <th>
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+
+                      {Object.values(
+                        demoUsers
+                      ).map(
+                        (user) => (
+                          <tr
+                            key={
+                              user.email
+                            }
+                          >
+                            <td>
+                              {
+                                user.fullName
+                              }
+                            </td>
+
+                            <td>
+                              {
+                                user.email
+                              }
+                            </td>
+
+                            <td>
+                              {
+                                user.role
+                              }
+                            </td>
+
+                            <td>
+                              Enabled
+                            </td>
+
+                            <td>
+                              Today
+                            </td>
+
+                            <td>
+                              <span className="admin-status success">
+                                Active
+                              </span>
+                            </td>
+
+                            <td>
+                              <button className="admin-table-action">
+                                View
+                              </button>
+                            </td>
+                          </tr>
+                        )
+                      )}
+
+                    </tbody>
+
+                  </table>
+
+                </div>
+
+              </section>
+            </>
+          )}
+
+        </main>
+
+      </div>
 
     </div>
   );
 }
 
-/* ==================================================
-   SUPPLY CHAIN
-================================================== */
+function ReportsTable({
+  reports,
+  onOpen,
+}) {
+  return (
+    <div className="admin-table-wrap">
+
+      <table className="admin-table">
+
+        <thead>
+          <tr>
+            <th>
+              Report ID
+            </th>
+            <th>
+              Medicine
+            </th>
+            <th>
+              Product ID
+            </th>
+            <th>
+              Batch
+            </th>
+            <th>
+              Result
+            </th>
+            <th>
+              Region
+            </th>
+            <th>
+              Reporter
+            </th>
+            <th>
+              Submitted
+            </th>
+            <th>
+              Status
+            </th>
+            <th>
+              Action
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {reports.map(
+            (report) => (
+              <tr key={report.id}>
+                <td>
+                  {
+                    report.id
+                  }
+                </td>
+
+                <td>
+                  {
+                    report.medicine
+                  }
+                </td>
+
+                <td>
+                  {
+                    report.productId
+                  }
+                </td>
+
+                <td>
+                  {
+                    report.batch
+                  }
+                </td>
+
+                <td>
+                  {resultLabel(
+                    report.verificationResult
+                  )}
+                </td>
+
+                <td>
+                  {
+                    report.region ||
+                    "—"
+                  }
+                </td>
+
+                <td>
+                  {
+                    report.reporterType
+                  }
+                </td>
+
+                <td>
+                  {formatEventTime(
+                    report.createdAt
+                  )}
+                </td>
+
+                <td>
+                  <span
+                    className={`admin-status ${
+                      report.status ===
+                      "NEW"
+                        ? "warning"
+                        : report.status ===
+                          "UNDER_REVIEW"
+                        ? "info"
+                        : "success"
+                    }`}
+                  >
+                    {
+                      report.status.replaceAll(
+                        "_",
+                        " "
+                      )
+                    }
+                  </span>
+                </td>
+
+                <td>
+                  <button
+                    className="admin-table-action"
+                    onClick={() =>
+                      onOpen(
+                        report
+                      )
+                    }
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            )
+          )}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  );
+}
+
+function ScanTable({
+  events,
+  reports,
+}) {
+  return (
+    <div className="admin-table-wrap">
+
+      <table className="admin-table">
+
+        <thead>
+          <tr>
+            <th>
+              Event ID
+            </th>
+            <th>
+              Timestamp
+            </th>
+            <th>
+              Medicine
+            </th>
+            <th>
+              Product ID
+            </th>
+            <th>
+              Batch
+            </th>
+            <th>
+              Result
+            </th>
+            <th>
+              Channel
+            </th>
+            <th>
+              Region
+            </th>
+            <th>
+              Connection
+            </th>
+            <th>
+              Report Linked?
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {events.map(
+            (event) => (
+              <tr key={event.id}>
+
+                <td>
+                  {
+                    event.id
+                  }
+                </td>
+
+                <td>
+                  {formatEventTime(
+                    event.timestamp
+                  )}
+                </td>
+
+                <td>
+                  {
+                    event.medicine
+                  }
+                </td>
+
+                <td>
+                  {
+                    event.productId ||
+                    event.code
+                  }
+                </td>
+
+                <td>
+                  {
+                    event.batch
+                  }
+                </td>
+
+                <td>
+                  {resultLabel(
+                    event.result
+                  )}
+                </td>
+
+                <td>
+                  {
+                    event.channel
+                  }
+                </td>
+
+                <td>
+                  {
+                    event.region ||
+                    "—"
+                  }
+                </td>
+
+                <td>
+                  {event.offline
+                    ? "Offline"
+                    : "Online"}
+                </td>
+
+                <td>
+                  {reports.some(
+                    (report) =>
+                      report.eventId ===
+                        event.id ||
+                      report.batch ===
+                        event.batch
+                  )
+                    ? "Yes"
+                    : "No"}
+                </td>
+
+              </tr>
+            )
+          )}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  );
+}
+
+function AuditTable({
+  events,
+}) {
+  return (
+    <div className="admin-table-wrap">
+
+      <table className="admin-table">
+
+        <thead>
+          <tr>
+            <th>
+              Audit ID
+            </th>
+            <th>
+              Timestamp
+            </th>
+            <th>
+              Actor / Role
+            </th>
+            <th>
+              Action
+            </th>
+            <th>
+              Record Type
+            </th>
+            <th>
+              Record ID
+            </th>
+            <th>
+              Previous State
+            </th>
+            <th>
+              New State
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {events.map(
+            (event) => (
+              <tr key={event.id}>
+
+                <td>
+                  {
+                    event.id
+                  }
+                </td>
+
+                <td>
+                  {formatEventTime(
+                    event.timestamp
+                  )}
+                </td>
+
+                <td>
+                  {
+                    event.actor
+                  }
+                </td>
+
+                <td>
+                  {
+                    event.action
+                  }
+                </td>
+
+                <td>
+                  {
+                    event.recordType
+                  }
+                </td>
+
+                <td>
+                  {
+                    event.recordId
+                  }
+                </td>
+
+                <td>
+                  {
+                    event.previousState
+                  }
+                </td>
+
+                <td>
+                  {
+                    event.newState
+                  }
+                </td>
+
+              </tr>
+            )
+          )}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  );
+}
+
+function RegionMap({
+  regions,
+}) {
+  return (
+    <div className="admin-region-map">
+
+      <div className="australia-map-shape">
+
+        {regions.map(
+          (region, index) => {
+            const positions = [
+              {
+                left: "72%",
+                top: "56%",
+              },
+              {
+                left: "65%",
+                top: "73%",
+              },
+              {
+                left: "48%",
+                top: "68%",
+              },
+              {
+                left: "76%",
+                top: "40%",
+              },
+              {
+                left: "22%",
+                top: "65%",
+              },
+            ];
+
+            const position =
+              positions[
+                index %
+                  positions.length
+              ];
+
+            return (
+              <button
+                type="button"
+                key={
+                  region.region
+                }
+                className="map-region-marker"
+                style={
+                  position
+                }
+              >
+                <span className="map-marker-dot">
+                  {
+                    region.total
+                  }
+                </span>
+
+                <strong>
+                  {
+                    region.region
+                  }
+                </strong>
+
+                <small>
+                  {region.noMatch} No Match · {region.reports} reports
+                </small>
+              </button>
+            );
+          }
+        )}
+
+      </div>
+
+    </div>
+  );
+}
+
+function MapFilters({
+  value,
+  onChange,
+}) {
+  const options = [
+    ["ALL", "All"],
+    ["MATCH", "Match"],
+    [
+      "NO_MATCH",
+      "No Match",
+    ],
+    [
+      "NOT_COVERED",
+      "Unable to Verify",
+    ],
+    [
+      "REPORTED",
+      "Reported",
+    ],
+  ];
+
+  return (
+    <div className="admin-filter-pills">
+
+      {options.map(
+        ([key, label]) => (
+          <button
+            type="button"
+            key={key}
+            className={
+              value === key
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              onChange(key)
+            }
+          >
+            {label}
+          </button>
+        )
+      )}
+
+    </div>
+  );
+}
+
+function InvestigationTimeline({
+  batch,
+  events,
+  reports,
+  audits,
+}) {
+  const items = [
+    ...events
+      .filter(
+        (event) =>
+          event.batch ===
+          batch
+      )
+      .map((event) => ({
+        id: event.id,
+        timestamp:
+          event.timestamp,
+        title:
+          resultLabel(
+            event.result
+          ),
+        text: `${event.channel} verification · ${event.region || "Unknown region"}`,
+      })),
+
+    ...reports
+      .filter(
+        (report) =>
+          report.batch ===
+          batch
+      )
+      .map((report) => ({
+        id: report.id,
+        timestamp:
+          report.createdAt,
+        title:
+          "Suspicious report submitted",
+        text: report.id,
+      })),
+
+    ...audits
+      .filter(
+        (audit) =>
+          reports.some(
+            (report) =>
+              report.batch ===
+                batch &&
+              report.id ===
+                audit.recordId
+          )
+      )
+      .map((audit) => ({
+        id: audit.id,
+        timestamp:
+          audit.timestamp,
+        title:
+          audit.action,
+        text: `${audit.previousState} → ${audit.newState}`,
+      })),
+  ].sort(
+    (a, b) =>
+      new Date(
+        b.timestamp
+      ).getTime() -
+      new Date(
+        a.timestamp
+      ).getTime()
+  );
+
+  return (
+    <div className="investigation-timeline">
+
+      {items.map(
+        (item) => (
+          <div
+            className="timeline-item"
+            key={item.id}
+          >
+            <div className="timeline-dot" />
+
+            <div>
+              <span>
+                {formatEventTime(
+                  item.timestamp
+                )}
+              </span>
+
+              <strong>
+                {
+                  item.title
+                }
+              </strong>
+
+              <p>
+                {
+                  item.text
+                }
+              </p>
+            </div>
+          </div>
+        )
+      )}
+
+    </div>
+  );
+}
+
+function AdminPageHeader({
+  eyebrow,
+  title,
+  subtitle,
+  backAction,
+}) {
+  return (
+    <div className="admin-page-header">
+
+      <div>
+        {backAction && (
+          <button
+            className="admin-back-link"
+            onClick={
+              backAction
+            }
+          >
+            ← Back
+          </button>
+        )}
+
+        <span className="admin-eyebrow">
+          {eyebrow}
+        </span>
+
+        <h1>
+          {title}
+        </h1>
+
+        <p>
+          {subtitle}
+        </p>
+      </div>
+
+      <span className="admin-access-badge">
+        Admin Access
+      </span>
+
+    </div>
+  );
+}
+
+function AdminSummary({
+  label,
+  value,
+}) {
+  return (
+    <div className="admin-summary-card">
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+    </div>
+  );
+}
+
+function AdminDetailRow({
+  label,
+  value,
+}) {
+  return (
+    <div className="admin-detail-row">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value || "—"}
+      </strong>
+
+    </div>
+  );
+}
+
+function AdminNavButton({
+  label,
+  active,
+  onClick,
+}) {
+  return (
+    <button
+      type="button"
+      className={`admin-nav-button ${
+        active
+          ? "active"
+          : ""
+      }`}
+      onClick={onClick}
+    >
+      {label}
+    </button>
+  );
+}
 
 function SupplyChainSnapshot({
   product,
@@ -3664,24 +4526,11 @@ function SupplyChainSnapshot({
     return (
       <div className="supply-chain-card">
 
-        <div className="section-heading-row">
-
-          <div>
-
-            <h3>
-              Supply Chain Snapshot
-            </h3>
-
-            <span className="prototype-label">
-              Prototype information
-            </span>
-
-          </div>
-
-        </div>
+        <h3>
+          Supply Chain Snapshot
+        </h3>
 
         <div className="supply-unavailable-row">
-
           <span>
             Product record
           </span>
@@ -3689,23 +4538,9 @@ function SupplyChainSnapshot({
           <strong>
             Not available
           </strong>
-
         </div>
 
         <div className="supply-unavailable-row">
-
-          <span>
-            Batch record
-          </span>
-
-          <strong>
-            Not available
-          </strong>
-
-        </div>
-
-        <div className="supply-unavailable-row">
-
           <span>
             Supply-chain history
           </span>
@@ -3713,12 +4548,7 @@ function SupplyChainSnapshot({
           <strong>
             Not Yet Covered
           </strong>
-
         </div>
-
-        <p className="supply-chain-note">
-          Supply-chain information is unavailable for this product in the current MedAuth prototype dataset.
-        </p>
 
       </div>
     );
@@ -3727,146 +4557,38 @@ function SupplyChainSnapshot({
   return (
     <div className="supply-chain-card">
 
-      <div className="section-heading-row">
+      <h3>
+        Supply Chain Snapshot
+      </h3>
 
-        <div>
+      {product.supplyChain.map(
+        (stage) => (
+          <div
+            key={stage.id}
+            className="supply-chain-stage"
+          >
+            <div className="supply-stage-marker">
+              ✓
+            </div>
 
-          <h3>
-            Supply Chain Snapshot
-          </h3>
+            <div>
+              <strong>
+                {stage.stage}
+              </strong>
 
-          <span className="prototype-label">
-            Prototype / sample information
-          </span>
-
-        </div>
-
-      </div>
-
-      <div className="supply-chain-timeline">
-
-        {product.supplyChain.map(
-          (stage) => {
-            const mismatch =
-              result.status ===
-                "NO_MATCH" &&
-              result.mismatchField ===
-                "batch" &&
-              stage.stage ===
-                "At Pharmacy";
-
-            return (
-              <div
-                key={stage.id}
-                className={`supply-chain-stage ${
-                  mismatch
-                    ? "mismatch"
-                    : ""
-                }`}
-              >
-                <div className="supply-stage-marker">
-
-                  {mismatch
-                    ? "!"
-                    : stage.status ===
-                      "PENDING"
-                    ? "○"
-                    : "✓"}
-
-                </div>
-
-                <div className="supply-stage-content">
-
-                  <div className="supply-stage-heading">
-
-                    <strong>
-                      {mismatch
-                        ? "Batch / Pharmacy Record"
-                        : stage.stage}
-                    </strong>
-
-                    <span
-                      className={`supply-stage-status ${
-                        mismatch
-                          ? "mismatch"
-                          : stage.status.toLowerCase()
-                      }`}
-                    >
-                      {mismatch
-                        ? "MISMATCH"
-                        : stage.status ===
-                          "CURRENT"
-                        ? "CURRENT LOCATION"
-                        : stage.status}
-                    </span>
-
-                  </div>
-
-                  {stage.organisation && (
-                    <span>
-                      {
-                        stage.organisation
-                      }
-                    </span>
-                  )}
-
-                  {stage.date && (
-                    <small>
-                      {stage.date}
-                    </small>
-                  )}
-
-                  {stage.detail && (
-                    <small>
-                      {stage.detail}
-                    </small>
-                  )}
-
-                  {mismatch && (
-                    <p>
-                      Scanned batch{" "}
-                      <strong>
-                        {
-                          result.scannedBatch
-                        }
-                      </strong>{" "}
-                      differs from registered batch{" "}
-                      <strong>
-                        {
-                          product.batch
-                        }
-                      </strong>
-                      .
-                    </p>
-                  )}
-
-                </div>
-
-              </div>
-            );
-          }
-        )}
-
-      </div>
-
-      {result.status ===
-        "NO_MATCH" && (
-        <p className="supply-chain-warning">
-          A difference was found between the scanned information and the registered prototype record.
-        </p>
+              <small>
+                {
+                  stage.organisation
+                }
+              </small>
+            </div>
+          </div>
+        )
       )}
-
-      <p className="supply-chain-note">
-        This is prototype/sample supply-chain information and is not a real blockchain record.
-      </p>
 
     </div>
   );
 }
-
-/* ==================================================
-   COMPONENTS
-================================================== */
 
 function BackButton({
   onClick,
@@ -3882,21 +4604,19 @@ function BackButton({
   );
 }
 
-function ProfileRow({
+function Row({
   label,
   value,
 }) {
   return (
-    <div className="profile-row">
-
+    <div className="detail-row">
       <span>
         {label}
       </span>
 
       <strong>
-        {value}
+        {value || "—"}
       </strong>
-
     </div>
   );
 }
@@ -3907,7 +4627,6 @@ function PharmacistMetric({
 }) {
   return (
     <div className="pharmacist-metric">
-
       <span>
         {label}
       </span>
@@ -3915,393 +4634,54 @@ function PharmacistMetric({
       <strong>
         {value}
       </strong>
-
     </div>
   );
 }
-
-function PharmacistNav({
-  screen,
-  setScreen,
-}) {
-  const items = [
-    {
-      label: "Dashboard",
-      screen:
-        "pharmacistDashboard",
-    },
-    {
-      label: "Verify",
-      screen: "scan",
-    },
-    {
-      label: "Batch",
-      screen:
-        "pharmacistBatchLookup",
-    },
-    {
-      label: "Recalls",
-      screen:
-        "pharmacistRecalls",
-    },
-    {
-      label: "History",
-      screen:
-        "pharmacistHistory",
-    },
-  ];
-
-  return (
-    <nav className="pharmacist-nav">
-
-      {items.map(
-        (item) => (
-          <button
-            key={item.screen}
-            type="button"
-            className={
-              screen ===
-              item.screen
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setScreen(
-                item.screen
-              )
-            }
-          >
-            {item.label}
-          </button>
-        )
-      )}
-
-    </nav>
-  );
-}
-
-function DashboardHeader({
-  title,
-  role,
-}) {
-  return (
-    <div className="dashboard-head">
-
-      <div>
-
-        <div className="eyebrow">
-          MedAuth account
-        </div>
-
-        <h1>
-          {title}
-        </h1>
-
-      </div>
-
-      <span className="role-badge">
-        {role}
-      </span>
-
-    </div>
-  );
-}
-
-function Row({
-  label,
-  value,
-}) {
-  return (
-    <div className="detail-row">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value || "—"}
-      </strong>
-
-    </div>
-  );
-}
-
-function Metric({
-  label,
-  value,
-}) {
-  return (
-    <div className="metric">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value}
-      </strong>
-
-    </div>
-  );
-}
-
-function ManufacturerDashboard({
-  totals,
-}) {
-  return (
-    <>
-      <div className="metric-grid">
-
-        <Metric
-          label="Demo scans"
-          value={
-            totals.scans
-          }
-        />
-
-        <Metric
-          label="Matches"
-          value={
-            totals.match
-          }
-        />
-
-        <Metric
-          label="No matches"
-          value={
-            totals.noMatch
-          }
-        />
-
-        <Metric
-          label="Covered"
-          value={
-            totals.covered
-          }
-        />
-
-      </div>
-
-      <div className="panel">
-
-        <h3>
-          Products
-        </h3>
-
-        <p>
-          SampleMed 10mg — enrolled
-        </p>
-
-        <p>
-          HealthMed 20mg — enrolled
-        </p>
-
-      </div>
-    </>
-  );
-}
-
-function AdminDashboard({
-  reports,
-  totals,
-}) {
-  return (
-    <>
-      <div className="admin-summary-grid">
-
-        <div className="admin-summary-card">
-
-          <span>
-            Open Reports
-          </span>
-
-          <strong>
-            {
-              reports.filter(
-                (report) =>
-                  report.status ===
-                  "New"
-              ).length
-            }
-          </strong>
-
-        </div>
-
-        <div className="admin-summary-card">
-
-          <span>
-            No Match Events
-          </span>
-
-          <strong>
-            {totals.noMatch}
-          </strong>
-
-        </div>
-
-        <div className="admin-summary-card">
-
-          <span>
-            Verification Events
-          </span>
-
-          <strong>
-            {totals.scans}
-          </strong>
-
-        </div>
-
-      </div>
-
-      <div className="panel admin-monitor-panel">
-
-        <div className="eyebrow">
-          Admin monitoring
-        </div>
-
-        <h3>
-          Investigation overview
-        </h3>
-
-        <p>
-          Review suspicious medicine activity, verification provenance and investigation status.
-        </p>
-
-      </div>
-
-      <div className="panel">
-
-        <h3>
-          Suspicious Reports
-        </h3>
-
-        {reports.length ===
-        0 ? (
-          <p className="muted">
-            No locally submitted suspicious medicine reports yet.
-          </p>
-        ) : (
-          reports
-            .slice(0, 3)
-            .map(
-              (report) => (
-                <div
-                  className="admin-report-row"
-                  key={report.id}
-                >
-                  <div>
-
-                    <strong>
-                      {
-                        report.medicine
-                      }
-                    </strong>
-
-                    <span>
-                      {report.id}
-                    </span>
-
-                  </div>
-
-                  <span className="admin-report-status">
-                    {
-                      report.status
-                    }
-                  </span>
-
-                </div>
-              )
-            )
-        )}
-
-      </div>
-
-    </>
-  );
-}
-
-/* ==================================================
-   ICONS
-================================================== */
 
 function ScanIcon() {
   return (
     <svg
       className="home-scan-icon"
       viewBox="0 0 24 24"
-      aria-hidden="true"
     >
       <path d="M8 3H5a2 2 0 0 0-2 2v3" />
       <path d="M16 3h3a2 2 0 0 1 2 2v3" />
       <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
       <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+    </svg>
+  );
+}
 
-      <rect
-        x="8"
-        y="8"
-        width="3"
-        height="3"
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <circle
+        cx="11"
+        cy="11"
+        r="7"
       />
-
-      <rect
-        x="13"
-        y="8"
-        width="3"
-        height="3"
-      />
-
-      <rect
-        x="8"
-        y="13"
-        width="3"
-        height="3"
-      />
-
-      <rect
-        x="13"
-        y="13"
-        width="3"
-        height="3"
-      />
+      <path d="m16 16 4 4" />
     </svg>
   );
 }
 
 function BatchLookupIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle
-        cx="10"
-        cy="10"
-        r="6"
-      />
-      <path d="m15 15 5 5" />
-    </svg>
+    <SearchIcon />
   );
 }
 
 function RecallIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M12 3v3" />
+    <svg viewBox="0 0 24 24">
       <path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Z" />
-      <path d="M10 20h4" />
     </svg>
   );
 }
 
 function ShortagesIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24">
       <rect
         x="6"
         y="3"
@@ -4309,32 +4689,21 @@ function ShortagesIcon() {
         height="18"
         rx="2"
       />
-      <path d="M9 7h6" />
-      <path d="M9 11h6" />
-      <path d="M9 15h3" />
     </svg>
   );
 }
 
 function EscalateIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24">
       <path d="M12 3 3 20h18L12 3Z" />
-      <path d="M12 9v4" />
-      <path d="M12 17h.01" />
     </svg>
   );
 }
 
 function ProfileIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24">
       <circle
         cx="12"
         cy="8"
@@ -4347,10 +4716,7 @@ function ProfileIcon() {
 
 function SettingsIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24">
       <circle
         cx="12"
         cy="12"
@@ -4367,28 +4733,16 @@ function SettingsIcon() {
 
 function EyeIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-      <circle
-        cx="12"
-        cy="12"
-        r="2.5"
-      />
+    <svg viewBox="0 0 24 24">
+      <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6Z" />
     </svg>
   );
 }
 
 function EyeOffIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24">
       <path d="m3 3 18 18" />
-      <path d="M6 7c-2 2-3.5 5-3.5 5s3.5 6 9.5 6" />
     </svg>
   );
 }
@@ -4398,7 +4752,6 @@ function LockIcon() {
     <svg
       className="security-lock"
       viewBox="0 0 24 24"
-      aria-hidden="true"
     >
       <rect
         x="5"
@@ -4408,24 +4761,6 @@ function LockIcon() {
         rx="2"
       />
       <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="14"
-        rx="2"
-      />
-      <path d="m4 7 8 6 8-6" />
     </svg>
   );
 }
