@@ -19,8 +19,10 @@ const demoUsers = {
   "manufacturer@medauth.com": {
     role: "manufacturer",
     password: "demo123",
-    name: "Manufacturer",
-    fullName: "MedAuth Manufacturer",
+    name: "Harry",
+    fullName: "Harry",
+    title: "Manufacturer Representative",
+    organisation: "MedAuth Manufacturer Demo",
     email: "manufacturer@medauth.com",
   },
 
@@ -561,6 +563,11 @@ export default function App() {
   ] = useState("");
 
   const [
+    manufacturerHistoryFilter,
+    setManufacturerHistoryFilter,
+  ] = useState("ALL");
+
+  const [
     batchSearch,
     setBatchSearch,
   ] = useState("");
@@ -679,6 +686,113 @@ export default function App() {
       consumerActivityEvents,
       consumerActivityFilter,
     ]);
+
+  const manufacturerEvents =
+    useMemo(
+      () =>
+        verificationEvents.filter(
+          (event) =>
+            event.type ===
+              "verification" ||
+            !event.type
+        ),
+      [verificationEvents]
+    );
+
+  const manufacturerTotals =
+    useMemo(
+      () => ({
+        total:
+          manufacturerEvents.length,
+
+        match:
+          manufacturerEvents.filter(
+            (event) =>
+              event.result ===
+              "MATCH"
+          ).length,
+
+        noMatch:
+          manufacturerEvents.filter(
+            (event) =>
+              event.result ===
+              "NO_MATCH"
+          ).length,
+
+        notCovered:
+          manufacturerEvents.filter(
+            (event) =>
+              event.result ===
+              "NOT_COVERED"
+          ).length,
+
+        activeAlerts:
+          manufacturerEvents.filter(
+            (event) =>
+              event.result ===
+              "NO_MATCH"
+          ).length,
+      }),
+      [manufacturerEvents]
+    );
+
+  const manufacturerFilteredHistory =
+    useMemo(() => {
+      if (
+        manufacturerHistoryFilter ===
+        "ALL"
+      ) {
+        return manufacturerEvents;
+      }
+
+      return manufacturerEvents.filter(
+        (event) =>
+          event.result ===
+          manufacturerHistoryFilter
+      );
+    }, [
+      manufacturerEvents,
+      manufacturerHistoryFilter,
+    ]);
+
+  const manufacturerRegionSummary =
+    useMemo(() => {
+      const grouped = {};
+
+      manufacturerEvents.forEach(
+        (event) => {
+          const region =
+            event.region ||
+            "Region unavailable";
+
+          if (!grouped[region]) {
+            grouped[region] = {
+              region,
+              total: 0,
+              noMatch: 0,
+            };
+          }
+
+          grouped[region].total += 1;
+
+          if (
+            event.result ===
+            "NO_MATCH"
+          ) {
+            grouped[
+              region
+            ].noMatch += 1;
+          }
+        }
+      );
+
+      return Object.values(
+        grouped
+      ).sort(
+        (a, b) =>
+          b.total - a.total
+      );
+    }, [manufacturerEvents]);
 
   const activeRecalls =
     useMemo(
@@ -1963,6 +2077,17 @@ export default function App() {
         );
         break;
 
+      case "manufacturerProfile":
+      case "manufacturerSettings":
+      case "manufacturerProducts":
+      case "manufacturerAlerts":
+      case "manufacturerIntelligence":
+      case "manufacturerHistory":
+        setScreen(
+          "manufacturerDashboard"
+        );
+        break;
+
       case "manufacturerDashboard":
       case "consumerDashboard":
       case "pharmacistDashboard":
@@ -3230,26 +3355,1064 @@ export default function App() {
 
         {screen ===
           "manufacturerDashboard" && (
-          <section className="screen">
+          <section className="screen manufacturer-screen">
 
-            <BackButton
-              onClick={goBack}
-            />
+            <div className="manufacturer-profile-header">
 
-            <DashboardHeader
-              title="Manufacturer"
-              role="Manufacturer"
-            />
+              <div className="manufacturer-profile-main">
 
-            <ManufacturerDashboard
-              totals={totals}
-            />
+                <img
+                  className="manufacturer-avatar"
+                  src={`${import.meta.env.BASE_URL}manufacturer-harry.png`}
+                  alt="Harry"
+                />
+
+                <div className="manufacturer-greeting">
+
+                  <span>
+                    Welcome back
+                  </span>
+
+                  <h1>
+                    Hi,{" "}
+                    {currentUser
+                      ?.name ||
+                      "Harry"}
+                  </h1>
+
+                  <p>
+                    Manufacturer
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="manufacturer-profile-actions">
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "manufacturerProfile"
+                    )
+                  }
+                  aria-label="My Profile"
+                  title="My Profile"
+                >
+                  <ProfileIcon />
+                </button>
+
+                <button
+                  type="button"
+                  className="profile-icon-button"
+                  onClick={() =>
+                    setScreen(
+                      "manufacturerSettings"
+                    )
+                  }
+                  aria-label="Settings"
+                  title="Settings"
+                >
+                  <SettingsIcon />
+                </button>
+
+              </div>
+
+            </div>
+
+            <div
+              className={`manufacturer-system-status ${
+                offline
+                  ? "is-offline"
+                  : "is-online"
+              }`}
+            >
+
+              <div>
+
+                <strong>
+                  {offline
+                    ? "Offline Mode — Using Cached Data"
+                    : "System Online"}
+                </strong>
+
+                <span>
+                  {currentUser
+                    ?.organisation ||
+                    "MedAuth Manufacturer Demo"}
+                </span>
+
+              </div>
+
+              <NetworkBadge
+                offline={offline}
+                onToggle={
+                  handleNetworkToggle
+                }
+              />
+
+            </div>
+
+            <div className="manufacturer-dashboard-copy">
+
+              <div className="eyebrow">
+                Manufacturer Dashboard
+              </div>
+
+              <h2>
+                Brand protection & product intelligence
+              </h2>
+
+              <p>
+                Monitor registered products, verification activity and brand alerts.
+              </p>
+
+            </div>
+
+            <div className="manufacturer-metric-grid">
+
+              <Metric
+                label="Total Verifications"
+                value={
+                  manufacturerTotals.total
+                }
+              />
+
+              <Metric
+                label="Match"
+                value={
+                  manufacturerTotals.match
+                }
+              />
+
+              <Metric
+                label="No Match"
+                value={
+                  manufacturerTotals.noMatch
+                }
+              />
+
+              <Metric
+                label="Not Yet Covered"
+                value={
+                  manufacturerTotals.notCovered
+                }
+              />
+
+              <Metric
+                label="Active Alerts"
+                value={
+                  manufacturerTotals.activeAlerts
+                }
+              />
+
+            </div>
+
+            <div className="manufacturer-quick-grid">
+
+              <button
+                type="button"
+                className="manufacturer-nav-card"
+                onClick={() =>
+                  setScreen(
+                    "manufacturerProducts"
+                  )
+                }
+              >
+                <span className="manufacturer-nav-icon">
+                  <PackageIcon />
+                </span>
+
+                <span>
+                  <strong>
+                    Products & GS1
+                  </strong>
+
+                  <small>
+                    Registered products and batches
+                  </small>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="manufacturer-nav-card"
+                onClick={() =>
+                  setScreen(
+                    "manufacturerAlerts"
+                  )
+                }
+              >
+                <span className="manufacturer-nav-icon alert">
+                  <AlertTriangleIcon />
+                </span>
+
+                <span>
+                  <strong>
+                    Brand Alerts
+                  </strong>
+
+                  <small>
+                    Review suspicious activity
+                  </small>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="manufacturer-nav-card"
+                onClick={() =>
+                  setScreen(
+                    "manufacturerIntelligence"
+                  )
+                }
+              >
+                <span className="manufacturer-nav-icon">
+                  <TrendIcon />
+                </span>
+
+                <span>
+                  <strong>
+                    Intelligence
+                  </strong>
+
+                  <small>
+                    Status, region and batch trends
+                  </small>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="manufacturer-nav-card"
+                onClick={() => {
+                  setManufacturerHistoryFilter(
+                    "ALL"
+                  );
+
+                  setScreen(
+                    "manufacturerHistory"
+                  );
+                }}
+              >
+                <span className="manufacturer-nav-icon">
+                  <HistoryIcon />
+                </span>
+
+                <span>
+                  <strong>
+                    History
+                  </strong>
+
+                  <small>
+                    Recent verification activity
+                  </small>
+                </span>
+              </button>
+
+            </div>
+
+            <div className="manufacturer-dashboard-section">
+
+              <div className="section-heading-row">
+
+                <h3>
+                  Recent Brand Alerts
+                </h3>
+
+                <button
+                  type="button"
+                  className="text-action"
+                  onClick={() =>
+                    setScreen(
+                      "manufacturerAlerts"
+                    )
+                  }
+                >
+                  View All
+                </button>
+
+              </div>
+
+              {manufacturerEvents
+                .filter(
+                  (event) =>
+                    event.result ===
+                    "NO_MATCH"
+                )
+                .slice(0, 2)
+                .map(
+                  (event) => (
+                    <button
+                      key={event.id}
+                      type="button"
+                      className="manufacturer-alert-row"
+                      onClick={() =>
+                        setScreen(
+                          "manufacturerAlerts"
+                        )
+                      }
+                    >
+                      <div>
+
+                        <strong>
+                          {event.medicine ||
+                            findMedicine(
+                              event.code
+                            )?.medicineName ||
+                            "Medicine"}
+                        </strong>
+
+                        <span>
+                          {event.batch} ·{" "}
+                          {event.region ||
+                            "Region unavailable"}
+                        </span>
+
+                      </div>
+
+                      <span className="manufacturer-alert-status">
+                        No Match
+                      </span>
+                    </button>
+                  )
+                )}
+
+              {manufacturerTotals.noMatch ===
+                0 && (
+                <div className="manufacturer-empty">
+                  No active brand alerts in the prototype data.
+                </div>
+              )}
+
+            </div>
 
             <SecondaryButton
               onClick={reset}
             >
               Sign Out
             </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* MANUFACTURER PROFILE */}
+
+        {screen ===
+          "manufacturerProfile" && (
+          <section className="screen manufacturer-detail-screen">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "manufacturerDashboard"
+                )
+              }
+            />
+
+            <div className="profile-page-header">
+
+              <img
+                className="profile-page-avatar manufacturer-profile-page-avatar"
+                src={`${import.meta.env.BASE_URL}manufacturer-harry.png`}
+                alt="Harry"
+              />
+
+              <h1>
+                Harry
+              </h1>
+
+              <p>
+                Manufacturer Representative
+              </p>
+
+              <span className="manufacturer-role-badge">
+                Manufacturer
+              </span>
+
+            </div>
+
+            <div className="profile-information-card">
+
+              <ProfileRow
+                label="Name"
+                value="Harry"
+              />
+
+              <ProfileRow
+                label="Role"
+                value="Manufacturer"
+              />
+
+              <ProfileRow
+                label="Organisation"
+                value={
+                  currentUser
+                    ?.organisation ||
+                  "MedAuth Manufacturer Demo"
+                }
+              />
+
+              <ProfileRow
+                label="Email"
+                value={
+                  currentUser
+                    ?.email ||
+                  "manufacturer@medauth.com"
+                }
+              />
+
+            </div>
+
+            <div className="profile-note">
+
+              <LockIcon />
+
+              <span>
+                Manufacturer access is limited to product, brand-alert, intelligence and verification-history features.
+              </span>
+
+            </div>
+
+          </section>
+        )}
+
+        {/* MANUFACTURER SETTINGS */}
+
+        {screen ===
+          "manufacturerSettings" && (
+          <section className="screen manufacturer-detail-screen">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "manufacturerDashboard"
+                )
+              }
+            />
+
+            <div className="eyebrow">
+              Manufacturer
+            </div>
+
+            <h1>
+              Settings
+            </h1>
+
+            <div className="settings-card">
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Connection
+                  </strong>
+
+                  <span>
+                    {offline
+                      ? "Offline — Using Cached Data"
+                      : "System Online"}
+                  </span>
+
+                </div>
+
+                <NetworkBadge
+                  offline={offline}
+                  onToggle={
+                    handleNetworkToggle
+                  }
+                />
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Pending Sync
+                  </strong>
+
+                  <span>
+                    Prototype activity waiting to synchronise
+                  </span>
+
+                </div>
+
+                <span className="settings-value">
+                  {pendingSync}
+                </span>
+
+              </div>
+
+              <div className="settings-row">
+
+                <div>
+
+                  <strong>
+                    Remember this device
+                  </strong>
+
+                  <span>
+                    Keep your demo preference
+                  </span>
+
+                </div>
+
+                <input
+                  className="settings-checkbox"
+                  type="checkbox"
+                  checked={
+                    rememberDevice
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setRememberDevice(
+                      event.target
+                        .checked
+                    )
+                  }
+                />
+
+              </div>
+
+            </div>
+
+            <div className="settings-card">
+
+              <button
+                type="button"
+                className="settings-link-row"
+                onClick={() =>
+                  setScreen(
+                    "manufacturerProfile"
+                  )
+                }
+              >
+                <span>
+                  My Profile
+                </span>
+
+                <span>
+                  →
+                </span>
+              </button>
+
+            </div>
+
+            <SecondaryButton
+              onClick={reset}
+            >
+              Sign Out
+            </SecondaryButton>
+
+          </section>
+        )}
+
+        {/* MANUFACTURER PRODUCTS */}
+
+        {screen ===
+          "manufacturerProducts" && (
+          <section className="screen manufacturer-detail-screen">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "manufacturerDashboard"
+                )
+              }
+            />
+
+            <div className="eyebrow">
+              Manufacturer
+            </div>
+
+            <h1>
+              Products & GS1
+            </h1>
+
+            <p className="manufacturer-page-subtitle">
+              Registered prototype products and identifiers.
+            </p>
+
+            <div className="manufacturer-list">
+
+              {Object.values(
+                medicines
+              ).map(
+                (product) => (
+                  <article
+                    className="manufacturer-product-card"
+                    key={
+                      product.code
+                    }
+                  >
+
+                    <div className="manufacturer-product-head">
+
+                      <div>
+                        <h2>
+                          {product.medicineName}
+                        </h2>
+
+                        <span>
+                          {product.manufacturer}
+                        </span>
+                      </div>
+
+                      <span
+                        className={`manufacturer-coverage ${
+                          product.coverageStatus ===
+                          "ENROLLED"
+                            ? "enrolled"
+                            : "not-covered"
+                        }`}
+                      >
+                        {product.coverageStatus ===
+                        "ENROLLED"
+                          ? "Enrolled"
+                          : "Not Covered"}
+                      </span>
+
+                    </div>
+
+                    <div className="manufacturer-product-meta">
+
+                      <div>
+                        <span>
+                          Product ID
+                        </span>
+
+                        <strong>
+                          {product.productId}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>
+                          Batch
+                        </span>
+
+                        <strong>
+                          {product.batch}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>
+                          Last updated
+                        </span>
+
+                        <strong>
+                          {product.lastUpdated
+                            ?.replace(
+                              "T",
+                              " "
+                            )}
+                        </strong>
+                      </div>
+
+                    </div>
+
+                  </article>
+                )
+              )}
+
+            </div>
+
+          </section>
+        )}
+
+        {/* MANUFACTURER ALERTS */}
+
+        {screen ===
+          "manufacturerAlerts" && (
+          <section className="screen manufacturer-detail-screen">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "manufacturerDashboard"
+                )
+              }
+            />
+
+            <div className="eyebrow">
+              Manufacturer
+            </div>
+
+            <h1>
+              Brand Alerts
+            </h1>
+
+            <p className="manufacturer-page-subtitle">
+              Suspicious verification activity related to prototype products.
+            </p>
+
+            <div className="manufacturer-list">
+
+              {manufacturerEvents
+                .filter(
+                  (event) =>
+                    event.result ===
+                    "NO_MATCH"
+                )
+                .map(
+                  (event) => (
+                    <article
+                      className="manufacturer-alert-card"
+                      key={event.id}
+                    >
+
+                      <div className="manufacturer-alert-card-head">
+
+                        <div>
+
+                          <h2>
+                            {event.medicine ||
+                              findMedicine(
+                                event.code
+                              )?.medicineName ||
+                              "Medicine"}
+                          </h2>
+
+                          <span>
+                            {event.id}
+                          </span>
+
+                        </div>
+
+                        <span className="manufacturer-alert-status">
+                          No Match
+                        </span>
+
+                      </div>
+
+                      <div className="manufacturer-product-meta">
+
+                        <div>
+                          <span>
+                            Batch
+                          </span>
+
+                          <strong>
+                            {event.batch}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>
+                            Region
+                          </span>
+
+                          <strong>
+                            {event.region ||
+                              "Region unavailable"}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>
+                            Date / Time
+                          </span>
+
+                          <strong>
+                            {formatEventTime(
+                              event.timestamp
+                            )}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>
+                            Status
+                          </span>
+
+                          <strong>
+                            Review Recommended
+                          </strong>
+                        </div>
+
+                      </div>
+
+                    </article>
+                  )
+                )}
+
+              {manufacturerTotals.noMatch ===
+                0 && (
+                <div className="manufacturer-empty">
+                  No current brand alerts.
+                </div>
+              )}
+
+            </div>
+
+          </section>
+        )}
+
+        {/* MANUFACTURER INTELLIGENCE */}
+
+        {screen ===
+          "manufacturerIntelligence" && (
+          <section className="screen manufacturer-detail-screen">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "manufacturerDashboard"
+                )
+              }
+            />
+
+            <div className="eyebrow">
+              Manufacturer
+            </div>
+
+            <h1>
+              Intelligence
+            </h1>
+
+            <p className="manufacturer-page-subtitle">
+              Prototype verification trends from the shared event data.
+            </p>
+
+            <div className="manufacturer-metric-grid compact">
+
+              <Metric
+                label="Total"
+                value={
+                  manufacturerTotals.total
+                }
+              />
+
+              <Metric
+                label="Match"
+                value={
+                  manufacturerTotals.match
+                }
+              />
+
+              <Metric
+                label="No Match"
+                value={
+                  manufacturerTotals.noMatch
+                }
+              />
+
+              <Metric
+                label="Not Covered"
+                value={
+                  manufacturerTotals.notCovered
+                }
+              />
+
+            </div>
+
+            <div className="manufacturer-dashboard-section">
+
+              <h3>
+                Verification Activity by Region
+              </h3>
+
+              {manufacturerRegionSummary.map(
+                (region) => (
+                  <div
+                    className="manufacturer-region-row"
+                    key={
+                      region.region
+                    }
+                  >
+                    <div>
+
+                      <strong>
+                        {region.region}
+                      </strong>
+
+                      <span>
+                        {region.total} verifications
+                      </span>
+
+                    </div>
+
+                    <span>
+                      {region.noMatch} No Match
+                    </span>
+                  </div>
+                )
+              )}
+
+            </div>
+
+          </section>
+        )}
+
+        {/* MANUFACTURER HISTORY */}
+
+        {screen ===
+          "manufacturerHistory" && (
+          <section className="screen manufacturer-detail-screen">
+
+            <BackButton
+              onClick={() =>
+                setScreen(
+                  "manufacturerDashboard"
+                )
+              }
+            />
+
+            <div className="eyebrow">
+              Manufacturer
+            </div>
+
+            <h1>
+              Verification History
+            </h1>
+
+            <p className="manufacturer-page-subtitle">
+              Recent verification events for prototype products.
+            </p>
+
+            <div className="manufacturer-history-filters">
+
+              {[
+                ["ALL", "All Results"],
+                ["MATCH", "Match"],
+                ["NO_MATCH", "No Match"],
+                [
+                  "NOT_COVERED",
+                  "Not Yet Covered",
+                ],
+              ].map(
+                ([
+                  value,
+                  label,
+                ]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={
+                      manufacturerHistoryFilter ===
+                      value
+                        ? "active"
+                        : ""
+                    }
+                    onClick={() =>
+                      setManufacturerHistoryFilter(
+                        value
+                      )
+                    }
+                  >
+                    {label}
+                  </button>
+                )
+              )}
+
+            </div>
+
+            <div className="manufacturer-list">
+
+              {manufacturerFilteredHistory.map(
+                (event) => (
+                  <article
+                    className="manufacturer-history-card"
+                    key={event.id}
+                  >
+
+                    <div className="manufacturer-alert-card-head">
+
+                      <div>
+
+                        <h2>
+                          {event.medicine ||
+                            findMedicine(
+                              event.code
+                            )?.medicineName ||
+                            "Medicine"}
+                        </h2>
+
+                        <span>
+                          {event.id} ·{" "}
+                          {formatEventTime(
+                            event.timestamp
+                          )}
+                        </span>
+
+                      </div>
+
+                      <span
+                        className={`manufacturer-history-status ${
+                          event.result
+                            ?.toLowerCase()
+                        }`}
+                      >
+                        {event.result ===
+                        "MATCH"
+                          ? "✓ Match"
+                          : event.result ===
+                            "NO_MATCH"
+                          ? "⚠ No Match"
+                          : "? Not Yet Covered"}
+                      </span>
+
+                    </div>
+
+                    <div className="manufacturer-product-meta">
+
+                      <div>
+                        <span>
+                          Code
+                        </span>
+
+                        <strong>
+                          {event.code}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>
+                          Batch
+                        </span>
+
+                        <strong>
+                          {event.batch}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>
+                          Channel
+                        </span>
+
+                        <strong>
+                          {event.channel ||
+                            "Prototype"}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>
+                          Network
+                        </span>
+
+                        <strong>
+                          {event.offline
+                            ? "Offline"
+                            : "Online"}
+                        </strong>
+                      </div>
+
+                    </div>
+
+                  </article>
+                )
+              )}
+
+            </div>
 
           </section>
         )}
@@ -9213,6 +10376,46 @@ function HistoryIcon() {
       <path d="M3 12a9 9 0 1 0 3-6.7" />
       <path d="M3 4v5h5" />
       <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+function PackageIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="m12 3 8 4-8 4-8-4 8-4Z" />
+      <path d="m4 7 8 4 8-4" />
+      <path d="M4 7v10l8 4 8-4V7" />
+      <path d="M12 11v10" />
+    </svg>
+  );
+}
+
+function AlertTriangleIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M12 3 2.8 20h18.4L12 3Z" />
+      <path d="M12 9v5" />
+      <path d="M12 17.5h.01" />
+    </svg>
+  );
+}
+
+function TrendIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M4 18V6" />
+      <path d="M4 18h16" />
+      <path d="m7 14 4-4 3 2 5-6" />
     </svg>
   );
 }
