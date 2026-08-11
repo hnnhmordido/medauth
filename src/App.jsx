@@ -224,7 +224,7 @@ export default function App() {
 
             <div className="home-divider">
               <span>
-                Professional Access
+                or
               </span>
             </div>
 
