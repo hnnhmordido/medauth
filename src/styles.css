@@ -1,6 +1,1891 @@
-/* ==================================================
-   SHORTAGES PAGE
-================================================== */
+/* =========================================================
+   MEDAUTH
+   COMPLETE STYLES.CSS
+   Phone target: 393 × 852
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+html,
+body {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  background: #edf2f5;
+  color: #173653;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(11, 99, 182, 0.2);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   APP / PHONE
+========================================================= */
+
+.app-shell {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 0;
+
+  background: #edf2f5;
+}
+
+.phone-stage {
+  position: relative;
+
+  width: 393px;
+  max-width: 100%;
+
+  height: 852px;
+  max-height: 100vh;
+
+  margin: 0 auto;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 10px 40px
+    rgba(20, 48, 70, 0.08);
+}
+
+.screen {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  padding:
+    28px
+    22px
+    24px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #ffffff 70%,
+      #fbfdfe 100%
+    );
+
+  scrollbar-width: none;
+}
+
+.screen::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* =========================================================
+   GLOBAL TYPOGRAPHY
+========================================================= */
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 10px;
+
+  color: #173653;
+
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1.15;
+
+  letter-spacing: -0.6px;
+}
+
+h2 {
+  color: #173653;
+
+  font-size: 20px;
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+h3 {
+  margin-bottom: 8px;
+
+  color: #173653;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  line-height: 1.3;
+}
+
+p {
+  color: #687d8d;
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.eyebrow {
+  margin-bottom: 6px;
+
+  color: var(--brand-blue, #0b63b6);
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.2px;
+
+  text-transform: uppercase;
+}
+
+.muted {
+  color: #8495a1;
+}
+
+
+/* =========================================================
+   COMMON BUTTONS
+========================================================= */
+
+.primary-button,
+.secondary-button {
+  width: 100%;
+  min-height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 18px;
+
+  border-radius: 14px;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    background 0.15s ease;
+}
+
+.primary-button {
+  border: 0;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      100deg,
+      var(--brand-blue, #0b63b6),
+      var(--brand-teal, #00989f)
+    );
+}
+
+.secondary-button {
+  border:
+    1.5px solid
+    var(--brand-blue, #0b63b6);
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: #ffffff;
+}
+
+.primary-button:active,
+.secondary-button:active {
+  transform: scale(0.985);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.back-button {
+  min-height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  margin:
+    0
+    0
+    18px;
+
+  padding: 0 5px;
+
+  border: 0;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: transparent;
+
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.back-button svg {
+  width: 18px;
+  height: 18px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 2;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+.home-screen {
+  display: flex;
+  flex-direction: column;
+
+  padding:
+    24px
+    25px
+    20px;
+
+  overflow: hidden;
+}
+
+.home-status-row {
+  width: 100%;
+
+  display: flex;
+  justify-content: flex-end;
+
+  min-height: 34px;
+}
+
+.home-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin:
+    5px
+    0
+    18px;
+}
+
+.hero-logo {
+  display: block;
+
+  width: 210px;
+  max-width: 70%;
+
+  height: auto;
+
+  object-fit: contain;
+}
+
+.home-scan-button {
+  width: 100%;
+  min-height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 0 18px;
+
+  border: 0;
+  border-radius: 15px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      100deg,
+      var(--brand-blue, #0b63b6),
+      var(--brand-teal, #00989f)
+    );
+
+  font-size: 14px;
+  font-weight: 800;
+
+  box-shadow:
+    0 7px 16px
+    rgba(11, 99, 182, 0.13);
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.home-scan-button:active {
+  transform: scale(0.985);
+}
+
+.home-scan-icon {
+  width: 20px;
+  height: 20px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home-divider {
+  position: relative;
+
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 16px 0;
+}
+
+.home-divider::before,
+.home-divider::after {
+  content: "";
+
+  flex: 1;
+
+  height: 1px;
+
+  background: #e1e9ee;
+}
+
+.home-divider span {
+  padding: 0 12px;
+
+  color: #8a9aa5;
+
+  background: #ffffff;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.home-login-form,
+.forgot-form {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 13px;
+}
+
+.home-login-field {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.home-login-field > span {
+  color: #607484;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 0.8px;
+}
+
+.home-login-field input,
+.field input,
+.field textarea {
+  width: 100%;
+
+  border:
+    1px solid
+    #d8e3e9;
+
+  border-radius: 12px;
+
+  color: #173653;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.home-login-field input {
+  height: 49px;
+
+  padding: 0 14px;
+
+  font-size: 13px;
+}
+
+.home-login-field input:focus,
+.field input:focus,
+.field textarea:focus {
+  border-color:
+    var(--brand-blue, #0b63b6);
+
+  outline: none;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(11, 99, 182, 0.08);
+}
+
+.password-input-wrap {
+  position: relative;
+}
+
+.password-input-wrap input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+
+  top: 50%;
+  right: 8px;
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+
+  transform:
+    translateY(-50%);
+
+  color: #728694;
+
+  background: transparent;
+}
+
+.password-toggle svg {
+  width: 19px;
+  height: 19px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.login-options {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.remember-device {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  color: #667b8a;
+
+  font-size: 10px;
+}
+
+.remember-device input {
+  width: 15px;
+  height: 15px;
+
+  accent-color:
+    var(--brand-blue, #0b63b6);
+}
+
+.forgot-password {
+  padding: 5px 0;
+
+  border: 0;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: transparent;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.login-error {
+  padding: 9px 11px;
+
+  border:
+    1px solid
+    #f0c5c1;
+
+  border-radius: 10px;
+
+  color: #a63e35;
+
+  background: #fff4f2;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.home-signin-button {
+  width: 100%;
+  min-height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 18px;
+
+  border: 0;
+  border-radius: 14px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      100deg,
+      var(--brand-blue, #0b63b6),
+      var(--brand-teal, #00989f)
+    );
+
+  font-size: 14px;
+  font-weight: 800;
+
+  transition:
+    transform 0.15s ease;
+}
+
+.home-signin-button:active {
+  transform: scale(0.985);
+}
+
+.security-footer {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: auto;
+  padding-top: 15px;
+
+  color: #84939d;
+
+  font-size: 8px;
+  line-height: 1.3;
+
+  text-align: center;
+}
+
+.security-lock {
+  width: 11px;
+  height: 11px;
+
+  flex: 0 0 auto;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   NETWORK BADGE
+========================================================= */
+
+.network-badge {
+  min-height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding:
+    5px
+    9px;
+
+  border:
+    1px solid
+    #dce7eb;
+
+  border-radius: 999px;
+
+  background: #ffffff;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.network-badge svg {
+  width: 15px;
+  height: 15px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.network-badge.online {
+  color: #1e805a;
+
+  border-color: #cce8db;
+
+  background: #f2fbf7;
+}
+
+.network-badge.offline {
+  color: #75838c;
+
+  border-color: #dce3e7;
+
+  background: #f6f8f9;
+}
+
+
+/* =========================================================
+   FORGOT PASSWORD
+========================================================= */
+
+.forgot-screen {
+  display: flex;
+  flex-direction: column;
+}
+
+.forgot-brand {
+  display: flex;
+  justify-content: center;
+
+  margin:
+    5px
+    0
+    26px;
+}
+
+.forgot-logo {
+  width: 180px;
+  max-width: 65%;
+
+  height: auto;
+}
+
+.forgot-description {
+  margin-bottom: 20px;
+}
+
+.reset-success {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 35px;
+
+  text-align: center;
+}
+
+.reset-success-icon {
+  width: 56px;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 15px;
+
+  border-radius: 50%;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: #eaf4fb;
+}
+
+.reset-success-icon svg {
+  width: 25px;
+  height: 25px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   GENERIC FORM FIELDS
+========================================================= */
+
+.field {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin-bottom: 16px;
+
+  color: #4e6575;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.field input {
+  min-height: 49px;
+
+  padding: 0 13px;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.field textarea {
+  min-height: 95px;
+
+  padding: 12px 13px;
+
+  resize: vertical;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   SCANNER
+========================================================= */
+
+.scanner-panel {
+  position: relative;
+
+  width: 100%;
+  height: 245px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  margin: 22px 0 17px;
+
+  padding-bottom: 15px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    #dce7ec;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f4f8fa,
+      #eaf1f4
+    );
+}
+
+.scanner-panel small {
+  color: #81919b;
+
+  font-size: 9px;
+}
+
+.scan-corners span {
+  position: absolute;
+
+  width: 35px;
+  height: 35px;
+
+  border-color:
+    var(--brand-blue, #0b63b6);
+}
+
+.scan-corners span:nth-child(1) {
+  top: 35px;
+  left: 35px;
+
+  border-top: 3px solid;
+  border-left: 3px solid;
+}
+
+.scan-corners span:nth-child(2) {
+  top: 35px;
+  right: 35px;
+
+  border-top: 3px solid;
+  border-right: 3px solid;
+}
+
+.scan-corners span:nth-child(3) {
+  bottom: 35px;
+  left: 35px;
+
+  border-bottom: 3px solid;
+  border-left: 3px solid;
+}
+
+.scan-corners span:nth-child(4) {
+  right: 35px;
+  bottom: 35px;
+
+  border-right: 3px solid;
+  border-bottom: 3px solid;
+}
+
+.scan-line {
+  position: absolute;
+
+  top: 50%;
+  left: 45px;
+  right: 45px;
+
+  height: 2px;
+
+  background:
+    var(--brand-teal, #00989f);
+
+  opacity: 0.7;
+}
+
+.sample-box {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin-bottom: 14px;
+
+  padding: 12px;
+
+  border:
+    1px solid
+    #e0e9ed;
+
+  border-radius: 13px;
+
+  background: #f8fbfc;
+}
+
+.sample-box > strong {
+  margin-bottom: 2px;
+
+  color: #4f6878;
+
+  font-size: 10px;
+}
+
+.sample-box button {
+  width: 100%;
+
+  padding:
+    8px
+    9px;
+
+  border:
+    1px solid
+    #dfe8ed;
+
+  border-radius: 9px;
+
+  color: #3d5c6f;
+
+  background: #ffffff;
+
+  font-size: 9px;
+
+  text-align: left;
+}
+
+
+/* =========================================================
+   CHECKING
+========================================================= */
+
+.center-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.loader {
+  width: 43px;
+  height: 43px;
+
+  margin-bottom: 20px;
+
+  border:
+    4px solid
+    #e2ebef;
+
+  border-top-color:
+    var(--brand-blue, #0b63b6);
+
+  border-radius: 50%;
+
+  animation:
+    medauth-spin
+    0.8s
+    linear
+    infinite;
+}
+
+@keyframes medauth-spin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.status-card {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 13px;
+
+  margin-bottom: 17px;
+
+  padding: 17px;
+
+  border-radius: 16px;
+}
+
+.status-card.match {
+  border:
+    1px solid
+    #cde7db;
+
+  background: #f0faf5;
+}
+
+.status-card.no_match {
+  border:
+    1px solid
+    #f0ccc7;
+
+  background: #fff4f2;
+}
+
+.status-card.not_covered {
+  border:
+    1px solid
+    #eadfc2;
+
+  background: #fffaf0;
+}
+
+.status-card h2 {
+  margin:
+    2px
+    0
+    5px;
+
+  font-size: 19px;
+}
+
+.status-card p {
+  margin: 0;
+
+  font-size: 11px;
+}
+
+.notice {
+  margin-bottom: 14px;
+
+  padding: 11px 12px;
+
+  border:
+    1px solid
+    #e3e7d3;
+
+  border-radius: 11px;
+
+  color: #6f6c42;
+
+  background: #fffdf1;
+
+  font-size: 10px;
+}
+
+.product-card,
+.details-list {
+  width: 100%;
+
+  margin-bottom: 16px;
+
+  padding: 4px 14px;
+
+  border:
+    1px solid
+    #dfe8ed;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+}
+
+.product-card > div,
+.detail-row {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 47px;
+
+  border-bottom:
+    1px solid
+    #edf2f4;
+}
+
+.product-card > div:last-child,
+.detail-row:last-child {
+  border-bottom: 0;
+}
+
+.product-card span,
+.detail-row span {
+  color: #7a8d99;
+
+  font-size: 10px;
+}
+
+.product-card strong,
+.detail-row strong {
+  color: #26485e;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-align: right;
+}
+
+.action-stack {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+/* =========================================================
+   GENERIC DASHBOARD
+========================================================= */
+
+.dashboard-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+.role-badge {
+  padding:
+    6px
+    9px;
+
+  border-radius: 999px;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: #eaf4fb;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 10px;
+
+  margin-bottom: 14px;
+}
+
+.metric {
+  min-height: 86px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 13px;
+
+  border:
+    1px solid
+    #dfe8ed;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+}
+
+.metric span {
+  color: #718592;
+
+  font-size: 10px;
+}
+
+.metric strong {
+  color: #173653;
+
+  font-size: 23px;
+}
+
+.panel {
+  width: 100%;
+
+  margin-bottom: 13px;
+
+  padding: 15px;
+
+  border:
+    1px solid
+    #dfe8ed;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+}
+
+.panel p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   PHARMACIST DASHBOARD
+========================================================= */
+
+.pharmacist-screen {
+  display: flex;
+  flex-direction: column;
+
+  padding:
+    20px
+    18px
+    76px;
+
+  overflow-y: auto;
+}
+
+.pharmacist-profile-header {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 12px;
+}
+
+.pharmacist-profile-main {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+}
+
+.pharmacist-avatar {
+  width: 58px;
+  height: 58px;
+
+  flex: 0 0 auto;
+
+  object-fit: cover;
+
+  border:
+    2px solid
+    #ffffff;
+
+  border-radius: 50%;
+
+  background: #e8f1f5;
+
+  box-shadow:
+    0 2px 9px
+    rgba(24, 65, 91, 0.13);
+}
+
+.pharmacist-greeting {
+  min-width: 0;
+}
+
+.pharmacist-welcome {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #7d8e99;
+
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.pharmacist-greeting h1 {
+  margin: 0;
+
+  color: #173653;
+
+  font-size: 23px;
+  line-height: 1.1;
+}
+
+.pharmacist-greeting p {
+  margin:
+    3px
+    0
+    0;
+
+  color: #718591;
+
+  font-size: 9px;
+}
+
+.pharmacist-profile-actions {
+  display: flex;
+
+  gap: 6px;
+}
+
+.profile-icon-button {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border:
+    1px solid
+    #dce7eb;
+
+  border-radius: 10px;
+
+  color: #557084;
+
+  background: #ffffff;
+}
+
+.profile-icon-button svg {
+  width: 16px;
+  height: 16px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   PHARMACIST CONNECTION STATUS
+========================================================= */
+
+.pharmacist-system-status {
+  width: 100%;
+
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 11px;
+
+  padding:
+    8px
+    10px
+    8px
+    12px;
+
+  border-radius: 13px;
+}
+
+.pharmacist-system-status.is-online {
+  border:
+    1px solid
+    #d3eade;
+
+  background: #f3faf7;
+}
+
+.pharmacist-system-status.is-offline {
+  border:
+    1px solid
+    #dfe5e8;
+
+  background: #f6f8f9;
+}
+
+.pharmacist-system-status > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.pharmacist-system-status strong {
+  color: #315c4c;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.pharmacist-system-status.is-offline strong {
+  color: #667985;
+}
+
+.pharmacist-system-status > div > span {
+  color: #80908d;
+
+  font-size: 8px;
+}
+
+
+/* =========================================================
+   PHARMACIST PRIMARY VERIFY
+========================================================= */
+
+.pharmacist-primary-action {
+  width: 100%;
+  min-height: 66px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 11px;
+
+  padding:
+    10px
+    15px;
+
+  border: 0;
+  border-radius: 15px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      105deg,
+      var(--brand-blue, #0b63b6),
+      var(--brand-teal, #00989f)
+    );
+
+  box-shadow:
+    0 7px 16px
+    rgba(11, 99, 182, 0.12);
+
+  text-align: left;
+
+  transition:
+    transform 0.15s ease;
+}
+
+.pharmacist-primary-action:active {
+  transform: scale(0.985);
+}
+
+.pharmacist-primary-action svg {
+  width: 23px;
+  height: 23px;
+
+  flex: 0 0 auto;
+}
+
+.pharmacist-primary-action > div {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.pharmacist-primary-action strong {
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.pharmacist-primary-action span {
+  font-size: 9px;
+
+  opacity: 0.9;
+}
+
+
+/* =========================================================
+   PHARMACIST ACTION CARDS
+========================================================= */
+
+.pharmacist-action-grid {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 9px;
+
+  margin-bottom: 11px;
+}
+
+.pharmacist-action-card {
+  width: 100%;
+  min-height: 83px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  padding: 11px;
+
+  border:
+    1px solid
+    #dce7ec;
+
+  border-radius: 14px;
+
+  color: #173653;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.pharmacist-action-card:hover {
+  border-color: #c8dce7;
+
+  background: #fbfdfe;
+}
+
+.pharmacist-action-card:active {
+  transform: scale(0.98);
+}
+
+.pharmacist-action-card > svg {
+  width: 21px;
+  height: 21px;
+
+  flex: 0 0 auto;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pharmacist-action-copy {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.pharmacist-action-copy strong {
+  color: #173653;
+
+  font-size: 11px;
+  font-weight: 850;
+
+  line-height: 1.25;
+}
+
+.pharmacist-action-copy span {
+  color: #7b8d99;
+
+  font-size: 8px;
+  line-height: 1.35;
+}
+
+.pharmacist-escalate-card {
+  border-color: #eadfdc;
+
+  background: #fffdfc;
+}
+
+
+/* =========================================================
+   PHARMACIST SUMMARY
+========================================================= */
+
+.pharmacist-summary {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 6px;
+
+  margin-bottom: 11px;
+}
+
+.pharmacist-metric {
+  min-width: 0;
+  min-height: 57px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  padding: 6px 3px;
+
+  border:
+    1px solid
+    #e0e9ed;
+
+  border-radius: 11px;
+
+  background: #f9fbfc;
+
+  text-align: center;
+}
+
+.pharmacist-metric span {
+  color: #7c8e99;
+
+  font-size: 7px;
+  line-height: 1.2;
+}
+
+.pharmacist-metric strong {
+  color: #173653;
+
+  font-size: 17px;
+  font-weight: 850;
+}
+
+
+/* =========================================================
+   RECENT ACTIVITY
+========================================================= */
+
+.pharmacist-recent {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  border:
+    1px solid
+    #e0e8ec;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+}
+
+.section-heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 4px;
+}
+
+.section-heading-row h3 {
+  margin: 0;
+
+  font-size: 12px;
+}
+
+.text-action {
+  padding:
+    5px
+    0;
+
+  border: 0;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: transparent;
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.recent-event-row {
+  width: 100%;
+
+  min-height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  border-bottom:
+    1px solid
+    #edf2f4;
+}
+
+.recent-event-row:last-child {
+  border-bottom: 0;
+}
+
+.recent-event-row > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.recent-event-row strong {
+  overflow: hidden;
+
+  color: #38566a;
+
+  font-size: 8.5px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-event-row span {
+  color: #8a99a2;
+
+  font-size: 7px;
+}
+
+.recent-event-result {
+  align-items: flex-end;
+
+  text-align: right;
+}
+
+
+/* =========================================================
+   PHARMACIST BOTTOM NAVIGATION
+========================================================= */
+
+.pharmacist-nav {
+  position: absolute;
+
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  z-index: 20;
+
+  height: 61px;
+
+  display: grid;
+  grid-template-columns:
+    repeat(5, 1fr);
+
+  padding:
+    5px
+    8px
+    7px;
+
+  border-top:
+    1px solid
+    #e1e9ed;
+
+  background:
+    rgba(255, 255, 255, 0.98);
+
+  box-shadow:
+    0 -5px 16px
+    rgba(31, 65, 87, 0.04);
+}
+
+.pharmacist-nav button {
+  min-width: 0;
+
+  border: 0;
+
+  border-radius: 9px;
+
+  color: #82929d;
+
+  background: transparent;
+
+  font-size: 7.5px;
+  font-weight: 750;
+}
+
+.pharmacist-nav button.active {
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: #eef6fb;
+}
+
+
+/* =========================================================
+   SHORTAGES — CURRENT AVAILABILITY
+========================================================= */
 
 .shortage-list {
   width: 100%;
@@ -18,7 +1903,6 @@
   min-height: 78px;
 
   display: flex;
-
   justify-content: space-between;
   align-items: center;
 
@@ -39,7 +1923,6 @@
   min-width: 0;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 5px;
@@ -49,7 +1932,6 @@
   color: #173653;
 
   font-size: 13px;
-
   font-weight: 800;
 
   line-height: 1.25;
@@ -64,14 +1946,13 @@
 }
 
 .availability-badge {
-  flex-shrink: 0;
-
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
+  flex: 0 0 auto;
 
   min-height: 27px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   padding:
     6px
@@ -80,26 +1961,602 @@
   border-radius: 999px;
 
   font-size: 9px;
-
   font-weight: 800;
 
   white-space: nowrap;
 }
 
 .availability-badge.available {
-  background: #e8f7f1;
-
   color: #227659;
+
+  background: #e8f7f1;
 }
 
 .availability-badge.low {
-  background: #fff5df;
-
   color: #95620b;
+
+  background: #fff5df;
 }
 
 .availability-badge.unavailable {
+  color: #b24b40;
+
+  background: #fff0ee;
+}
+
+
+/* =========================================================
+   BATCH LOOKUP
+========================================================= */
+
+.batch-result-card {
+  width: 100%;
+
+  margin-top: 18px;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #dfe8ed;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+}
+
+.recall-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 28px;
+
+  margin-bottom: 10px;
+
+  padding:
+    6px
+    9px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.recall-status.active {
+  color: #ae4339;
+
+  background: #fff0ee;
+}
+
+.recall-status.clear {
+  color: #247157;
+
+  background: #eaf8f1;
+}
+
+.recall-notice {
+  margin-top: 12px;
+
+  padding: 12px;
+
+  border:
+    1px solid
+    #eaded9;
+
+  border-radius: 12px;
+
+  background: #fffaf8;
+}
+
+.recall-notice strong {
+  color: #724b43;
+
+  font-size: 10px;
+}
+
+.recall-notice p {
+  margin:
+    5px
+    0
+    0;
+
+  color: #76645f;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   RECALLS
+========================================================= */
+
+.recall-list {
+  width: 100%;
+
+  display: grid;
+
+  gap: 10px;
+
+  margin-top: 17px;
+}
+
+.recall-list-card {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns:
+    1fr auto;
+
+  gap:
+    5px
+    10px;
+
+  padding: 14px;
+
+  border:
+    1px solid
+    #e3e8ea;
+
+  border-radius: 14px;
+
+  color: #173653;
+
+  background: #ffffff;
+
+  text-align: left;
+}
+
+.recall-list-card strong {
+  font-size: 12px;
+}
+
+.recall-list-card > span:not(.recall-pill),
+.recall-list-card small {
+  color: #81919b;
+
+  font-size: 9px;
+}
+
+.recall-pill {
+  grid-row:
+    1 /
+    span 2;
+
+  grid-column: 2;
+
+  align-self: center;
+
+  padding:
+    6px
+    8px;
+
+  border-radius: 999px;
+
+  color: #ad4339;
+
   background: #fff0ee;
 
-  color: #b24b40;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-list {
+  width: 100%;
+
+  display: grid;
+
+  gap: 10px;
+
+  margin-top: 17px;
+}
+
+.history-card {
+  width: 100%;
+
+  padding: 13px;
+
+  border:
+    1px solid
+    #dfe8ed;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+}
+
+.history-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 5px;
+}
+
+.history-card-head > strong {
+  color: #284a60;
+
+  font-size: 12px;
+}
+
+.history-status {
+  padding:
+    5px
+    8px;
+
+  border-radius: 999px;
+
+  font-size: 8px;
+  font-weight: 850;
+}
+
+.history-match {
+  color: #237258;
+
+  background: #eaf8f1;
+}
+
+.history-no_match {
+  color: #a84a41;
+
+  background: #fff0ee;
+}
+
+.history-not_covered {
+  color: #886a27;
+
+  background: #fff6df;
+}
+
+.history-recall_check {
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: #edf6fc;
+}
+
+
+/* =========================================================
+   PHARMACIST PROFILE
+========================================================= */
+
+.pharmacist-sub-screen {
+  padding-bottom: 30px;
+}
+
+.profile-page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-bottom: 20px;
+
+  text-align: center;
+}
+
+.profile-page-avatar {
+  width: 92px;
+  height: 92px;
+
+  margin-bottom: 11px;
+
+  object-fit: cover;
+
+  border:
+    3px solid
+    #ffffff;
+
+  border-radius: 50%;
+
+  background: #e8f1f5;
+
+  box-shadow:
+    0 4px 14px
+    rgba(24, 65, 91, 0.13);
+}
+
+.profile-page-header h1 {
+  margin-bottom: 3px;
+}
+
+.profile-page-header p {
+  margin-bottom: 8px;
+}
+
+.professional-status {
+  padding:
+    5px
+    9px;
+
+  border-radius: 999px;
+
+  color:
+    var(--brand-blue, #0b63b6);
+
+  background: #eaf4fb;
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.profile-information-card {
+  width: 100%;
+
+  margin-bottom: 13px;
+
+  padding:
+    3px
+    14px;
+
+  border:
+    1px solid
+    #dfe8ed;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+}
+
+.profile-row {
+  min-height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  border-bottom:
+    1px solid
+    #edf2f4;
+}
+
+.profile-row:last-child {
+  border-bottom: 0;
+}
+
+.profile-row span {
+  color: #7b8d99;
+
+  font-size: 10px;
+}
+
+.profile-row strong {
+  color: #315267;
+
+  font-size: 10px;
+
+  text-align: right;
+}
+
+.profile-note {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 7px;
+
+  padding: 11px;
+
+  border-radius: 11px;
+
+  color: #748692;
+
+  background: #f5f8fa;
+
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings-card {
+  width: 100%;
+
+  margin:
+    14px
+    0;
+
+  padding:
+    2px
+    13px;
+
+  border:
+    1px solid
+    #dfe8ed;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+}
+
+.settings-row {
+  min-height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  border-bottom:
+    1px solid
+    #edf2f4;
+}
+
+.settings-row:last-child {
+  border-bottom: 0;
+}
+
+.settings-row > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.settings-row strong {
+  color: #315267;
+
+  font-size: 10px;
+}
+
+.settings-row span {
+  color: #84949e;
+
+  font-size: 8px;
+}
+
+.settings-value {
+  color:
+    var(--brand-blue, #0b63b6) !important;
+
+  font-size: 15px !important;
+  font-weight: 850;
+}
+
+.settings-checkbox {
+  width: 17px;
+  height: 17px;
+
+  accent-color:
+    var(--brand-blue, #0b63b6);
+}
+
+.settings-link-row {
+  width: 100%;
+  min-height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border: 0;
+  border-bottom:
+    1px solid
+    #edf2f4;
+
+  color: #38596e;
+
+  background: transparent;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  text-align: left;
+}
+
+.settings-link-row:last-child {
+  border-bottom: 0;
+}
+
+
+/* =========================================================
+   RESPONSIVE PHONE SIZE
+========================================================= */
+
+@media (max-width: 393px) {
+  .phone-stage {
+    width: 100vw;
+
+    height: 100dvh;
+    max-height: none;
+
+    box-shadow: none;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONE
+========================================================= */
+
+@media (max-height: 760px) {
+  .pharmacist-screen {
+    padding-top: 14px;
+  }
+
+  .pharmacist-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .pharmacist-greeting h1 {
+    font-size: 20px;
+  }
+
+  .pharmacist-system-status {
+    min-height: 43px;
+
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-primary-action {
+    min-height: 57px;
+
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-action-grid {
+    gap: 7px;
+
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-action-card {
+    min-height: 70px;
+
+    padding: 9px;
+  }
+
+  .pharmacist-summary {
+    margin-bottom: 8px;
+  }
+
+  .pharmacist-metric {
+    min-height: 49px;
+  }
+
+  .recent-event-row {
+    min-height: 34px;
+  }
+}
+
+
+/* =========================================================
+   DESKTOP PREVIEW
+
+   The app remains the same phone size.
+========================================================= */
+
+@media (min-width: 600px) {
+  .app-shell {
+    min-height: 100vh;
+
+    padding:
+      20px
+      0;
+  }
+
+  .phone-stage {
+    height: min(
+      852px,
+      calc(100vh - 40px)
+    );
+
+    border-radius: 26px;
+
+    box-shadow:
+      0 18px 55px
+      rgba(27, 57, 76, 0.16);
+  }
 }
