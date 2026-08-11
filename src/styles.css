@@ -49,19 +49,23 @@ textarea {
 
 button {
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+
+  -webkit-tap-highlight-color:
+    transparent;
 }
 
 /* ==================================================
-   MAIN APP SHELL
+   APP BACKGROUND
 ================================================== */
 
 .app-shell {
   width: 100%;
+
   min-height: 100vh;
   min-height: 100dvh;
 
   display: flex;
+
   justify-content: center;
   align-items: flex-start;
 
@@ -71,13 +75,13 @@ button {
     linear-gradient(
       180deg,
       #f9fcfe 0%,
-      #eef5f9 100%
+      #edf5f9 100%
     );
 }
 
 /* ==================================================
-   SHARED PHONE SIZE
-   393 × 852
+   PHONE FRAME
+   SAME SIZE FOR EVERY SCREEN
 ================================================== */
 
 .phone-stage {
@@ -95,29 +99,39 @@ button {
 
   background: #ffffff;
 
-  border: 1px solid #d9e7ef;
-  border-radius: 28px;
+  border:
+    1px solid
+    #d6e5ed;
+
+  border-radius: 30px;
 
   box-shadow:
-    0 12px 34px rgba(18, 55, 84, 0.08);
+    0 12px 36px
+    rgba(18, 55, 84, 0.09);
 }
 
 /* ==================================================
-   ALL PAGES
+   ALL APP SCREENS
 ================================================== */
 
 .screen {
   width: 100%;
   height: 100%;
 
-  flex: 1 1 auto;
-
   min-height: 0;
 
+  flex: 1 1 auto;
+
   padding:
-    max(18px, env(safe-area-inset-top))
-    20px
-    max(18px, env(safe-area-inset-bottom));
+    max(
+      17px,
+      env(safe-area-inset-top)
+    )
+    25px
+    max(
+      17px,
+      env(safe-area-inset-bottom)
+    );
 
   overflow-y: auto;
   overflow-x: hidden;
@@ -125,27 +139,21 @@ button {
   background: #ffffff;
 
   border: 0;
-  border-radius: 0;
-
-  box-shadow: none;
 
   scrollbar-width: thin;
 }
 
 /* ==================================================
-   HOME PAGE
+   HOME
 ================================================== */
 
 .home-screen {
-  width: 100%;
-  height: 100%;
-
   display: flex;
   flex-direction: column;
 }
 
 /* ==================================================
-   WIFI STATUS INSIDE APP
+   ONLINE STATUS
 ================================================== */
 
 .home-status-row {
@@ -155,27 +163,28 @@ button {
 
   display: flex;
   justify-content: flex-end;
-  align-items: center;
+  align-items: flex-start;
 
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 .network-badge {
   appearance: none;
 
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-
   min-height: 34px;
 
-  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 7px 11px;
 
   border: 0;
   border-radius: 999px;
 
   font-size: 0.76rem;
-  font-weight: 750;
+  font-weight: 800;
 
   line-height: 1;
 
@@ -186,98 +195,131 @@ button {
 }
 
 .network-badge.online {
-  color: #147d64;
-  background: #e8f7f2;
+  color: #117252;
+
+  background: #e8f7f1;
 }
 
 .network-badge.offline {
-  color: #6f7e89;
-  background: #eef2f4;
+  color: #687783;
+
+  background: #edf1f3;
 }
 
 .network-badge:active {
-  transform: scale(0.97);
+  transform:
+    scale(0.97);
 }
 
 .network-badge:focus-visible {
   outline:
     3px solid
-    rgba(11, 99, 182, 0.18);
+    rgba(11, 99, 182, 0.17);
 
   outline-offset: 2px;
 }
 
 .wifi-icon {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
 
   fill: none;
-  stroke: currentColor;
+
+  stroke:
+    currentColor;
 
   stroke-width: 1.9;
+
   stroke-linecap: round;
 }
 
 .wifi-dot {
-  fill: currentColor;
+  fill:
+    currentColor;
+
   stroke: none;
 }
 
 /* ==================================================
-   BIG LOGO
+   LARGE MEDAUTH LOGO
 ================================================== */
 
 .home-brand {
   width: 100%;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
-  margin: 4px 0 18px;
+  margin:
+    2px 0
+    16px;
 }
 
 .hero-logo {
   display: block;
 
-  width: 225px;
-  max-width: 72%;
+  width: 245px;
+  max-width: 78%;
 
   height: auto;
-  max-height: 195px;
+
+  max-height: 215px;
 
   object-fit: contain;
 }
 
 /* ==================================================
-   GENERIC BUTTONS
+   HOME SCAN MEDICINE
 ================================================== */
 
-.btn {
+.home-scan-button {
   width: 100%;
 
-  min-height: 54px;
+  min-height: 58px;
 
-  padding: 14px 18px;
+  display: flex;
 
-  border: 1px solid transparent;
-  border-radius: 14px;
+  justify-content: center;
+  align-items: center;
 
-  font-size: 0.96rem;
-  font-weight: 760;
+  gap: 10px;
+
+  padding:
+    14px 18px;
+
+  border: 0;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      110deg,
+      #0756b4,
+      var(--brand-teal)
+    );
+
+  color: #ffffff;
+
+  font-size: 1rem;
+  font-weight: 800;
+
+  box-shadow:
+    0 6px 16px
+    rgba(11, 99, 182, 0.13);
 
   transition:
     transform 0.12s ease,
-    opacity 0.15s ease,
-    background-color 0.15s ease,
-    border-color 0.15s ease;
+    opacity 0.15s ease;
 }
 
-.btn:active {
-  transform: scale(0.985);
+.home-scan-button:active {
+  transform:
+    scale(0.985);
 }
 
-.btn:focus-visible {
+.home-scan-button:focus-visible {
   outline:
     3px solid
     rgba(11, 99, 182, 0.18);
@@ -285,88 +327,69 @@ button {
   outline-offset: 2px;
 }
 
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+.home-scan-icon {
+  width: 23px;
+  height: 23px;
 
-.btn-primary {
-  color: #ffffff;
+  fill: none;
 
-  background:
-    linear-gradient(
-      110deg,
-      var(--brand-blue),
-      var(--brand-teal)
-    );
+  stroke:
+    currentColor;
 
-  box-shadow:
-    0 5px 14px
-    rgba(11, 99, 182, 0.12);
-}
+  stroke-width: 1.8;
 
-.btn-secondary {
-  color: var(--brand-deep);
-
-  background: #ffffff;
-
-  border-color: #90bfdc;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* ==================================================
-   HOME SCAN BUTTON
-================================================== */
-
-.home-screen > .btn-primary {
-  margin-top: 2px;
-}
-
-/* ==================================================
-   HOME DIVIDER
+   OR DIVIDER
 ================================================== */
 
 .home-divider {
   width: 100%;
 
   display: flex;
+
   align-items: center;
-  gap: 10px;
 
-  margin: 17px 0 14px;
+  gap: 14px;
 
-  color: #71889a;
+  margin:
+    19px 0
+    15px;
 
-  font-size: 0.68rem;
-  font-weight: 800;
+  color: #8394a3;
 
-  letter-spacing: 0.11em;
+  font-size: 0.86rem;
+  font-weight: 650;
 
-  text-transform: uppercase;
+  text-transform: none;
+
+  letter-spacing: 0;
 }
 
 .home-divider::before,
 .home-divider::after {
   content: "";
 
-  height: 1px;
-
   flex: 1;
 
-  background: #dce8ef;
-}
+  height: 1px;
 
-.home-divider span {
-  white-space: nowrap;
+  background:
+    #cad9e3;
 }
 
 /* ==================================================
-   HOME LOGIN FORM
+   LOGIN FORM
 ================================================== */
 
 .home-login-form {
   width: 100%;
 
   display: flex;
+
   flex-direction: column;
 
   gap: 13px;
@@ -376,32 +399,38 @@ button {
   width: 100%;
 
   display: flex;
+
   flex-direction: column;
 
   gap: 7px;
 }
 
 .home-login-field > span {
-  color: #345c7c;
+  color: #16477e;
 
-  font-size: 0.71rem;
-  font-weight: 800;
+  font-size: 0.73rem;
 
-  letter-spacing: 0.045em;
+  font-weight: 850;
+
+  letter-spacing: 0.055em;
 }
 
 .home-login-field input {
   width: 100%;
-  height: 50px;
+  height: 52px;
 
-  padding: 0 14px;
+  padding:
+    0 15px;
 
-  border: 1px solid #c5dae7;
+  border:
+    1px solid
+    #9fc7e5;
+
   border-radius: 12px;
 
   outline: none;
 
-  background: #fbfdff;
+  background: #ffffff;
 
   color: #17324d;
 
@@ -413,11 +442,12 @@ button {
 }
 
 .home-login-field input::placeholder {
-  color: #91a3b1;
+  color: #8fa2b1;
 }
 
 .home-login-field input:focus {
-  border-color: var(--brand-blue);
+  border-color:
+    var(--brand-blue);
 
   box-shadow:
     0 0 0 3px
@@ -439,26 +469,29 @@ button {
 }
 
 .password-toggle {
+  position: absolute;
+
   width: 42px;
   height: 42px;
-
-  position: absolute;
 
   right: 4px;
   top: 50%;
 
-  transform: translateY(-50%);
+  transform:
+    translateY(-50%);
 
   display: grid;
+
   place-items: center;
 
   padding: 0;
 
   border: 0;
 
-  background: transparent;
+  background:
+    transparent;
 
-  color: #66839a;
+  color: #648097;
 }
 
 .password-toggle svg {
@@ -466,40 +499,46 @@ button {
   height: 19px;
 
   fill: none;
-  stroke: currentColor;
+
+  stroke:
+    currentColor;
 
   stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
 }
 
 /* ==================================================
-   REMEMBER / FORGOT PASSWORD
+   REMEMBER + FORGOT
 ================================================== */
 
 .login-options {
   width: 100%;
 
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   align-items: center;
 
-  gap: 10px;
-
-  margin-top: -1px;
+  gap: 12px;
 }
 
 .remember-device {
   display: inline-flex;
+
   align-items: center;
 
   gap: 7px;
 
-  color: #526f86;
+  color: #486a84;
 
   font-size: 0.74rem;
-
-  cursor: pointer;
 }
 
 .remember-device input {
@@ -508,59 +547,55 @@ button {
 
   margin: 0;
 
-  accent-color: var(--brand-blue);
+  accent-color:
+    var(--brand-blue);
 }
 
 .forgot-password {
-  min-height: 34px;
-
-  padding: 6px 0;
-
-  border: 0;
-
-  background: transparent;
-
-  color: var(--brand-blue);
+  color:
+    var(--brand-blue);
 
   font-size: 0.74rem;
+
   font-weight: 700;
 }
 
-.forgot-password:hover {
-  text-decoration: underline;
-}
-
 /* ==================================================
-   HOME SIGN-IN BUTTON
+   SIGN IN
 ================================================== */
 
 .home-signin-button {
   width: 100%;
-  height: 54px;
+
+  min-height: 56px;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
-  gap: 7px;
+  gap: 8px;
 
   margin-top: 2px;
 
-  padding: 0 18px;
+  padding:
+    14px 18px;
 
   border: 0;
+
   border-radius: 14px;
 
   background:
     linear-gradient(
       110deg,
-      var(--brand-blue),
+      #0756b4,
       var(--brand-teal)
     );
 
   color: #ffffff;
 
-  font-size: 0.94rem;
+  font-size: 0.96rem;
+
   font-weight: 800;
 
   box-shadow:
@@ -573,7 +608,12 @@ button {
 }
 
 .home-signin-button:active {
-  transform: scale(0.985);
+  transform:
+    scale(0.985);
+}
+
+.signin-arrow {
+  font-size: 1.08rem;
 }
 
 /* ==================================================
@@ -584,19 +624,19 @@ button {
   width: 100%;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
   gap: 5px;
 
-  margin-top: 12px;
+  margin-top: 13px;
 
-  padding: 8px 2px 2px;
+  padding-top: 7px;
 
-  color: #70889b;
+  color: #6c8294;
 
-  font-size: 0.61rem;
-  line-height: 1.3;
+  font-size: 0.62rem;
 
   text-align: center;
 }
@@ -605,14 +645,21 @@ button {
   width: 13px;
   height: 13px;
 
-  flex: 0 0 13px;
+  flex:
+    0 0 13px;
 
   fill: none;
-  stroke: var(--brand-teal);
+
+  stroke:
+    var(--brand-teal);
 
   stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
 }
 
 /* ==================================================
@@ -624,51 +671,112 @@ button {
   height: 40px;
 
   display: inline-flex;
+
   align-items: center;
+
   gap: 4px;
 
-  margin: -4px 0 10px -8px;
+  margin:
+    -4px 0
+    10px -8px;
 
-  padding: 7px 9px;
+  padding:
+    7px 9px;
 
   border: 0;
-  border-radius: 10px;
 
-  background: transparent;
+  border-radius:
+    10px;
 
-  color: var(--brand-blue);
+  background:
+    transparent;
+
+  color:
+    var(--brand-blue);
 
   font-size: 0.9rem;
-  font-weight: 700;
 
-  flex: 0 0 auto;
+  font-weight: 700;
 }
 
 .back-button svg {
   width: 20px;
   height: 20px;
 
-  flex: 0 0 20px;
-
   fill: none;
-  stroke: currentColor;
+
+  stroke:
+    currentColor;
 
   stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
 }
 
 .back-button:hover,
 .back-button:active {
-  background: #edf6fb;
+  background:
+    #edf6fb;
 }
 
-.back-button:focus-visible {
-  outline:
-    3px solid
-    rgba(11, 99, 182, 0.18);
+/* ==================================================
+   SHARED BUTTONS
+================================================== */
 
-  outline-offset: 2px;
+.btn {
+  width: 100%;
+
+  min-height: 54px;
+
+  padding:
+    14px 18px;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius:
+    14px;
+
+  font-size:
+    0.96rem;
+
+  font-weight: 760;
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease;
+}
+
+.btn:active {
+  transform:
+    scale(0.985);
+}
+
+.btn-primary {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      110deg,
+      var(--brand-blue),
+      var(--brand-teal)
+    );
+}
+
+.btn-secondary {
+  color:
+    var(--brand-deep);
+
+  background:
+    #ffffff;
+
+  border-color:
+    #90bfdc;
 }
 
 /* ==================================================
@@ -676,12 +784,16 @@ button {
 ================================================== */
 
 h1 {
-  margin: 16px 0 10px;
+  margin:
+    15px 0
+    10px;
 
-  font-size: 2.15rem;
+  font-size: 2.1rem;
+
   line-height: 1.06;
 
-  letter-spacing: -0.04em;
+  letter-spacing:
+    -0.04em;
 
   color: #12304b;
 }
@@ -698,25 +810,32 @@ p {
 }
 
 .eyebrow {
-  color: var(--brand-teal);
+  color:
+    var(--brand-teal);
 
-  font-size: 0.78rem;
+  font-size:
+    0.76rem;
+
   font-weight: 800;
 
-  text-transform: uppercase;
+  text-transform:
+    uppercase;
 
-  letter-spacing: 0.13em;
+  letter-spacing:
+    0.13em;
 }
 
 .hint,
 .muted {
-  font-size: 0.88rem;
+  font-size:
+    0.88rem;
 
-  color: #72879a;
+  color:
+    #72879a;
 }
 
 /* ==================================================
-   NORMAL FORM FIELDS
+   STANDARD FORMS
 ================================================== */
 
 .field {
@@ -724,11 +843,12 @@ p {
 
   gap: 8px;
 
-  margin: 16px 0;
-
-  font-weight: 750;
+  margin:
+    16px 0;
 
   color: #29475f;
+
+  font-weight: 750;
 }
 
 .field input,
@@ -736,22 +856,30 @@ p {
 .field textarea {
   width: 100%;
 
-  padding: 14px 15px;
+  padding:
+    14px 15px;
 
-  border: 1px solid #c8dbe7;
-  border-radius: 14px;
+  border:
+    1px solid
+    #c8dbe7;
+
+  border-radius:
+    14px;
 
   outline: none;
 
-  color: #17324d;
+  background:
+    #fbfdff;
 
-  background: #fbfdff;
+  color:
+    #17324d;
 }
 
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: var(--brand-blue);
+  border-color:
+    var(--brand-blue);
 
   box-shadow:
     0 0 0 4px
@@ -759,37 +887,30 @@ p {
 }
 
 /* ==================================================
-   ACTION STACK
-================================================== */
-
-.action-stack {
-  width: 100%;
-
-  display: grid;
-
-  gap: 12px;
-
-  margin-top: 20px;
-}
-
-/* ==================================================
-   SCANNER PAGE
+   SCANNER
 ================================================== */
 
 .scanner-panel {
   height: 295px;
 
-  margin: 22px 0 16px;
-
   position: relative;
+
+  display: grid;
+
+  place-items: center;
 
   overflow: hidden;
 
-  display: grid;
-  place-items: center;
+  margin:
+    22px 0
+    16px;
 
-  border: 2px solid #b8dbe7;
-  border-radius: 24px;
+  border:
+    2px solid
+    #b8dbe7;
+
+  border-radius:
+    24px;
 
   background:
     linear-gradient(
@@ -815,7 +936,9 @@ p {
     );
 
   animation:
-    scan 2.4s ease-in-out infinite alternate;
+    scan 2.4s
+    ease-in-out
+    infinite alternate;
 }
 
 @keyframes scan {
@@ -834,40 +957,47 @@ p {
   width: 58px;
   height: 58px;
 
-  border-color: var(--brand-blue);
-  border-style: solid;
+  border-color:
+    var(--brand-blue);
+
+  border-style:
+    solid;
 }
 
 .scan-corners span:nth-child(1) {
   left: 28px;
   top: 28px;
 
-  border-width: 5px 0 0 5px;
+  border-width:
+    5px 0 0 5px;
 }
 
 .scan-corners span:nth-child(2) {
   right: 28px;
   top: 28px;
 
-  border-width: 5px 5px 0 0;
+  border-width:
+    5px 5px 0 0;
 }
 
 .scan-corners span:nth-child(3) {
   left: 28px;
   bottom: 28px;
 
-  border-width: 0 0 5px 5px;
+  border-width:
+    0 0 5px 5px;
 }
 
 .scan-corners span:nth-child(4) {
   right: 28px;
   bottom: 28px;
 
-  border-width: 0 5px 5px 0;
+  border-width:
+    0 5px 5px 0;
 }
 
 /* ==================================================
-   SAMPLE BUTTONS
+   SAMPLE SCANS
 ================================================== */
 
 .sample-box {
@@ -879,84 +1009,114 @@ p {
 
   margin-bottom: 14px;
 
-  border: 1px solid #dcebf2;
-  border-radius: 16px;
+  border:
+    1px solid
+    #dcebf2;
 
-  background: #f6fbfd;
+  border-radius:
+    16px;
+
+  background:
+    #f6fbfd;
 }
 
 .sample-box button {
-  padding: 10px 11px;
+  padding:
+    10px 11px;
 
   border: 0;
-  border-radius: 11px;
+
+  border-radius:
+    11px;
+
+  background:
+    #ffffff;
+
+  color:
+    #27536f;
 
   text-align: left;
-
-  background: #ffffff;
-
-  color: #27536f;
 }
 
 /* ==================================================
-   CENTER SCREENS
+   CENTERED SCREENS
 ================================================== */
 
 .center-screen {
   display: flex;
-  flex-direction: column;
 
-  justify-content: center;
-  align-items: center;
+  flex-direction:
+    column;
 
-  text-align: center;
+  justify-content:
+    center;
+
+  align-items:
+    center;
+
+  text-align:
+    center;
 }
 
 .loader {
   width: 64px;
   height: 64px;
 
-  border: 6px solid #dbeaf3;
-  border-top-color: var(--brand-teal);
+  border:
+    6px solid
+    #dbeaf3;
 
-  border-radius: 50%;
+  border-top-color:
+    var(--brand-teal);
 
-  animation: spin 0.9s linear infinite;
+  border-radius:
+    50%;
+
+  animation:
+    spin 0.9s
+    linear infinite;
 }
 
 @keyframes spin {
   to {
-    transform: rotate(360deg);
+    transform:
+      rotate(360deg);
   }
 }
 
 /* ==================================================
-   STATUS CARDS
+   RESULT
 ================================================== */
+
+.action-stack {
+  width: 100%;
+
+  display: grid;
+
+  gap: 12px;
+
+  margin-top:
+    20px;
+}
 
 .status-card {
   display: grid;
 
-  grid-template-columns: 60px 1fr;
+  grid-template-columns:
+    60px 1fr;
 
   gap: 14px;
 
-  align-items: center;
+  align-items:
+    center;
 
   padding: 16px;
 
-  border: 1px solid;
-  border-radius: 18px;
-}
+  border:
+    1px solid;
 
-.status-card h2 {
-  margin: 3px 0;
-
-  font-size: 1.8rem;
-}
-
-.status-card p {
-  margin: 0;
+  border-radius:
+    18px;
 }
 
 .status-icon {
@@ -964,41 +1124,63 @@ p {
   height: 54px;
 
   display: grid;
-  place-items: center;
 
-  border-radius: 50%;
+  place-items:
+    center;
 
-  color: #ffffff;
+  border-radius:
+    50%;
 
-  font-size: 1.8rem;
-  font-weight: 900;
+  color:
+    #ffffff;
+
+  font-size:
+    1.8rem;
+
+  font-weight:
+    900;
 }
 
 .status-card.match {
-  background: #eaf9f6;
-  border-color: #9edfd7;
+  background:
+    #eaf9f6;
+
+  border-color:
+    #9edfd7;
 }
 
-.status-card.match .status-icon {
-  background: var(--brand-teal);
+.status-card.match
+.status-icon {
+  background:
+    var(--brand-teal);
 }
 
 .status-card.no_match {
-  background: #fff5e9;
-  border-color: #f0c994;
+  background:
+    #fff5e9;
+
+  border-color:
+    #f0c994;
 }
 
-.status-card.no_match .status-icon {
-  background: #c97900;
+.status-card.no_match
+.status-icon {
+  background:
+    #c97900;
 }
 
 .status-card.not_covered {
-  background: #eef5fb;
-  border-color: #b9d5e7;
+  background:
+    #eef5fb;
+
+  border-color:
+    #b9d5e7;
 }
 
-.status-card.not_covered .status-icon {
-  background: var(--brand-blue);
+.status-card.not_covered
+.status-icon {
+  background:
+    var(--brand-blue);
 }
 
 /* ==================================================
@@ -1008,31 +1190,44 @@ p {
 .product-card,
 .panel,
 .notice {
-  margin: 16px 0;
+  margin:
+    16px 0;
 
   padding: 14px;
 
-  border: 1px solid #d9e8f0;
-  border-radius: 16px;
+  border:
+    1px solid
+    #d9e8f0;
 
-  background: #f9fcfe;
+  border-radius:
+    16px;
+
+  background:
+    #f9fcfe;
 }
 
 .notice {
-  background: #eef8fb;
+  background:
+    #eef8fb;
 
-  color: #3f6177;
+  color:
+    #3f6177;
 }
 
 .product-card div {
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
 
   gap: 14px;
 
-  padding: 8px 0;
+  padding:
+    8px 0;
 
-  border-bottom: 1px solid #e7f0f5;
+  border-bottom:
+    1px solid
+    #e7f0f5;
 }
 
 .product-card div:last-child {
@@ -1040,11 +1235,13 @@ p {
 }
 
 .product-card span {
-  color: #71879a;
+  color:
+    #71879a;
 }
 
 .product-card strong {
-  text-align: right;
+  text-align:
+    right;
 }
 
 /* ==================================================
@@ -1052,31 +1249,41 @@ p {
 ================================================== */
 
 .details-list {
-  margin: 18px 0;
+  margin:
+    18px 0;
 
-  border-top: 1px solid #dfebf2;
+  border-top:
+    1px solid
+    #dfebf2;
 }
 
 .detail-row {
   display: grid;
 
-  grid-template-columns: 1fr 1.35fr;
+  grid-template-columns:
+    1fr 1.35fr;
 
   gap: 14px;
 
-  padding: 13px 0;
+  padding:
+    13px 0;
 
-  border-bottom: 1px solid #dfebf2;
+  border-bottom:
+    1px solid
+    #dfebf2;
 }
 
 .detail-row span {
-  color: #6e8396;
+  color:
+    #6e8396;
 }
 
 .detail-row strong {
-  text-align: right;
+  text-align:
+    right;
 
-  word-break: break-word;
+  word-break:
+    break-word;
 }
 
 /* ==================================================
@@ -1088,14 +1295,21 @@ p {
   height: 76px;
 
   display: grid;
-  place-items: center;
 
-  border-radius: 50%;
+  place-items:
+    center;
 
-  color: #ffffff;
+  border-radius:
+    50%;
 
-  font-size: 2.5rem;
-  font-weight: 900;
+  color:
+    #ffffff;
+
+  font-size:
+    2.5rem;
+
+  font-weight:
+    900;
 
   background:
     linear-gradient(
@@ -1112,42 +1326,59 @@ p {
 .dashboard-head {
   display: flex;
 
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content:
+    space-between;
+
+  align-items:
+    flex-start;
 
   gap: 12px;
 }
 
 .role-badge {
-  padding: 7px 10px;
+  padding:
+    7px 10px;
 
-  border-radius: 999px;
+  border-radius:
+    999px;
 
-  background: #e8f4fb;
+  background:
+    #e8f4fb;
 
-  color: var(--brand-deep);
+  color:
+    var(--brand-deep);
 
-  text-transform: capitalize;
+  font-size:
+    0.78rem;
 
-  font-size: 0.78rem;
-  font-weight: 750;
+  font-weight:
+    750;
+
+  text-transform:
+    capitalize;
 }
 
 .metric-grid {
   display: grid;
 
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns:
+    repeat(2, 1fr);
 
   gap: 10px;
 
-  margin: 16px 0;
+  margin:
+    16px 0;
 }
 
 .metric {
   padding: 14px;
 
-  border: 1px solid #d5e8f1;
-  border-radius: 16px;
+  border:
+    1px solid
+    #d5e8f1;
+
+  border-radius:
+    16px;
 
   background:
     linear-gradient(
@@ -1160,19 +1391,23 @@ p {
 .metric span {
   display: block;
 
-  color: #698197;
+  color:
+    #698197;
 
-  font-size: 0.78rem;
+  font-size:
+    0.78rem;
 }
 
 .metric strong {
-  font-size: 1.6rem;
+  color:
+    var(--brand-deep);
 
-  color: var(--brand-deep);
+  font-size:
+    1.6rem;
 }
 
 /* ==================================================
-   SMALL PHONES
+   REAL MOBILE
 ================================================== */
 
 @media (max-width: 393px) {
@@ -1184,17 +1419,28 @@ p {
     width: 100vw;
     height: 100dvh;
 
-    max-width: 393px;
-
     border: 0;
-    border-radius: 0;
 
-    box-shadow: none;
+    border-radius:
+      0;
+
+    box-shadow:
+      none;
+  }
+
+  .screen {
+    padding-left:
+      22px;
+
+    padding-right:
+      22px;
   }
 
   .hero-logo {
-    width: 205px;
-    max-width: 70%;
+    width: 225px;
+
+    max-width:
+      76%;
   }
 }
 
@@ -1204,16 +1450,27 @@ p {
 
 @media (max-height: 760px) {
   .home-brand {
-    margin: 2px 0 10px;
+    margin:
+      0 0
+      9px;
   }
 
   .hero-logo {
-    width: 180px;
-    max-height: 145px;
+    width:
+      180px;
+
+    max-height:
+      142px;
+  }
+
+  .home-scan-button {
+    min-height:
+      52px;
   }
 
   .home-divider {
-    margin: 12px 0;
+    margin:
+      11px 0;
   }
 
   .home-login-form {
@@ -1221,14 +1478,17 @@ p {
   }
 
   .home-login-field input {
-    height: 46px;
+    height:
+      45px;
   }
 
   .home-signin-button {
-    height: 50px;
+    min-height:
+      50px;
   }
 
   .security-footer {
-    margin-top: 7px;
+    margin-top:
+      7px;
   }
 }
