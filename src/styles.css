@@ -5378,3 +5378,571 @@ p {
   }
 }
 
+/* =========================================================
+   MANUFACTURER - HARRY
+   Added to the existing MedAuth design
+========================================================= */
+
+.manufacturer-screen,
+.manufacturer-detail-screen {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.manufacturer-profile-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.manufacturer-profile-main {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.manufacturer-avatar {
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+  flex: 0 0 58px;
+  object-fit: cover;
+  object-position: center 20%;
+  border: 2px solid #d7e9f3;
+  border-radius: 50%;
+  background: #f7fbfd;
+}
+
+.manufacturer-greeting {
+  min-width: 0;
+}
+
+.manufacturer-greeting > span {
+  display: block;
+  margin-bottom: 2px;
+  color: #75899a;
+  font-size: 0.64rem;
+}
+
+.manufacturer-greeting h1 {
+  margin: 0;
+  color: #082f5a;
+  font-size: 1.45rem;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.manufacturer-greeting p {
+  margin: 4px 0 0;
+  color: var(--brand-teal);
+  font-size: 0.6rem;
+  font-weight: 750;
+}
+
+.manufacturer-profile-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 7px;
+}
+
+.manufacturer-profile-actions .profile-icon-button {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+}
+
+.manufacturer-system-status {
+  width: 100%;
+  min-height: 49px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 8px 11px;
+  border-radius: 14px;
+}
+
+.manufacturer-system-status.is-online {
+  color: #17694f;
+  background: #eaf8f3;
+}
+
+.manufacturer-system-status.is-offline {
+  color: #586c7b;
+  background: #f1f4f6;
+}
+
+.manufacturer-system-status > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.manufacturer-system-status strong {
+  font-size: 0.66rem;
+}
+
+.manufacturer-system-status span {
+  color: inherit;
+  opacity: 0.78;
+  font-size: 0.49rem;
+}
+
+.manufacturer-dashboard-copy {
+  margin-bottom: 10px;
+}
+
+.manufacturer-dashboard-copy .eyebrow {
+  margin-bottom: 4px;
+}
+
+.manufacturer-dashboard-copy h2 {
+  margin: 0 0 4px;
+  color: #0b3158;
+  font-size: 1rem;
+  line-height: 1.18;
+}
+
+.manufacturer-dashboard-copy p,
+.manufacturer-page-subtitle {
+  margin: 0;
+  color: #718592;
+  font-size: 0.57rem;
+  line-height: 1.4;
+}
+
+.manufacturer-page-subtitle {
+  margin-top: -4px;
+  margin-bottom: 12px;
+}
+
+.manufacturer-metric-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.manufacturer-metric-grid .metric {
+  min-width: 0;
+  min-height: 58px;
+  padding: 7px 5px;
+  border: 1px solid #d8e6ee;
+  border-radius: 11px;
+  background: #f8fbfd;
+  text-align: center;
+}
+
+.manufacturer-metric-grid .metric span {
+  font-size: 0.43rem;
+  line-height: 1.2;
+}
+
+.manufacturer-metric-grid .metric strong {
+  font-size: 0.92rem;
+}
+
+.manufacturer-metric-grid.compact {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.manufacturer-quick-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.manufacturer-nav-card {
+  width: 100%;
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #d7e5ed;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #17324d;
+  text-align: left;
+}
+
+.manufacturer-nav-card:active {
+  transform: scale(0.985);
+}
+
+.manufacturer-nav-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #edf6fb;
+  color: var(--brand-blue);
+}
+
+.manufacturer-nav-icon.alert {
+  color: #b96535;
+  background: #fff3ec;
+}
+
+.manufacturer-nav-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.manufacturer-nav-card > span:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.manufacturer-nav-card strong {
+  color: #0b3158;
+  font-size: 0.65rem;
+}
+
+.manufacturer-nav-card small {
+  color: #768896;
+  font-size: 0.47rem;
+  line-height: 1.35;
+}
+
+.manufacturer-dashboard-section {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #dce7ed;
+  border-radius: 13px;
+  background: #ffffff;
+}
+
+.manufacturer-dashboard-section h3 {
+  margin: 0;
+  color: #153953;
+  font-size: 0.68rem;
+}
+
+.manufacturer-alert-row {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border: 0;
+  border-bottom: 1px solid #e7eef2;
+  background: transparent;
+  text-align: left;
+}
+
+.manufacturer-alert-row:last-child {
+  border-bottom: 0;
+}
+
+.manufacturer-alert-row > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.manufacturer-alert-row strong {
+  color: #1c3d56;
+  font-size: 0.58rem;
+}
+
+.manufacturer-alert-row span {
+  color: #7e909d;
+  font-size: 0.47rem;
+}
+
+.manufacturer-alert-status {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #fff1e6;
+  color: #9e5b2b;
+  font-size: 0.47rem;
+  font-weight: 800;
+}
+
+.manufacturer-empty {
+  padding: 12px 6px;
+  color: #758894;
+  font-size: 0.55rem;
+  text-align: center;
+}
+
+.manufacturer-role-badge,
+.manufacturer-coverage {
+  display: inline-flex;
+  width: max-content;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 0.55rem;
+  font-weight: 800;
+}
+
+.manufacturer-role-badge {
+  background: #eaf4fb;
+  color: var(--brand-blue);
+}
+
+.manufacturer-profile-page-avatar {
+  object-position: center 20%;
+}
+
+.manufacturer-list {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.manufacturer-list::-webkit-scrollbar {
+  display: none;
+}
+
+.manufacturer-product-card,
+.manufacturer-alert-card,
+.manufacturer-history-card {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #d9e6ed;
+  border-radius: 13px;
+  background: #ffffff;
+}
+
+.manufacturer-product-head,
+.manufacturer-alert-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 9px;
+}
+
+.manufacturer-product-head > div,
+.manufacturer-alert-card-head > div {
+  min-width: 0;
+}
+
+.manufacturer-product-head h2,
+.manufacturer-alert-card-head h2 {
+  margin: 0 0 3px;
+  color: #0b3458;
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.manufacturer-product-head > div > span,
+.manufacturer-alert-card-head > div > span {
+  color: #83939f;
+  font-size: 0.48rem;
+}
+
+.manufacturer-coverage.enrolled {
+  background: #e8f7f1;
+  color: #237258;
+}
+
+.manufacturer-coverage.not-covered {
+  background: #edf3f6;
+  color: #596e7d;
+}
+
+.manufacturer-product-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.manufacturer-product-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 8px;
+  border-radius: 9px;
+  background: #f7fafc;
+  min-width: 0;
+}
+
+.manufacturer-product-meta span {
+  color: #83939f;
+  font-size: 0.46rem;
+}
+
+.manufacturer-product-meta strong {
+  color: #29475e;
+  font-size: 0.54rem;
+  overflow-wrap: anywhere;
+}
+
+.manufacturer-region-row {
+  min-height: 46px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 0;
+  border-bottom: 1px solid #e7eef2;
+}
+
+.manufacturer-region-row:last-child {
+  border-bottom: 0;
+}
+
+.manufacturer-region-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.manufacturer-region-row strong {
+  color: #1c3d56;
+  font-size: 0.58rem;
+}
+
+.manufacturer-region-row span {
+  color: #7e909d;
+  font-size: 0.48rem;
+}
+
+.manufacturer-history-filters {
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 11px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.manufacturer-history-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.manufacturer-history-filters button {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 5px 9px;
+  border: 1px solid #cfdee7;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #647b8d;
+  font-size: 0.52rem;
+  font-weight: 750;
+}
+
+.manufacturer-history-filters button.active {
+  border-color: #9bc9dd;
+  background: #eaf6fa;
+  color: var(--brand-blue);
+}
+
+.manufacturer-history-status {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 7px;
+  border-radius: 999px;
+  font-size: 0.47rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.manufacturer-history-status.match {
+  background: #e8f7f1;
+  color: #237258;
+}
+
+.manufacturer-history-status.no_match {
+  background: #fff1e6;
+  color: #9e5b2b;
+}
+
+.manufacturer-history-status.not_covered {
+  background: #edf3f6;
+  color: #596e7d;
+}
+
+@media (max-width: 393px) {
+  .manufacturer-metric-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 360px) {
+  .manufacturer-avatar {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    flex-basis: 52px;
+  }
+
+  .manufacturer-greeting h1 {
+    font-size: 1.28rem;
+  }
+
+  .manufacturer-profile-actions .profile-icon-button {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .manufacturer-nav-card {
+    min-height: 68px;
+    padding: 8px;
+  }
+
+  .manufacturer-metric-grid .metric span {
+    font-size: 0.39rem;
+  }
+}
+
+@media (max-height: 760px) {
+  .manufacturer-screen {
+    overflow-y: auto;
+  }
+
+  .manufacturer-profile-header,
+  .manufacturer-system-status,
+  .manufacturer-dashboard-copy,
+  .manufacturer-metric-grid,
+  .manufacturer-quick-grid {
+    margin-bottom: 7px;
+  }
+
+  .manufacturer-nav-card {
+    min-height: 62px;
+  }
+}
+
