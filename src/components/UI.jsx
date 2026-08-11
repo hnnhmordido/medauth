@@ -38,9 +38,10 @@ export function NetworkBadge({
   offline,
   onToggle,
 }) {
-  const label = offline
-    ? "Offline"
-    : "Online";
+  const label =
+    offline
+      ? "Offline"
+      : "Online";
 
   return (
     <button
@@ -52,7 +53,6 @@ export function NetworkBadge({
       }`}
       onClick={onToggle}
       aria-label={`Connection status: ${label}`}
-      aria-pressed={!offline}
     >
       <svg
         className="wifi-icon"
@@ -62,6 +62,7 @@ export function NetworkBadge({
         <path d="M2.7 8.6a14.2 14.2 0 0 1 18.6 0" />
         <path d="M5.8 12a9.6 9.6 0 0 1 12.4 0" />
         <path d="M8.9 15.4a4.8 4.8 0 0 1 6.2 0" />
+
         <circle
           cx="12"
           cy="19"
@@ -70,7 +71,9 @@ export function NetworkBadge({
         />
       </svg>
 
-      <span>{label}</span>
+      <span>
+        {label}
+      </span>
     </button>
   );
 }
@@ -99,13 +102,19 @@ export function StatusCard({
       </div>
 
       <div>
+
         <div className="eyebrow">
           Verification result
         </div>
 
-        <h2>{title}</h2>
+        <h2>
+          {title}
+        </h2>
 
-        <p>{text}</p>
+        <p>
+          {text}
+        </p>
+
       </div>
     </div>
   );
