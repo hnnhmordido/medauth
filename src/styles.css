@@ -1174,4 +1174,339 @@ p {
   .security-footer {
     margin-top: 7px;
   }
+
+  /* ==================================================
+   PHARMACIST DASHBOARD
+================================================== */
+
+.pharmacist-mode {
+  width: 100%;
+
+  margin-top: 6px;
+
+  padding: 16px;
+
+  border: 1px solid #dfe8ed;
+  border-radius: 18px;
+
+  background: #ffffff;
+}
+
+.pharmacist-mode-head {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 14px;
+}
+
+.pharmacist-mode-title {
+  margin: 0;
+
+  color: #172b3d;
+
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.workflow-badge {
+  flex-shrink: 0;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #e7f8ed;
+
+  color: #4f9561;
+
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+/* ==================================================
+   PHARMACIST TOOLS
+================================================== */
+
+.pharmacist-tools-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+.pharmacist-tool-card {
+  width: 100%;
+  min-height: 105px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 12px 8px;
+
+  border: 1px solid #e0e7eb;
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  color: #23384b;
+
+  text-align: center;
+
+  box-shadow: none;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.pharmacist-tool-card:hover {
+  background: #f8fbfd;
+
+  border-color: #ccdde6;
+}
+
+.pharmacist-tool-card:active {
+  transform: scale(0.98);
+}
+
+.pharmacist-tool-card:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.14);
+
+  outline-offset: 2px;
+}
+
+.pharmacist-tool-card strong {
+  color: #24384b;
+
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.pharmacist-tool-card span {
+  color: #7b8791;
+
+  font-size: 0.61rem;
+  line-height: 1.35;
+}
+
+/* ==================================================
+   PHARMACIST TOOL ICONS
+================================================== */
+
+.tool-icon {
+  width: 25px;
+  height: 25px;
+
+  display: grid;
+
+  place-items: center;
+}
+
+.tool-icon svg {
+  width: 18px;
+  height: 18px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tool-icon-blue {
+  color: #3285ff;
+}
+
+.tool-icon-red {
+  color: #e85555;
+}
+
+.tool-icon-orange {
+  color: #ee9a25;
+}
+
+.tool-icon-slate {
+  color: #697785;
+}
+
+/* ==================================================
+   PHARMACIST STATS
+================================================== */
+
+.pharmacist-stats {
+  width: 100%;
+
+  margin-top: 18px;
+
+  padding-top: 12px;
+
+  border-top: 1px solid #e3e9ed;
+}
+
+.pharmacist-stat-row {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 9px 0;
+
+  color: #33485a;
+
+  font-size: 0.78rem;
+}
+
+.pharmacist-stat-row strong {
+  color: #1f2f3e;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+/* ==================================================
+   PHARMACIST IMPORTANT
+================================================== */
+
+.pharmacist-important {
+  width: 100%;
+
+  margin-top: 18px;
+
+  padding: 0 2px;
+}
+
+.pharmacist-important h3 {
+  margin: 0 0 7px;
+
+  color: #1e2f3d;
+
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.pharmacist-important p {
+  margin: 0;
+
+  color: #5f7280;
+
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* ==================================================
+   PHARMACIST BOTTOM NAVIGATION
+================================================== */
+
+.pharmacist-bottom-nav {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 4px;
+
+  margin-top: 18px;
+
+  padding-top: 12px;
+
+  border-top: 1px solid #e2eaef;
+}
+
+.pharmacist-nav-item {
+  min-height: 48px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 3px;
+
+  padding: 5px 3px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #7b8995;
+
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.pharmacist-nav-item svg {
+  width: 18px;
+  height: 18px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pharmacist-nav-item.active {
+  color: var(--brand-blue);
+
+  background: #eef6fb;
+}
+
+/* ==================================================
+   PHARMACIST RESPONSIVE
+================================================== */
+
+@media (max-width: 360px) {
+  .pharmacist-mode {
+    padding: 13px;
+  }
+
+  .pharmacist-tools-grid {
+    gap: 8px;
+  }
+
+  .pharmacist-tool-card {
+    min-height: 98px;
+
+    padding: 10px 6px;
+  }
+
+  .pharmacist-tool-card strong {
+    font-size: 0.78rem;
+  }
+
+  .pharmacist-tool-card span {
+    font-size: 0.58rem;
+  }
+}
 }
