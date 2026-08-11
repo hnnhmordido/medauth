@@ -15,11 +15,6 @@ const palette = {
   aqua: "#01A09D",
 };
 
-/* =========================================================
-   DEMO USERS
-   Replace this with your real authentication later.
-========================================================= */
-
 const demoUsers = {
   "manufacturer@medauth.com": {
     role: "manufacturer",
@@ -42,17 +37,16 @@ const demoUsers = {
   },
 };
 
-/* =========================================================
-   MEDICINE VERIFICATION
-========================================================= */
-
 function verifyMedicine(code, batch, offline) {
   const normalizedCode = code?.trim().toUpperCase();
   const normalizedBatch = batch?.trim().toUpperCase();
 
   const product = medicines[normalizedCode];
 
-  if (offline && normalizedCode !== "MED-001") {
+  if (
+    offline &&
+    normalizedCode !== "MED-001"
+  ) {
     return {
       status: "NOT_COVERED",
       product: null,
@@ -60,7 +54,10 @@ function verifyMedicine(code, batch, offline) {
     };
   }
 
-  if (!product || product.coverageStatus !== "ENROLLED") {
+  if (
+    !product ||
+    product.coverageStatus !== "ENROLLED"
+  ) {
     return {
       status: "NOT_COVERED",
       product: product || null,
@@ -100,8 +97,6 @@ export default function App() {
 
   const [reportRef, setReportRef] = useState("");
 
-  /* Login */
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -111,9 +106,8 @@ export default function App() {
   const [showPassword, setShowPassword] =
     useState(false);
 
-  const [loginError, setLoginError] = useState("");
-
-  /* Dashboard totals */
+  const [loginError, setLoginError] =
+    useState("");
 
   const totals = useMemo(
     () => ({
@@ -128,15 +122,12 @@ export default function App() {
       ).length,
 
       covered: demoEvents.filter(
-        (event) => event.result !== "NOT_COVERED"
+        (event) =>
+          event.result !== "NOT_COVERED"
       ).length,
     }),
     []
   );
-
-  /* =========================================================
-     VERIFY
-  ========================================================= */
 
   const runVerification = (
     nextCode = code,
@@ -145,21 +136,17 @@ export default function App() {
     setScreen("checking");
 
     window.setTimeout(() => {
-      const verificationResult = verifyMedicine(
-        nextCode,
-        nextBatch,
-        offline
+      setResult(
+        verifyMedicine(
+          nextCode,
+          nextBatch,
+          offline
+        )
       );
-
-      setResult(verificationResult);
 
       setScreen("result");
     }, 650);
   };
-
-  /* =========================================================
-     RESET / SIGN OUT
-  ========================================================= */
 
   const reset = () => {
     setScreen("home");
@@ -177,10 +164,6 @@ export default function App() {
 
     setLoginError("");
   };
-
-  /* =========================================================
-     BACK
-  ========================================================= */
 
   const goBack = () => {
     switch (screen) {
@@ -208,10 +191,6 @@ export default function App() {
     }
   };
 
-  /* =========================================================
-     LOGIN
-  ========================================================= */
-
   const handleHomeLogin = (event) => {
     event.preventDefault();
 
@@ -227,6 +206,7 @@ export default function App() {
       setLoginError(
         "Account not found. Check your email address."
       );
+
       return;
     }
 
@@ -234,28 +214,41 @@ export default function App() {
       setLoginError(
         "Incorrect password. Please try again."
       );
+
       return;
     }
 
     setRole(user.role);
 
-    if (user.role === "manufacturer") {
-      setScreen("manufacturerDashboard");
-      return;
-    }
+    switch (user.role) {
+      case "manufacturer":
+        setScreen(
+          "manufacturerDashboard"
+        );
+        break;
 
-    if (user.role === "pharmacist") {
-      setScreen("pharmacistDashboard");
-      return;
-    }
+      case "pharmacist":
+        setScreen(
+          "pharmacistDashboard"
+        );
+        break;
 
-    if (user.role === "consumer") {
-      setScreen("consumerDashboard");
-      return;
-    }
+      case "consumer":
+        setScreen(
+          "consumerDashboard"
+        );
+        break;
 
-    if (user.role === "admin") {
-      setScreen("adminDashboard");
+      case "admin":
+        setScreen(
+          "adminDashboard"
+        );
+        break;
+
+      default:
+        setLoginError(
+          "This account does not have a valid role."
+        );
     }
   };
 
@@ -271,9 +264,7 @@ export default function App() {
     >
       <main className="phone-stage">
 
-        {/* =================================================
-            HOME
-        ================================================= */}
+        {/* HOME */}
 
         {screen === "home" && (
           <section className="screen home-screen">
@@ -312,7 +303,9 @@ export default function App() {
             </button>
 
             <div className="home-divider">
-              <span>or</span>
+              <span>
+                or
+              </span>
             </div>
 
             <form
@@ -337,7 +330,6 @@ export default function App() {
                   }}
                   placeholder="e.g. manufacturer@medauth.com"
                   autoComplete="email"
-                  aria-label="Email address"
                   required
                 />
               </label>
@@ -365,7 +357,6 @@ export default function App() {
                     }}
                     placeholder="••••••••"
                     autoComplete="current-password"
-                    aria-label="Password"
                     required
                   />
 
@@ -465,9 +456,7 @@ export default function App() {
           </section>
         )}
 
-        {/* =================================================
-            SCAN
-        ================================================= */}
+        {/* SCAN */}
 
         {screen === "scan" && (
           <section className="screen">
@@ -568,9 +557,7 @@ export default function App() {
           </section>
         )}
 
-        {/* =================================================
-            MANUAL CODE ENTRY
-        ================================================= */}
+        {/* MANUAL */}
 
         {screen === "manual" && (
           <section className="screen">
@@ -621,19 +608,10 @@ export default function App() {
               Verify Medicine
             </PrimaryButton>
 
-            <p className="hint">
-              Demo examples:
-              MED-001/B1001,
-              MED-002/B2045,
-              or MED-003.
-            </p>
-
           </section>
         )}
 
-        {/* =================================================
-            CHECKING
-        ================================================= */}
+        {/* CHECKING */}
 
         {screen === "checking" && (
           <section className="screen center-screen">
@@ -653,9 +631,7 @@ export default function App() {
           </section>
         )}
 
-        {/* =================================================
-            RESULT
-        ================================================= */}
+        {/* RESULT */}
 
         {screen === "result" &&
           result && (
@@ -663,8 +639,7 @@ export default function App() {
 
               <BackButton onClick={goBack} />
 
-              {result.status ===
-                "MATCH" && (
+              {result.status === "MATCH" && (
                 <StatusCard
                   status="MATCH"
                   title="Match"
@@ -672,8 +647,7 @@ export default function App() {
                 />
               )}
 
-              {result.status ===
-                "NO_MATCH" && (
+              {result.status === "NO_MATCH" && (
                 <StatusCard
                   status="NO_MATCH"
                   title="No Match"
@@ -741,8 +715,7 @@ export default function App() {
 
               <div className="action-stack">
 
-                {result.status ===
-                  "MATCH" && (
+                {result.status === "MATCH" && (
                   <PrimaryButton
                     onClick={() =>
                       setScreen("details")
@@ -752,8 +725,7 @@ export default function App() {
                   </PrimaryButton>
                 )}
 
-                {result.status !==
-                  "MATCH" && (
+                {result.status !== "MATCH" && (
                   <PrimaryButton
                     onClick={() =>
                       setScreen("report")
@@ -774,9 +746,7 @@ export default function App() {
             </section>
           )}
 
-        {/* =================================================
-            MEDICINE DETAILS
-        ================================================= */}
+        {/* DETAILS */}
 
         {screen === "details" &&
           result?.product && (
@@ -860,9 +830,7 @@ export default function App() {
             </section>
           )}
 
-        {/* =================================================
-            REPORT
-        ================================================= */}
+        {/* REPORT */}
 
         {screen === "report" && (
           <section className="screen">
@@ -878,9 +846,9 @@ export default function App() {
             </h1>
 
             <div className="notice">
-              Prototype only.
-              Do not enter real personal
-              or health information.
+              Prototype only. Do not enter
+              real personal or health
+              information.
             </div>
 
             <label className="field">
@@ -939,12 +907,9 @@ export default function App() {
           </section>
         )}
 
-        {/* =================================================
-            REPORT CONFIRMATION
-        ================================================= */}
+        {/* CONFIRMATION */}
 
-        {screen ===
-          "confirmation" && (
+        {screen === "confirmation" && (
           <section className="screen center-screen">
 
             <div className="success-badge">
@@ -971,9 +936,7 @@ export default function App() {
           </section>
         )}
 
-        {/* =================================================
-            MANUFACTURER DASHBOARD
-        ================================================= */}
+        {/* MANUFACTURER */}
 
         {screen ===
           "manufacturerDashboard" && (
@@ -999,9 +962,7 @@ export default function App() {
           </section>
         )}
 
-        {/* =================================================
-            PHARMACIST DASHBOARD
-        ================================================= */}
+        {/* PHARMACIST */}
 
         {screen ===
           "pharmacistDashboard" && (
@@ -1029,9 +990,7 @@ export default function App() {
           </section>
         )}
 
-        {/* =================================================
-            CONSUMER DASHBOARD
-        ================================================= */}
+        {/* CONSUMER */}
 
         {screen ===
           "consumerDashboard" && (
@@ -1072,12 +1031,6 @@ export default function App() {
                 Enter code manually
               </h3>
 
-              <p>
-                You can also verify a
-                medicine using its product
-                code and batch.
-              </p>
-
               <SecondaryButton
                 onClick={() =>
                   setScreen("manual")
@@ -1113,9 +1066,7 @@ export default function App() {
           </section>
         )}
 
-        {/* =================================================
-            ADMIN DASHBOARD
-        ================================================= */}
+        {/* ADMIN */}
 
         {screen ===
           "adminDashboard" && (
@@ -1144,10 +1095,6 @@ export default function App() {
   );
 }
 
-/* =========================================================
-   BACK
-========================================================= */
-
 function BackButton({
   onClick,
 }) {
@@ -1172,10 +1119,6 @@ function BackButton({
   );
 }
 
-/* =========================================================
-   SCAN ICON
-========================================================= */
-
 function ScanIcon() {
   return (
     <svg
@@ -1184,8 +1127,11 @@ function ScanIcon() {
       aria-hidden="true"
     >
       <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+
       <path d="M16 3h3a2 2 0 0 1 2 2v3" />
+
       <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
+
       <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
 
       <rect
@@ -1219,10 +1165,6 @@ function ScanIcon() {
   );
 }
 
-/* =========================================================
-   EYE ICON
-========================================================= */
-
 function EyeIcon() {
   return (
     <svg
@@ -1255,10 +1197,6 @@ function EyeOffIcon() {
   );
 }
 
-/* =========================================================
-   LOCK
-========================================================= */
-
 function LockIcon() {
   return (
     <svg
@@ -1278,10 +1216,6 @@ function LockIcon() {
     </svg>
   );
 }
-
-/* =========================================================
-   DASHBOARD HEADER
-========================================================= */
 
 function DashboardHeader({
   title,
@@ -1310,10 +1244,6 @@ function DashboardHeader({
   );
 }
 
-/* =========================================================
-   DETAIL ROW
-========================================================= */
-
 function Row({
   label,
   value,
@@ -1332,10 +1262,6 @@ function Row({
     </div>
   );
 }
-
-/* =========================================================
-   MANUFACTURER
-========================================================= */
 
 function ManufacturerDashboard({
   totals,
@@ -1408,10 +1334,6 @@ function ManufacturerDashboard({
   );
 }
 
-/* =========================================================
-   PHARMACIST
-========================================================= */
-
 function PharmacistDashboard({
   onVerify,
 }) {
@@ -1457,10 +1379,6 @@ function PharmacistDashboard({
   );
 }
 
-/* =========================================================
-   ADMIN
-========================================================= */
-
 function AdminDashboard() {
   return (
     <>
@@ -1502,10 +1420,6 @@ function AdminDashboard() {
     </>
   );
 }
-
-/* =========================================================
-   METRIC
-========================================================= */
 
 function Metric({
   label,
