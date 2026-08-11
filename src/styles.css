@@ -10,6 +10,8 @@
 
   color: #17324d;
   background: #eef5f9;
+
+  font-synthesis: none;
 }
 
 * {
@@ -22,14 +24,23 @@ body,
   width: 100%;
   min-width: 320px;
   min-height: 100%;
+
   margin: 0;
+}
+
+html {
+  background: #eef5f9;
 }
 
 body {
   min-height: 100vh;
   min-height: 100dvh;
 
+  margin: 0;
+
   background: #eef5f9;
+
+  overflow-x: hidden;
 }
 
 button,
@@ -41,10 +52,14 @@ textarea {
 
 button {
   cursor: pointer;
+
   -webkit-tap-highlight-color: transparent;
 }
 
-/* APP */
+
+/* ==================================================
+   APP
+================================================== */
 
 .app-shell {
   width: 100%;
@@ -53,6 +68,7 @@ button {
   min-height: 100dvh;
 
   display: flex;
+
   justify-content: center;
   align-items: flex-start;
 
@@ -66,13 +82,19 @@ button {
     );
 }
 
-/* PHONE */
+
+/* ==================================================
+   PHONE
+   SAME SIZE FOR ALL SCREENS
+================================================== */
 
 .phone-stage {
   width: 393px;
   height: 852px;
 
   max-width: 100%;
+
+  position: relative;
 
   display: flex;
   flex-direction: column;
@@ -89,11 +111,18 @@ button {
     rgba(18, 55, 84, 0.09);
 }
 
+
+/* ==================================================
+   ALL SCREENS
+================================================== */
+
 .screen {
   width: 100%;
   height: 100%;
 
   min-height: 0;
+
+  flex: 1 1 auto;
 
   padding:
     max(17px, env(safe-area-inset-top))
@@ -104,31 +133,49 @@ button {
   overflow-x: hidden;
 
   background: #ffffff;
+
+  scrollbar-width: thin;
 }
 
-/* HOME */
+
+/* ==================================================
+   HOME
+================================================== */
 
 .home-screen {
   display: flex;
   flex-direction: column;
 }
 
+
+/* ==================================================
+   ONLINE / OFFLINE
+================================================== */
+
 .home-status-row {
   width: 100%;
+
   min-height: 38px;
 
   display: flex;
+
   justify-content: flex-end;
   align-items: flex-start;
+
+  flex-shrink: 0;
 }
 
 .network-badge {
-  display: inline-flex;
-  align-items: center;
-
-  gap: 6px;
+  appearance: none;
 
   min-height: 34px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
 
   padding: 7px 11px;
 
@@ -137,16 +184,37 @@ button {
 
   font-size: 0.76rem;
   font-weight: 800;
+
+  line-height: 1;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    transform 0.12s ease;
 }
 
 .network-badge.online {
   color: #117252;
+
   background: #e8f7f1;
 }
 
 .network-badge.offline {
   color: #687783;
+
   background: #edf1f3;
+}
+
+.network-badge:active {
+  transform: scale(0.97);
+}
+
+.network-badge:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.17);
+
+  outline-offset: 2px;
 }
 
 .wifi-icon {
@@ -158,6 +226,7 @@ button {
 
   stroke-width: 1.9;
   stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .wifi-dot {
@@ -165,18 +234,25 @@ button {
   stroke: none;
 }
 
-/* LOGO */
+
+/* ==================================================
+   HOME LOGO
+================================================== */
 
 .home-brand {
   width: 100%;
 
   display: flex;
+
   justify-content: center;
+  align-items: center;
 
   margin: 2px 0 16px;
 }
 
 .hero-logo {
+  display: block;
+
   width: 245px;
   max-width: 78%;
 
@@ -186,7 +262,10 @@ button {
   object-fit: contain;
 }
 
-/* SCAN BUTTON */
+
+/* ==================================================
+   HOME SCAN BUTTON
+================================================== */
 
 .home-scan-button {
   width: 100%;
@@ -194,6 +273,7 @@ button {
   min-height: 58px;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
@@ -219,6 +299,22 @@ button {
   box-shadow:
     0 6px 16px
     rgba(11, 99, 182, 0.13);
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease;
+}
+
+.home-scan-button:active {
+  transform: scale(0.985);
+}
+
+.home-scan-button:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.18);
+
+  outline-offset: 2px;
 }
 
 .home-scan-icon {
@@ -229,14 +325,20 @@ button {
   stroke: currentColor;
 
   stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* OR */
+
+/* ==================================================
+   OR DIVIDER
+================================================== */
 
 .home-divider {
   width: 100%;
 
   display: flex;
+
   align-items: center;
 
   gap: 14px;
@@ -260,9 +362,14 @@ button {
   background: #cad9e3;
 }
 
-/* LOGIN */
+
+/* ==================================================
+   HOME LOGIN
+================================================== */
 
 .home-login-form {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
 
@@ -270,6 +377,8 @@ button {
 }
 
 .home-login-field {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
 
@@ -301,20 +410,32 @@ button {
   color: #17324d;
 
   font-size: 0.9rem;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.home-login-field input::placeholder {
+  color: #91a3b1;
 }
 
 .home-login-field input:focus {
-  border-color:
-    var(--brand-blue);
+  border-color: var(--brand-blue);
 
   box-shadow:
     0 0 0 3px
     rgba(11, 99, 182, 0.09);
 }
 
-/* PASSWORD */
+
+/* ==================================================
+   PASSWORD
+================================================== */
 
 .password-input-wrap {
+  width: 100%;
+
   position: relative;
 }
 
@@ -336,6 +457,8 @@ button {
   display: grid;
   place-items: center;
 
+  padding: 0;
+
   border: 0;
 
   background: transparent;
@@ -351,11 +474,18 @@ button {
   stroke: currentColor;
 
   stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* REMEMBER */
+
+/* ==================================================
+   REMEMBER / FORGOT
+================================================== */
 
 .login-options {
+  width: 100%;
+
   display: flex;
 
   justify-content: space-between;
@@ -365,7 +495,10 @@ button {
 }
 
 .remember-device {
+  min-width: 0;
+
   display: inline-flex;
+
   align-items: center;
 
   gap: 7px;
@@ -373,6 +506,8 @@ button {
   color: #486a84;
 
   font-size: 0.74rem;
+
+  white-space: nowrap;
 }
 
 .remember-device input {
@@ -381,19 +516,20 @@ button {
 
   margin: 0;
 
-  accent-color:
-    var(--brand-blue);
+  accent-color: var(--brand-blue);
 }
-
-/* FORGOT PASSWORD */
 
 .forgot-password {
   appearance: none;
 
+  width: auto;
+  min-width: 0;
   min-height: 36px;
 
   display: inline-flex;
+
   align-items: center;
+  justify-content: center;
 
   padding: 5px 0;
 
@@ -401,8 +537,7 @@ button {
 
   background: transparent;
 
-  color:
-    var(--brand-blue);
+  color: var(--brand-blue);
 
   font-size: 0.74rem;
   font-weight: 750;
@@ -414,7 +549,24 @@ button {
   text-decoration: underline;
 }
 
-/* SIGN IN */
+.forgot-password:active {
+  opacity: 0.7;
+}
+
+.forgot-password:focus-visible {
+  outline:
+    2px solid
+    rgba(11, 99, 182, 0.25);
+
+  outline-offset: 3px;
+
+  border-radius: 4px;
+}
+
+
+/* ==================================================
+   SIGN IN
+================================================== */
 
 .home-signin-button {
   width: 100%;
@@ -422,10 +574,13 @@ button {
   min-height: 56px;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
   gap: 8px;
+
+  padding: 14px 18px;
 
   border: 0;
   border-radius: 14px;
@@ -441,11 +596,32 @@ button {
 
   font-size: 0.96rem;
   font-weight: 800;
+
+  box-shadow:
+    0 5px 14px
+    rgba(11, 99, 182, 0.12);
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease;
 }
 
-/* ERROR */
+.home-signin-button:active {
+  transform: scale(0.985);
+}
+
+.signin-arrow {
+  font-size: 1.08rem;
+}
+
+
+/* ==================================================
+   LOGIN ERROR
+================================================== */
 
 .login-error {
+  width: 100%;
+
   padding: 9px 11px;
 
   border: 1px solid #efc3c3;
@@ -456,20 +632,27 @@ button {
   color: #a43d3d;
 
   font-size: 0.72rem;
+  line-height: 1.4;
 }
 
-/* SECURITY */
+
+/* ==================================================
+   SECURITY FOOTER
+================================================== */
 
 .security-footer {
   width: 100%;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
   gap: 5px;
 
   margin-top: 14px;
+
+  padding: 8px 0 2px;
 
   color: #647e92;
 
@@ -483,21 +666,27 @@ button {
   width: 13px;
   height: 13px;
 
-  fill: none;
+  flex: 0 0 13px;
 
-  stroke:
-    var(--brand-teal);
+  fill: none;
+  stroke: var(--brand-teal);
 
   stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* BACK */
+
+/* ==================================================
+   BACK BUTTON
+================================================== */
 
 .back-button {
   width: auto;
   height: 40px;
 
   display: inline-flex;
+
   align-items: center;
 
   gap: 4px;
@@ -511,11 +700,12 @@ button {
 
   background: transparent;
 
-  color:
-    var(--brand-blue);
+  color: var(--brand-blue);
 
   font-size: 0.9rem;
   font-weight: 700;
+
+  flex-shrink: 0;
 }
 
 .back-button svg {
@@ -530,11 +720,23 @@ button {
   stroke-linejoin: round;
 }
 
-.back-button:hover {
+.back-button:hover,
+.back-button:active {
   background: #edf6fb;
 }
 
-/* FORGOT PAGE */
+.back-button:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.18);
+
+  outline-offset: 2px;
+}
+
+
+/* ==================================================
+   FORGOT PASSWORD PAGE
+================================================== */
 
 .forgot-screen {
   display: flex;
@@ -542,8 +744,12 @@ button {
 }
 
 .forgot-brand {
+  width: 100%;
+
   display: flex;
+
   justify-content: center;
+  align-items: center;
 
   margin: 5px 0 22px;
 }
@@ -553,6 +759,8 @@ button {
   max-width: 48%;
 
   height: auto;
+
+  object-fit: contain;
 }
 
 .forgot-description {
@@ -565,6 +773,8 @@ button {
 }
 
 .forgot-form {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
 
@@ -604,8 +814,7 @@ button {
 
   background: #e9f8f5;
 
-  color:
-    var(--brand-teal);
+  color: var(--brand-teal);
 }
 
 .reset-success-icon svg {
@@ -616,9 +825,14 @@ button {
   stroke: currentColor;
 
   stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* SHARED BUTTONS */
+
+/* ==================================================
+   SHARED BUTTONS
+================================================== */
 
 .btn {
   width: 100%;
@@ -632,6 +846,30 @@ button {
 
   font-size: 0.96rem;
   font-weight: 760;
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.985);
+}
+
+.btn:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.18);
+
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -643,27 +881,34 @@ button {
       var(--brand-blue),
       var(--brand-teal)
     );
+
+  box-shadow:
+    0 5px 14px
+    rgba(11, 99, 182, 0.1);
 }
 
 .btn-secondary {
-  color:
-    var(--brand-deep);
+  color: var(--brand-deep);
 
   background: #ffffff;
 
   border-color: #90bfdc;
 }
 
-/* TEXT */
+
+/* ==================================================
+   TYPOGRAPHY
+================================================== */
 
 h1 {
   margin: 15px 0 10px;
 
-  font-size: 2.1rem;
+  color: #12304b;
 
+  font-size: 2.1rem;
   line-height: 1.06;
 
-  color: #12304b;
+  letter-spacing: -0.04em;
 }
 
 h2,
@@ -671,15 +916,18 @@ h3 {
   color: #12304b;
 }
 
-p {
-  line-height: 1.55;
+h2 {
+  margin-top: 0;
+}
 
+p {
   color: #526a7f;
+
+  line-height: 1.55;
 }
 
 .eyebrow {
-  color:
-    var(--brand-teal);
+  color: var(--brand-teal);
 
   font-size: 0.76rem;
   font-weight: 800;
@@ -689,15 +937,21 @@ p {
   letter-spacing: 0.13em;
 }
 
+.hint,
 .muted {
   color: #72879a;
 
   font-size: 0.88rem;
 }
 
-/* FORMS */
+
+/* ==================================================
+   FORM FIELDS
+================================================== */
 
 .field {
+  width: 100%;
+
   display: grid;
 
   gap: 8px;
@@ -724,9 +978,30 @@ p {
   background: #fbfdff;
 
   color: #17324d;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-/* SCANNER */
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--brand-blue);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(11, 99, 182, 0.09);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+
+/* ==================================================
+   SCANNER
+================================================== */
 
 .scanner-panel {
   height: 295px;
@@ -734,6 +1009,7 @@ p {
   position: relative;
 
   display: grid;
+
   place-items: center;
 
   overflow: hidden;
@@ -749,6 +1025,12 @@ p {
       #eff8fc,
       #e8f7f4
     );
+}
+
+.scanner-panel small {
+  color: #7290a3;
+
+  font-size: 0.75rem;
 }
 
 .scan-line {
@@ -788,9 +1070,7 @@ p {
   width: 58px;
   height: 58px;
 
-  border-color:
-    var(--brand-blue);
-
+  border-color: var(--brand-blue);
   border-style: solid;
 }
 
@@ -798,35 +1078,38 @@ p {
   left: 28px;
   top: 28px;
 
-  border-width:
-    5px 0 0 5px;
+  border-width: 5px 0 0 5px;
 }
 
 .scan-corners span:nth-child(2) {
   right: 28px;
   top: 28px;
 
-  border-width:
-    5px 5px 0 0;
+  border-width: 5px 5px 0 0;
 }
 
 .scan-corners span:nth-child(3) {
   left: 28px;
   bottom: 28px;
 
-  border-width:
-    0 0 5px 5px;
+  border-width: 0 0 5px 5px;
 }
 
 .scan-corners span:nth-child(4) {
   right: 28px;
   bottom: 28px;
 
-  border-width:
-    0 5px 5px 0;
+  border-width: 0 5px 5px 0;
 }
 
+
+/* ==================================================
+   DEMO SCANS
+================================================== */
+
 .sample-box {
+  width: 100%;
+
   display: grid;
 
   gap: 8px;
@@ -841,6 +1124,12 @@ p {
   background: #f6fbfd;
 }
 
+.sample-box strong {
+  color: #234b67;
+
+  font-size: 0.8rem;
+}
+
 .sample-box button {
   padding: 10px 11px;
 
@@ -852,9 +1141,18 @@ p {
   color: #27536f;
 
   text-align: left;
+
+  font-size: 0.78rem;
 }
 
-/* CHECKING */
+.sample-box button:hover {
+  background: #eef7fb;
+}
+
+
+/* ==================================================
+   CHECKING
+================================================== */
 
 .center-screen {
   display: flex;
@@ -871,13 +1169,13 @@ p {
   height: 64px;
 
   border: 6px solid #dbeaf3;
-  border-top-color:
-    var(--brand-teal);
+  border-top-color: var(--brand-teal);
 
   border-radius: 50%;
 
   animation:
-    spin 0.9s linear infinite;
+    spin 0.9s
+    linear infinite;
 }
 
 @keyframes spin {
@@ -886,9 +1184,14 @@ p {
   }
 }
 
-/* RESULT */
+
+/* ==================================================
+   RESULTS
+================================================== */
 
 .action-stack {
+  width: 100%;
+
   display: grid;
 
   gap: 12px;
@@ -897,6 +1200,8 @@ p {
 }
 
 .status-card {
+  width: 100%;
+
   display: grid;
 
   grid-template-columns:
@@ -912,11 +1217,24 @@ p {
   border-radius: 18px;
 }
 
+.status-card h2 {
+  margin: 3px 0 5px;
+
+  font-size: 1.6rem;
+}
+
+.status-card p {
+  margin: 0;
+
+  font-size: 0.82rem;
+}
+
 .status-icon {
   width: 54px;
   height: 54px;
 
   display: grid;
+
   place-items: center;
 
   border-radius: 50%;
@@ -934,8 +1252,7 @@ p {
 }
 
 .status-card.match .status-icon {
-  background:
-    var(--brand-teal);
+  background: var(--brand-teal);
 }
 
 .status-card.no_match {
@@ -955,15 +1272,19 @@ p {
 }
 
 .status-card.not_covered .status-icon {
-  background:
-    var(--brand-blue);
+  background: var(--brand-blue);
 }
 
-/* PANELS */
+
+/* ==================================================
+   PANELS
+================================================== */
 
 .product-card,
 .panel,
 .notice {
+  width: 100%;
+
   margin: 16px 0;
 
   padding: 14px;
@@ -972,6 +1293,22 @@ p {
   border-radius: 16px;
 
   background: #f9fcfe;
+}
+
+.panel h3 {
+  margin: 0 0 9px;
+
+  font-size: 1rem;
+}
+
+.panel p {
+  margin: 7px 0;
+}
+
+.notice {
+  background: #eef8fb;
+
+  color: #3f6177;
 }
 
 .product-card div {
@@ -991,9 +1328,22 @@ p {
   border-bottom: 0;
 }
 
-/* DETAILS */
+.product-card span {
+  color: #71879a;
+}
+
+.product-card strong {
+  text-align: right;
+}
+
+
+/* ==================================================
+   DETAILS
+================================================== */
 
 .details-list {
+  width: 100%;
+
   margin: 18px 0;
 
   border-top:
@@ -1012,19 +1362,31 @@ p {
 
   border-bottom:
     1px solid #dfebf2;
+
+  font-size: 0.82rem;
+}
+
+.detail-row span {
+  color: #6e8396;
 }
 
 .detail-row strong {
   text-align: right;
+
+  word-break: break-word;
 }
 
-/* SUCCESS */
+
+/* ==================================================
+   SUCCESS
+================================================== */
 
 .success-badge {
   width: 76px;
   height: 76px;
 
   display: grid;
+
   place-items: center;
 
   border-radius: 50%;
@@ -1042,9 +1404,14 @@ p {
     );
 }
 
-/* DASHBOARDS */
+
+/* ==================================================
+   DASHBOARD HEADER
+================================================== */
 
 .dashboard-head {
+  width: 100%;
+
   display: flex;
 
   justify-content: space-between;
@@ -1055,21 +1422,33 @@ p {
   margin-bottom: 12px;
 }
 
+.dashboard-head h1 {
+  margin-top: 7px;
+}
+
 .role-badge {
+  flex-shrink: 0;
+
   padding: 7px 10px;
 
   border-radius: 999px;
 
   background: #e8f4fb;
 
-  color:
-    var(--brand-deep);
+  color: var(--brand-deep);
 
   font-size: 0.76rem;
   font-weight: 800;
 }
 
+
+/* ==================================================
+   GENERIC DASHBOARD METRICS
+================================================== */
+
 .metric-grid {
+  width: 100%;
+
   display: grid;
 
   grid-template-columns:
@@ -1081,6 +1460,8 @@ p {
 }
 
 .metric {
+  min-width: 0;
+
   padding: 14px;
 
   border: 1px solid #d5e8f1;
@@ -1107,13 +1488,714 @@ p {
 
   margin-top: 4px;
 
-  color:
-    var(--brand-deep);
+  color: var(--brand-deep);
 
   font-size: 1.55rem;
 }
 
-/* MOBILE */
+
+/* ==================================================
+   PHARMACIST SCREEN
+================================================== */
+
+.pharmacist-screen {
+  padding-bottom: 18px;
+}
+
+
+/* ==================================================
+   PHARMACIST ONLINE / OFFLINE STATUS
+================================================== */
+
+.pharmacist-system-status {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 4px 0 16px;
+
+  padding: 12px;
+
+  border: 1px solid transparent;
+  border-radius: 14px;
+}
+
+.pharmacist-system-status > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.pharmacist-system-status strong {
+  font-size: 0.74rem;
+
+  line-height: 1.3;
+}
+
+.pharmacist-system-status > div > span {
+  font-size: 0.66rem;
+}
+
+.pharmacist-system-status.is-online {
+  background: #edf9f5;
+
+  border-color: #d4eee5;
+
+  color: #22765d;
+}
+
+.pharmacist-system-status.is-offline {
+  background: #f2f4f6;
+
+  border-color: #e1e6e9;
+
+  color: #5f6d78;
+}
+
+.pharmacist-system-status .network-badge {
+  flex-shrink: 0;
+}
+
+
+/* ==================================================
+   PHARMACIST PRIMARY VERIFY ACTION
+================================================== */
+
+.pharmacist-primary-action {
+  width: 100%;
+
+  min-height: 70px;
+
+  display: grid;
+
+  grid-template-columns:
+    30px 1fr auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 14px;
+
+  border: 0;
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      110deg,
+      var(--brand-blue),
+      var(--brand-teal)
+    );
+
+  color: #ffffff;
+
+  text-align: left;
+
+  box-shadow:
+    0 6px 16px
+    rgba(11, 99, 182, 0.12);
+
+  transition:
+    transform 0.12s ease,
+    opacity 0.15s ease;
+}
+
+.pharmacist-primary-action:active {
+  transform: scale(0.985);
+}
+
+.pharmacist-primary-action svg {
+  width: 24px;
+  height: 24px;
+
+  fill: none;
+  stroke: currentColor;
+
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pharmacist-primary-action div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.pharmacist-primary-action strong {
+  font-size: 0.94rem;
+}
+
+.pharmacist-primary-action div span {
+  opacity: 0.86;
+
+  font-size: 0.67rem;
+}
+
+.pharmacist-primary-action > span:last-child {
+  font-size: 1.15rem;
+}
+
+
+/* ==================================================
+   PHARMACIST ACTION CARDS
+================================================== */
+
+.pharmacist-action-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+
+  margin: 12px 0 16px;
+}
+
+.pharmacist-action-card {
+  min-height: 108px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: flex-start;
+
+  gap: 6px;
+
+  padding: 13px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  color: #263c4f;
+
+  text-align: left;
+
+  box-shadow: none;
+
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.pharmacist-action-card:hover {
+  background: #f8fbfd;
+
+  border-color: #c8dce7;
+}
+
+.pharmacist-action-card:active {
+  transform: scale(0.985);
+}
+
+.pharmacist-action-card:focus-visible {
+  outline:
+    3px solid
+    rgba(11, 99, 182, 0.14);
+
+  outline-offset: 2px;
+}
+
+.pharmacist-action-card svg {
+  width: 21px;
+  height: 21px;
+
+  fill: none;
+  stroke: var(--brand-blue);
+
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pharmacist-action-card strong {
+  color: #24384b;
+
+  font-size: 0.79rem;
+  font-weight: 800;
+}
+
+.pharmacist-action-card span {
+  color: #738694;
+
+  font-size: 0.62rem;
+  line-height: 1.4;
+}
+
+.pharmacist-escalate-card svg {
+  stroke: #c56543;
+}
+
+
+/* ==================================================
+   PHARMACIST SUMMARY
+================================================== */
+
+.pharmacist-summary {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 9px;
+
+  margin-bottom: 18px;
+}
+
+.pharmacist-metric {
+  min-width: 0;
+
+  padding: 12px;
+
+  border: 1px solid #deeaef;
+  border-radius: 13px;
+
+  background: #f8fbfd;
+}
+
+.pharmacist-metric span {
+  display: block;
+
+  color: #718696;
+
+  font-size: 0.65rem;
+}
+
+.pharmacist-metric strong {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #17324d;
+
+  font-size: 1.35rem;
+}
+
+
+/* ==================================================
+   PHARMACIST RECENT ACTIVITY
+================================================== */
+
+.pharmacist-recent {
+  width: 100%;
+
+  margin-top: 2px;
+}
+
+.section-heading-row {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 5px;
+}
+
+.section-heading-row h3 {
+  margin: 0;
+
+  font-size: 0.92rem;
+}
+
+.text-action {
+  padding: 6px 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--brand-blue);
+
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.text-action:hover {
+  text-decoration: underline;
+}
+
+.recent-event-row {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding: 10px 0;
+
+  border-bottom:
+    1px solid #edf1f3;
+}
+
+.recent-event-row > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.recent-event-row strong {
+  color: #253b4e;
+
+  font-size: 0.73rem;
+}
+
+.recent-event-row span {
+  color: #778995;
+
+  font-size: 0.63rem;
+}
+
+.recent-event-result {
+  flex-shrink: 0;
+
+  text-align: right;
+}
+
+
+/* ==================================================
+   BATCH LOOKUP
+================================================== */
+
+.batch-result-card {
+  width: 100%;
+
+  margin-top: 16px;
+
+  padding: 14px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 15px;
+
+  background: #fbfdfe;
+}
+
+.recall-status {
+  display: inline-flex;
+
+  margin-bottom: 12px;
+
+  padding: 6px 9px;
+
+  border-radius: 999px;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.recall-status.active {
+  background: #fff0ee;
+
+  color: #b84d3d;
+}
+
+.recall-status.clear {
+  background: #eaf8f2;
+
+  color: #27795d;
+}
+
+
+/* ==================================================
+   RECALL LIST
+================================================== */
+
+.recall-list {
+  width: 100%;
+
+  display: grid;
+
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+.recall-list-card {
+  width: 100%;
+
+  display: grid;
+
+  gap: 7px;
+
+  padding: 14px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 15px;
+
+  background: #fbfdfe;
+
+  color: inherit;
+
+  text-align: left;
+
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease;
+}
+
+.recall-list-card:hover {
+  background: #f5fafc;
+}
+
+.recall-list-card:active {
+  transform: scale(0.99);
+}
+
+.recall-list-card > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.recall-list-card strong {
+  color: #273e51;
+
+  font-size: 0.83rem;
+}
+
+.recall-list-card span,
+.recall-list-card small {
+  color: #748793;
+
+  font-size: 0.66rem;
+}
+
+.recall-list-card p {
+  margin: 0;
+
+  color: #667b89;
+
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.recall-pill {
+  width: max-content;
+
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  background: #fff0ee;
+
+  color: #b84d3d !important;
+
+  font-size: 0.64rem !important;
+  font-weight: 800;
+}
+
+
+/* ==================================================
+   RECALL NOTICE
+================================================== */
+
+.recall-notice {
+  width: 100%;
+
+  margin-top: 14px;
+
+  padding: 12px;
+
+  border: 1px solid #f3ddce;
+  border-radius: 12px;
+
+  background: #fff6f1;
+}
+
+.recall-notice strong {
+  color: #8f4a32;
+
+  font-size: 0.75rem;
+}
+
+.recall-notice p {
+  margin: 5px 0 0;
+
+  color: #745a4d;
+
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+
+/* ==================================================
+   VERIFICATION HISTORY
+================================================== */
+
+.history-list {
+  width: 100%;
+
+  display: grid;
+
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+.history-card {
+  width: 100%;
+
+  padding: 14px;
+
+  border: 1px solid #dce7ed;
+  border-radius: 15px;
+
+  background: #fbfdfe;
+}
+
+.history-card-head {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 8px;
+}
+
+.history-card-head strong {
+  min-width: 0;
+
+  color: #253b4e;
+
+  font-size: 0.82rem;
+}
+
+.history-status {
+  flex-shrink: 0;
+
+  padding: 4px 7px;
+
+  border-radius: 999px;
+
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.history-match {
+  background: #e9f8f3;
+
+  color: #23765b;
+}
+
+.history-no_match {
+  background: #fff0ed;
+
+  color: #b44f41;
+}
+
+.history-not_covered {
+  background: #edf4f8;
+
+  color: #546c7d;
+}
+
+.history-recall_check {
+  background: #fff6e6;
+
+  color: #9c6807;
+}
+
+
+/* ==================================================
+   PHARMACIST NAVIGATION
+================================================== */
+
+.pharmacist-nav {
+  position: sticky;
+
+  bottom: -1px;
+
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 2px;
+
+  margin-top: 18px;
+
+  padding:
+    9px 0
+    max(
+      3px,
+      env(safe-area-inset-bottom)
+    );
+
+  border-top:
+    1px solid #dfe8ed;
+
+  background:
+    rgba(255, 255, 255, 0.97);
+
+  backdrop-filter: blur(6px);
+}
+
+.pharmacist-nav button {
+  min-width: 0;
+  min-height: 40px;
+
+  padding: 5px 2px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #758592;
+
+  font-size: 0.57rem;
+  font-weight: 700;
+
+  line-height: 1.15;
+}
+
+.pharmacist-nav button:hover {
+  background: #f4f8fa;
+}
+
+.pharmacist-nav button.active {
+  background: #edf6fb;
+
+  color: var(--brand-blue);
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
 
 @media (max-width: 393px) {
   .app-shell {
@@ -1123,6 +2205,8 @@ p {
   .phone-stage {
     width: 100vw;
     height: 100dvh;
+
+    max-width: none;
 
     border: 0;
     border-radius: 0;
@@ -1137,8 +2221,57 @@ p {
 
   .hero-logo {
     width: 225px;
+
+    max-width: 76%;
   }
 }
+
+
+/* ==================================================
+   SMALL WIDTH
+================================================== */
+
+@media (max-width: 360px) {
+  .screen {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .login-options {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 2px;
+  }
+
+  .pharmacist-action-grid {
+    gap: 8px;
+  }
+
+  .pharmacist-action-card {
+    min-height: 102px;
+
+    padding: 11px;
+  }
+
+  .pharmacist-action-card strong {
+    font-size: 0.74rem;
+  }
+
+  .pharmacist-action-card span {
+    font-size: 0.59rem;
+  }
+
+  .pharmacist-nav button {
+    font-size: 0.53rem;
+  }
+}
+
+
+/* ==================================================
+   SHORT PHONE
+================================================== */
 
 @media (max-height: 760px) {
   .home-brand {
@@ -1175,421 +2308,29 @@ p {
     margin-top: 7px;
   }
 
-  /* ==================================================
-   PHARMACIST DASHBOARD
-================================================== */
-
-.pharmacist-mode {
-  width: 100%;
-
-  margin-top: 6px;
-
-  padding: 16px;
-
-  border: 1px solid #dfe8ed;
-  border-radius: 18px;
-
-  background: #ffffff;
-}
-
-.pharmacist-mode-head {
-  width: 100%;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 12px;
-
-  margin-bottom: 14px;
-}
-
-.pharmacist-mode-title {
-  margin: 0;
-
-  color: #172b3d;
-
-  font-size: 0.98rem;
-  font-weight: 800;
-}
-
-.workflow-badge {
-  flex-shrink: 0;
-
-  padding: 5px 9px;
-
-  border-radius: 999px;
-
-  background: #e7f8ed;
-
-  color: #4f9561;
-
-  font-size: 0.65rem;
-  font-weight: 800;
-}
-
-/* ==================================================
-   PHARMACIST TOOLS
-================================================== */
-
-.pharmacist-tools-grid {
-  width: 100%;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 10px;
-}
-
-.pharmacist-tool-card {
-  width: 100%;
-  min-height: 105px;
-
-  display: flex;
-  flex-direction: column;
-
-  justify-content: center;
-  align-items: center;
-
-  gap: 5px;
-
-  padding: 12px 8px;
-
-  border: 1px solid #e0e7eb;
-  border-radius: 13px;
-
-  background: #ffffff;
-
-  color: #23384b;
-
-  text-align: center;
-
-  box-shadow: none;
-
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.1s ease;
-}
-
-.pharmacist-tool-card:hover {
-  background: #f8fbfd;
-
-  border-color: #ccdde6;
-}
-
-.pharmacist-tool-card:active {
-  transform: scale(0.98);
-}
-
-.pharmacist-tool-card:focus-visible {
-  outline:
-    3px solid
-    rgba(11, 99, 182, 0.14);
-
-  outline-offset: 2px;
-}
-
-.pharmacist-tool-card strong {
-  color: #24384b;
-
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.pharmacist-tool-card span {
-  color: #7b8791;
-
-  font-size: 0.61rem;
-  line-height: 1.35;
-}
-
-/* ==================================================
-   PHARMACIST TOOL ICONS
-================================================== */
-
-.tool-icon {
-  width: 25px;
-  height: 25px;
-
-  display: grid;
-
-  place-items: center;
-}
-
-.tool-icon svg {
-  width: 18px;
-  height: 18px;
-
-  fill: none;
-
-  stroke: currentColor;
-
-  stroke-width: 1.7;
-
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.tool-icon-blue {
-  color: #3285ff;
-}
-
-.tool-icon-red {
-  color: #e85555;
-}
-
-.tool-icon-orange {
-  color: #ee9a25;
-}
-
-.tool-icon-slate {
-  color: #697785;
-}
-
-/* ==================================================
-   PHARMACIST STATS
-================================================== */
-
-.pharmacist-stats {
-  width: 100%;
-
-  margin-top: 18px;
-
-  padding-top: 12px;
-
-  border-top: 1px solid #e3e9ed;
-}
-
-.pharmacist-stat-row {
-  width: 100%;
-
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 12px;
-
-  padding: 9px 0;
-
-  color: #33485a;
-
-  font-size: 0.78rem;
-}
-
-.pharmacist-stat-row strong {
-  color: #1f2f3e;
-
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-/* ==================================================
-   PHARMACIST IMPORTANT
-================================================== */
-
-.pharmacist-important {
-  width: 100%;
-
-  margin-top: 18px;
-
-  padding: 0 2px;
-}
-
-.pharmacist-important h3 {
-  margin: 0 0 7px;
-
-  color: #1e2f3d;
-
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.pharmacist-important p {
-  margin: 0;
-
-  color: #5f7280;
-
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-
-/* ==================================================
-   PHARMACIST BOTTOM NAVIGATION
-================================================== */
-
-.pharmacist-bottom-nav {
-  width: 100%;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, 1fr);
-
-  gap: 4px;
-
-  margin-top: 18px;
-
-  padding-top: 12px;
-
-  border-top: 1px solid #e2eaef;
-}
-
-.pharmacist-nav-item {
-  min-height: 48px;
-
-  display: flex;
-  flex-direction: column;
-
-  justify-content: center;
-  align-items: center;
-
-  gap: 3px;
-
-  padding: 5px 3px;
-
-  border: 0;
-  border-radius: 10px;
-
-  background: transparent;
-
-  color: #7b8995;
-
-  font-size: 0.6rem;
-  font-weight: 700;
-}
-
-.pharmacist-nav-item svg {
-  width: 18px;
-  height: 18px;
-
-  fill: none;
-
-  stroke: currentColor;
-
-  stroke-width: 1.8;
-
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.pharmacist-nav-item.active {
-  color: var(--brand-blue);
-
-  background: #eef6fb;
-}
-
-/* ==================================================
-   PHARMACIST RESPONSIVE
-================================================== */
-
-@media (max-width: 360px) {
-  .pharmacist-mode {
-    padding: 13px;
+  .pharmacist-primary-action {
+    min-height: 62px;
   }
 
-  .pharmacist-tools-grid {
-    gap: 8px;
-  }
-
-  .pharmacist-tool-card {
-    min-height: 98px;
-
-    padding: 10px 6px;
-  }
-
-  .pharmacist-tool-card strong {
-    font-size: 0.78rem;
-  }
-
-  .pharmacist-tool-card span {
-    font-size: 0.58rem;
+  .pharmacist-action-card {
+    min-height: 96px;
   }
 }
-  .pharmacist-mode {
-  margin-top: 6px;
-}
 
-.pharmacist-main-action {
-  width: 100%;
-  min-height: 56px;
 
-  margin-bottom: 12px;
+/* ==================================================
+   REDUCE MOTION
+================================================== */
 
-  border: 0;
-  border-radius: 14px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
 
-  background:
-    linear-gradient(
-      110deg,
-      var(--brand-blue),
-      var(--brand-teal)
-    );
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
 
-  color: white;
-
-  font-size: 0.95rem;
-  font-weight: 800;
-}
-
-.pharmacist-tools-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-
-  gap: 10px;
-
-  margin-bottom: 18px;
-}
-
-.pharmacist-tool-card {
-  min-height: 100px;
-
-  display: flex;
-  flex-direction: column;
-
-  justify-content: center;
-  align-items: center;
-
-  gap: 5px;
-
-  padding: 12px;
-
-  border: 1px solid #dce7ed;
-  border-radius: 13px;
-
-  background: #ffffff;
-
-  text-align: center;
-}
-
-.pharmacist-tool-card strong {
-  font-size: 0.82rem;
-
-  color: #24384b;
-}
-
-.pharmacist-tool-card span {
-  font-size: 0.62rem;
-
-  color: #788895;
-}
-
-.pharmacist-stats {
-  padding-top: 12px;
-
-  border-top: 1px solid #e2eaef;
-}
-
-.pharmacist-stat-row {
-  display: flex;
-
-  justify-content: space-between;
-
-  padding: 9px 0;
-
-  font-size: 0.8rem;
-}
+    transition-duration: 0.01ms !important;
+  }
 }
