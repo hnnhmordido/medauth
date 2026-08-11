@@ -38,10 +38,9 @@ export function NetworkBadge({
   offline,
   onToggle,
 }) {
-  const label =
-    offline
-      ? "Offline"
-      : "Online";
+  const label = offline
+    ? "Offline"
+    : "Online";
 
   return (
     <button
@@ -60,7 +59,9 @@ export function NetworkBadge({
         aria-hidden="true"
       >
         <path d="M2.7 8.6a14.2 14.2 0 0 1 18.6 0" />
+
         <path d="M5.8 12a9.6 9.6 0 0 1 12.4 0" />
+
         <path d="M8.9 15.4a4.8 4.8 0 0 1 6.2 0" />
 
         <circle
@@ -102,7 +103,6 @@ export function StatusCard({
       </div>
 
       <div>
-
         <div className="eyebrow">
           Verification result
         </div>
@@ -114,7 +114,6 @@ export function StatusCard({
         <p>
           {text}
         </p>
-
       </div>
     </div>
   );
