@@ -6364,3 +6364,192 @@ p {
   }
 }
 
+/* =========================================================
+   FINAL MEDAUTH BRANDING + PROFILE / ACCOUNT UPDATE
+========================================================= */
+
+.back-row {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.back-row .back-button {
+  margin: -4px 0 0 -8px;
+}
+
+.back-brand-logo {
+  width: 72px;
+  max-height: 34px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.profile-password-card {
+  width: 100%;
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #dce8ef;
+  border-radius: 14px;
+  background: #fbfdfe;
+}
+
+.profile-password-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-password-head h3 {
+  margin: 0 0 3px;
+  color: #173b56;
+  font-size: 0.7rem;
+}
+
+.profile-password-head p {
+  margin: 0;
+  color: #7b8f9c;
+  font-size: 0.52rem;
+}
+
+.change-password-button {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid #b7d3e4;
+  border-radius: 9px;
+  background: #ffffff;
+  color: var(--brand-blue);
+  font-size: 0.55rem;
+  font-weight: 750;
+}
+
+.change-password-form {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.profile-error-message {
+  margin: 8px 0;
+  padding: 9px 10px;
+  border: 1px solid #efc3c3;
+  border-radius: 10px;
+  background: #fff4f4;
+  color: #a43d3d;
+  font-size: 0.56rem;
+  font-weight: 700;
+}
+
+.admin-account-editor {
+  max-width: 860px;
+}
+
+.admin-account-editor-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 16px 0 20px;
+}
+
+.admin-account-editor-head h2 {
+  margin: 0 0 5px;
+}
+
+.admin-account-editor-head p {
+  margin: 0;
+}
+
+.admin-account-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-account-form label {
+  display: grid;
+  gap: 7px;
+  color: #29485f;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.admin-account-form input,
+.admin-account-form select {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid #cbdde7;
+  border-radius: 10px;
+  outline: none;
+  background: #ffffff;
+  color: #203e55;
+}
+
+.admin-account-form input:focus,
+.admin-account-form select:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(11, 99, 182, 0.08);
+}
+
+.admin-account-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.admin-primary-action,
+.admin-secondary-action {
+  min-height: 42px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-weight: 750;
+}
+
+.admin-primary-action {
+  border: 0;
+  background: linear-gradient(110deg, var(--brand-blue), var(--brand-teal));
+  color: #ffffff;
+}
+
+.admin-secondary-action {
+  border: 1px solid #b9d5e4;
+  background: #ffffff;
+  color: var(--brand-blue);
+}
+
+.admin-account-message {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #eaf8f3;
+  color: #226b52;
+  font-size: 0.7rem;
+  font-weight: 750;
+}
+
+.admin-account-note {
+  margin: 12px 0 0 !important;
+  color: #7b8f9b !important;
+  font-size: 0.68rem !important;
+}
+
+@media (max-width: 850px) {
+  .admin-account-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 393px) {
+  .back-brand-logo {
+    width: 66px;
+  }
+}
+
