@@ -22,8 +22,10 @@ const demoUsers = {
     name: "Harry",
     fullName: "Harry",
     title: "Manufacturer Representative",
-    organisation: "MedAuth Manufacturer Demo",
+    organisation: "MedAuth Manufacturer",
     email: "manufacturer@medauth.com",
+    status: "ACTIVE",
+    lastActive: "Today",
   },
 
   "pharmacist@medauth.com": {
@@ -32,8 +34,10 @@ const demoUsers = {
     name: "Marie",
     fullName: "Marie Nguyen",
     title: "Registered Pharmacist",
-    organisation: "MedAuth Pharmacy Demo",
+    organisation: "MedAuth Pharmacy",
     email: "pharmacist@medauth.com",
+    status: "ACTIVE",
+    lastActive: "Today",
   },
 
   "consumer@medauth.com": {
@@ -43,6 +47,8 @@ const demoUsers = {
     fullName: "Ron",
     title: "Consumer",
     email: "consumer@medauth.com",
+    status: "ACTIVE",
+    lastActive: "Today",
   },
 
   "admin@medauth.com": {
@@ -53,6 +59,8 @@ const demoUsers = {
     title: "MedAuth Administrator",
     organisation: "MedAuth Administration",
     email: "admin@medauth.com",
+    status: "ACTIVE",
+    lastActive: "Today",
   },
 };
 
@@ -62,21 +70,21 @@ const shortageData = [
     medicineName: "Amoxicillin 500mg",
     availability: "Available",
     status: "available",
-    note: "Normal prototype availability",
+    note: "Normal availability",
   },
   {
     id: "SHORT-002",
     medicineName: "Ibuprofen 400mg",
     availability: "Low Stock",
     status: "low",
-    note: "Limited prototype availability",
+    note: "Limited availability",
   },
   {
     id: "SHORT-003",
     medicineName: "Paracetamol 1g",
     availability: "Unavailable",
     status: "unavailable",
-    note: "Currently unavailable in prototype data",
+    note: "Currently unavailable",
   },
 ];
 
@@ -92,7 +100,7 @@ const initialAdminReports = [
     region: "Adelaide SA",
     reporterType: "Pharmacist",
     comment:
-      "Batch information does not match the prototype record.",
+      "Batch information does not match the registered MedAuth record.",
     createdAt: "2026-08-11T10:10:00",
     status: "NEW",
     escalated: false,
@@ -232,7 +240,7 @@ function getActiveRecalls() {
 
       reason:
         item.recall.reason ||
-        "Prototype recall notice for demonstration purposes.",
+        "Recall notice for the registered batch.",
     }));
 }
 
@@ -497,6 +505,41 @@ export default function App() {
     currentUser,
     setCurrentUser,
   ] = useState(null);
+
+  const [
+    accounts,
+    setAccounts,
+  ] = useState(() => {
+    try {
+      const saved =
+        window.localStorage.getItem(
+          "medauth-accounts"
+        );
+
+      return saved
+        ? JSON.parse(saved)
+        : demoUsers;
+    } catch {
+      return demoUsers;
+    }
+  });
+
+  const saveAccounts = (
+    nextAccounts
+  ) => {
+    setAccounts(nextAccounts);
+
+    try {
+      window.localStorage.setItem(
+        "medauth-accounts",
+        JSON.stringify(
+          nextAccounts
+        )
+      );
+    } catch {
+      // Local account storage is optional.
+    }
+  };
 
   const [
     accessibilityPrefs,
@@ -1356,13 +1399,24 @@ export default function App() {
           .toLowerCase();
 
       const user =
-        demoUsers[
+        accounts[
           normalizedEmail
         ];
 
       if (!user) {
         setLoginError(
           "Account not found. Check your email address."
+        );
+
+        return;
+      }
+
+      if (
+        user.status ===
+        "INACTIVE"
+      ) {
+        setLoginError(
+          "This account is inactive. Contact an administrator."
         );
 
         return;
@@ -2146,6 +2200,272 @@ export default function App() {
     }
   };
 
+  const updateOwnAccount = (
+    nextName
+  ) => {
+    const emailKey =
+      currentUser?.email
+        ?.trim()
+        .toLowerCase();
+
+    if (!emailKey) {
+      return;
+    }
+
+    const nextAccounts = {
+      ...accounts,
+
+      [emailKey]: {
+        ...accounts[emailKey],
+        fullName: nextName,
+        name: nextName,
+      },
+    };
+
+    saveAccounts(
+      nextAccounts
+    );
+
+    setCurrentUser(
+      (current) => ({
+        ...(current || {}),
+        fullName: nextName,
+        name: nextName,
+      })
+    );
+  };
+
+  const changeOwnPassword = ({
+    currentPassword,
+    newPassword,
+  }) => {
+    const emailKey =
+      currentUser?.email
+        ?.trim()
+        .toLowerCase();
+
+    const account =
+      accounts[emailKey];
+
+    if (!account) {
+      return {
+        ok: false,
+        message:
+          "Account could not be found.",
+      };
+    }
+
+    if (
+      account.password !==
+      currentPassword
+    ) {
+      return {
+        ok: false,
+        message:
+          "Current password is incorrect.",
+      };
+    }
+
+    const nextAccounts = {
+      ...accounts,
+
+      [emailKey]: {
+        ...account,
+        password:
+          newPassword,
+      },
+    };
+
+    saveAccounts(
+      nextAccounts
+    );
+
+    return {
+      ok: true,
+      message:
+        "Password updated",
+    };
+  };
+
+  const updateAdminAccount = (
+    originalEmail,
+    updates
+  ) => {
+    if (
+      role !== "admin"
+    ) {
+      return;
+    }
+
+    const oldKey =
+      originalEmail
+        .trim()
+        .toLowerCase();
+
+    const existing =
+      accounts[oldKey];
+
+    if (!existing) {
+      return;
+    }
+
+    const newKey =
+      updates.email
+        .trim()
+        .toLowerCase();
+
+    const updatedAccount = {
+      ...existing,
+      fullName:
+        updates.fullName.trim(),
+      name:
+        updates.fullName.trim(),
+      email:
+        updates.email.trim(),
+      role:
+        updates.role,
+      status:
+        updates.status,
+    };
+
+    const nextAccounts = {
+      ...accounts,
+    };
+
+    delete nextAccounts[
+      oldKey
+    ];
+
+    nextAccounts[
+      newKey
+    ] = updatedAccount;
+
+    saveAccounts(
+      nextAccounts
+    );
+
+    if (
+      currentUser?.email
+        ?.toLowerCase() ===
+      oldKey
+    ) {
+      setCurrentUser(
+        updatedAccount
+      );
+
+      setRole(
+        updatedAccount.role
+      );
+    }
+
+    let action =
+      "Account updated";
+
+    if (
+      existing.role !==
+      updatedAccount.role
+    ) {
+      action =
+        "Role changed";
+    } else if (
+      existing.status !==
+      updatedAccount.status
+    ) {
+      action =
+        updatedAccount.status ===
+        "ACTIVE"
+          ? "Account activated"
+          : "Account deactivated";
+    }
+
+    setAuditEvents(
+      (current) => [
+        {
+          id:
+            `AUD-${Date.now()}`,
+          timestamp:
+            new Date().toISOString(),
+          actor:
+            currentUser?.fullName ||
+            "Admin",
+          action,
+          recordType:
+            "User Account",
+          recordId:
+            updatedAccount.email,
+          previousState:
+            `${existing.role} · ${existing.status || "ACTIVE"}`,
+          newState:
+            `${updatedAccount.role} · ${updatedAccount.status}`,
+        },
+
+        ...current,
+      ]
+    );
+  };
+
+  const requestAdminPasswordReset = (
+    accountEmail
+  ) => {
+    if (
+      role !== "admin"
+    ) {
+      return;
+    }
+
+    const key =
+      accountEmail
+        .trim()
+        .toLowerCase();
+
+    const account =
+      accounts[key];
+
+    if (!account) {
+      return;
+    }
+
+    const nextAccounts = {
+      ...accounts,
+
+      [key]: {
+        ...account,
+        password: "demo123",
+        resetRequested: true,
+      },
+    };
+
+    saveAccounts(
+      nextAccounts
+    );
+
+    setAuditEvents(
+      (current) => [
+        {
+          id:
+            `AUD-${Date.now()}`,
+          timestamp:
+            new Date().toISOString(),
+          actor:
+            currentUser?.fullName ||
+            "Admin",
+          action:
+            "Password reset requested",
+          recordType:
+            "User Account",
+          recordId:
+            account.email,
+          previousState:
+            "Password protected",
+          newState:
+            "Reset requested",
+        },
+
+        ...current,
+      ]
+    );
+  };
+
   const isAdminWebScreen =
     role === "admin" &&
     adminMode === "web" &&
@@ -2192,6 +2512,15 @@ export default function App() {
           }
           setCurrentUser={
             setCurrentUser
+          }
+          accounts={
+            accounts
+          }
+          onUpdateAccount={
+            updateAdminAccount
+          }
+          onPasswordReset={
+            requestAdminPasswordReset
           }
           accessibilityPrefs={
             accessibilityPrefs
@@ -2551,7 +2880,7 @@ export default function App() {
             </form>
 
             <div className="calm-trust-note">
-              Independent medicine verification prototype · MedAuth checks registered information and does not sell medicines.
+              Independent medicine verification · MedAuth checks registered information and does not sell medicines.
             </div>
 
             <div className="security-footer">
@@ -2693,7 +3022,7 @@ export default function App() {
             </h1>
 
             <p>
-              Check medicine information using barcode or manual entry · Prototype verification
+              Check medicine information using barcode or manual entry · MedAuth verification
             </p>
 
             <div className="scanner-panel">
@@ -2873,7 +3202,7 @@ export default function App() {
             </h1>
 
             <p>
-              Comparing product and batch information with the MedAuth prototype dataset.
+              Comparing product and batch information with registered MedAuth records.
             </p>
 
           </section>
@@ -2912,7 +3241,7 @@ export default function App() {
                   : result.status ===
                     "NO_MATCH"
                   ? "The scanned information does not fully match the product or batch information registered in MedAuth."
-                  : "MedAuth does not currently have enough prototype information to verify this medicine."
+                  : "MedAuth does not currently have enough registered information to verify this medicine."
               }
             />
 
@@ -2936,7 +3265,7 @@ export default function App() {
                 </strong>
 
                 <p>
-                  This result confirms that the scanned information matches the registered prototype record. It does not guarantee that the medicine is authentic or safe to use.
+                  This result confirms that the scanned information matches the registered MedAuth record. It does not guarantee that the medicine is authentic or safe to use.
                 </p>
 
               </div>
@@ -2987,7 +3316,7 @@ export default function App() {
                 </strong>
 
                 <span>
-                  Pending Sync. This verification will synchronise when the prototype returns online.
+                  Pending Sync. This verification will synchronise when the connection returns online.
                 </span>
 
               </div>
@@ -3103,7 +3432,7 @@ export default function App() {
                     )
                   }
                 >
-                  Back to Pharmacist Dashboard
+                  Back to Pharmacist
                 </SecondaryButton>
               )}
 
@@ -3181,7 +3510,7 @@ export default function App() {
                 value={
                   result.product
                     .source ||
-                  "MedAuth prototype dataset"
+                  "MedAuth Records"
                 }
               />
 
@@ -3230,7 +3559,7 @@ export default function App() {
             </h1>
 
             <p>
-              Prototype only. This report is saved locally in the MedAuth demo.
+              This report is saved locally in MedAuth.
             </p>
 
             <label className="field">
@@ -3384,7 +3713,7 @@ export default function App() {
             </h1>
 
             <p>
-              Prototype reference:{" "}
+              Reference:{" "}
               <strong>
                 {reportRef}
               </strong>
@@ -3399,7 +3728,7 @@ export default function App() {
                   )
                 }
               >
-                Back to Pharmacist Dashboard
+                Back to Pharmacist
               </PrimaryButton>
             ) : role ===
               "admin" ? (
@@ -3509,14 +3838,14 @@ export default function App() {
 
                 <strong>
                   {offline
-                    ? "Offline Mode — Using Cached Data"
+                    ? "Offline — Using saved records"
                     : "System Online"}
                 </strong>
 
                 <span>
                   {currentUser
                     ?.organisation ||
-                    "MedAuth Manufacturer Demo"}
+                    "MedAuth Manufacturer"}
                 </span>
 
               </div>
@@ -3533,7 +3862,7 @@ export default function App() {
             <div className="manufacturer-dashboard-copy">
 
               <div className="eyebrow">
-                Manufacturer Dashboard
+                Manufacturer
               </div>
 
               <h2>
@@ -3758,7 +4087,7 @@ export default function App() {
               {manufacturerTotals.noMatch ===
                 0 && (
                 <div className="manufacturer-empty">
-                  No active brand alerts in the prototype data.
+                  No active brand alerts.
                 </div>
               )}
 
@@ -3812,11 +4141,13 @@ export default function App() {
             <EditableProfilePanel
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
+              onUpdateName={updateOwnAccount}
+              onChangePassword={changeOwnPassword}
               roleLabel="Manufacturer"
               defaults={{
                 fullName: "Harry",
                 title: "Manufacturer Representative",
-                organisation: "MedAuth Manufacturer Demo",
+                organisation: "MedAuth Manufacturer",
                 email: "manufacturer@medauth.com",
                 phone: "",
               }}
@@ -3862,7 +4193,7 @@ export default function App() {
 
                   <span>
                     {offline
-                      ? "Offline — Using Cached Data"
+                      ? "Offline — Using saved records"
                       : "System Online"}
                   </span>
 
@@ -3886,7 +4217,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Prototype activity waiting to synchronise
+                    Activity waiting to synchronise
                   </span>
 
                 </div>
@@ -3906,7 +4237,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Keep your demo preference
+                    Keep your sign-in preference
                   </span>
 
                 </div>
@@ -3985,7 +4316,7 @@ export default function App() {
             </h1>
 
             <p className="manufacturer-page-subtitle">
-              Registered prototype products and identifiers.
+              Registered products and identifiers.
             </p>
 
             <div className="manufacturer-list">
@@ -4099,7 +4430,7 @@ export default function App() {
             </h1>
 
             <p className="manufacturer-page-subtitle">
-              Suspicious verification activity related to prototype products.
+              Suspicious verification activity related to registered products.
             </p>
 
             <div className="manufacturer-list">
@@ -4227,7 +4558,7 @@ export default function App() {
             </h1>
 
             <p className="manufacturer-page-subtitle">
-              Prototype verification trends from the shared event data.
+              Verification trends from shared MedAuth activity.
             </p>
 
             <div className="manufacturer-metric-grid compact">
@@ -4323,7 +4654,7 @@ export default function App() {
             </h1>
 
             <p className="manufacturer-page-subtitle">
-              Recent verification events for prototype products.
+              Recent verification events for registered products.
             </p>
 
             <div className="manufacturer-history-filters">
@@ -4439,7 +4770,7 @@ export default function App() {
 
                         <strong>
                           {event.channel ||
-                            "Prototype"}
+                            "MedAuth"}
                         </strong>
                       </div>
 
@@ -4544,7 +4875,7 @@ export default function App() {
 
                 <strong>
                   {offline
-                    ? "Offline — Using Cached Data"
+                    ? "Offline — Using saved records"
                     : "System Online"}
                 </strong>
 
@@ -4812,7 +5143,7 @@ export default function App() {
             </div>
 
             <div className="consumer-prototype-note">
-              MedAuth compares medicine information with prototype records. A match does not guarantee that a medicine is authentic or safe.
+              MedAuth compares medicine information with registered records. A match does not guarantee that a medicine is authentic or safe.
             </div>
 
             <button
@@ -5103,7 +5434,7 @@ export default function App() {
               </p>
 
               <span className="consumer-status-badge">
-                Demo Profile
+                Profile
               </span>
 
             </div>
@@ -5111,6 +5442,8 @@ export default function App() {
             <EditableProfilePanel
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
+              onUpdateName={updateOwnAccount}
+              onChangePassword={changeOwnPassword}
               roleLabel="Consumer"
               defaults={{
                 fullName: "Ron",
@@ -5121,7 +5454,7 @@ export default function App() {
               }}
               accessibilityPrefs={accessibilityPrefs}
               updateAccessibilityPrefs={updateAccessibilityPrefs}
-              privacyNote="Demo/local profile only. Medicine checking does not require medical history, prescriptions, diagnosis or health information."
+              privacyNote="Medicine checking does not require medical history, prescriptions, diagnosis or health information."
             />
 
           </section>
@@ -5203,7 +5536,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Keep your demo preference
+                    Keep your sign-in preference
                   </span>
 
                 </div>
@@ -5726,7 +6059,7 @@ export default function App() {
                       ? batchResult
                           .medicine
                           .medicineName
-                      : "No prototype medicine found"
+                      : "No medicine record found"
                   }
                 />
 
@@ -5817,7 +6150,7 @@ export default function App() {
                 <div className="panel">
 
                   <h3>
-                    No active prototype recalls
+                    No active recalls
                   </h3>
 
                   <p>
@@ -5984,7 +6317,7 @@ export default function App() {
             </h1>
 
             <p>
-              Current medicine availability from the MedAuth prototype data.
+              Current medicine availability from MedAuth records.
             </p>
 
             <div className="shortage-list">
@@ -6189,17 +6522,19 @@ export default function App() {
             <EditableProfilePanel
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
+              onUpdateName={updateOwnAccount}
+              onChangePassword={changeOwnPassword}
               roleLabel="Pharmacist"
               defaults={{
                 fullName: "Marie Nguyen",
                 title: "Registered Pharmacist",
-                organisation: "MedAuth Pharmacy Demo",
+                organisation: "MedAuth Pharmacy",
                 email: "pharmacist@medauth.com",
                 phone: "",
               }}
               accessibilityPrefs={accessibilityPrefs}
               updateAccessibilityPrefs={updateAccessibilityPrefs}
-              privacyNote="Professional demo profile only. No patient health information is stored."
+              privacyNote="No patient health information is stored in this profile."
             />
 
           </section>
@@ -6278,7 +6613,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Keep demo sign-in preference
+                    Keep your sign-in preference
                   </span>
                 </div>
 
@@ -6392,7 +6727,7 @@ export default function App() {
               </h2>
 
               <p>
-                Select the layout you want to use. Both versions use the same MedAuth prototype data.
+                Select the layout you want to use. Both versions use the same MedAuth information.
               </p>
 
             </div>
@@ -6453,7 +6788,7 @@ export default function App() {
 
                 <div>
                   <strong>
-                    Web Dashboard
+                    Web Administration
                   </strong>
 
                   <span>
@@ -7444,6 +7779,8 @@ export default function App() {
             <EditableProfilePanel
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
+              onUpdateName={updateOwnAccount}
+              onChangePassword={changeOwnPassword}
               roleLabel="Admin / Regulator"
               defaults={{
                 fullName: "Luna Chen",
@@ -7531,7 +7868,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Keep demo sign-in preference
+                    Keep your sign-in preference
                   </span>
                 </div>
 
@@ -7573,7 +7910,7 @@ export default function App() {
 
               <div>
                 <strong>
-                  Switch to Web Dashboard
+                  Switch to Web Administration
                 </strong>
 
                 <span>
@@ -7622,6 +7959,9 @@ function AdminWorkspace({
   setScreen,
   currentUser,
   setCurrentUser,
+  accounts,
+  onUpdateAccount,
+  onPasswordReset,
   accessibilityPrefs,
   updateAccessibilityPrefs,
   search,
@@ -7657,6 +7997,16 @@ function AdminWorkspace({
     exportOpen,
     setExportOpen,
   ] = useState(false);
+
+  const [
+    selectedAccountEmail,
+    setSelectedAccountEmail,
+  ] = useState("");
+
+  const selectedAccount =
+    accounts[
+      selectedAccountEmail
+    ] || null;
 
   return (
     <div className="admin-desktop">
@@ -8049,7 +8399,7 @@ function AdminWorkspace({
                       </h2>
 
                       <p>
-                        Prototype clusters requiring review.
+                        Activity clusters requiring review.
                       </p>
                     </div>
 
@@ -8127,7 +8477,7 @@ function AdminWorkspace({
                     </h2>
 
                     <p>
-                      Coarse prototype regions only.
+                      Coarse regions only.
                     </p>
                   </div>
 
@@ -8202,6 +8552,12 @@ function AdminWorkspace({
                   }
                   setCurrentUser={
                     setCurrentUser
+                  }
+                  onUpdateName={
+                    updateOwnAccount
+                  }
+                  onChangePassword={
+                    changeOwnPassword
                   }
                   roleLabel="Admin / Regulator"
                   defaults={{
@@ -8468,7 +8824,7 @@ function AdminWorkspace({
               <AdminPageHeader
                 eyebrow="Scan Provenance"
                 title="Scan Monitor"
-                subtitle="Review where prototype verification activity came from"
+                subtitle="Review where verification activity came from"
               />
 
               <div className="admin-filter-row">
@@ -8558,7 +8914,7 @@ function AdminWorkspace({
                     ? `Investigation — Batch ${selectedInvestigation.batch}`
                     : "Suspect Activity"
                 }
-                subtitle="Review verification provenance and related prototype activity"
+                subtitle="Review verification provenance and related activity"
               />
 
               <div className="admin-investigation-grid">
@@ -8705,7 +9061,7 @@ function AdminWorkspace({
               <AdminPageHeader
                 eyebrow="Audit Trail"
                 title="Administrative Audit Trail"
-                subtitle="Prototype audit history for verification, reports and administrative actions"
+                subtitle="Audit history for verification, reports and administrative actions"
               />
 
               <div className="admin-filter-row">
@@ -8745,98 +9101,128 @@ function AdminWorkspace({
               <AdminPageHeader
                 eyebrow="Role-Based Access"
                 title="Users & Access"
-                subtitle="Demo identities and role permissions"
+                subtitle="Application accounts and role permissions"
               />
 
-              <section className="admin-panel">
+              {selectedAccount ? (
+                <AdminAccountEditor
+                  account={
+                    selectedAccount
+                  }
+                  onBack={() =>
+                    setSelectedAccountEmail(
+                      ""
+                    )
+                  }
+                  onSave={(
+                    updates
+                  ) => {
+                    onUpdateAccount(
+                      selectedAccountEmail,
+                      updates
+                    );
 
-                <div className="admin-table-wrap">
+                    setSelectedAccountEmail(
+                      updates.email
+                        .trim()
+                        .toLowerCase()
+                    );
+                  }}
+                  onPasswordReset={() =>
+                    onPasswordReset(
+                      selectedAccount.email
+                    )
+                  }
+                />
+              ) : (
+                <section className="admin-panel">
 
-                  <table className="admin-table">
+                  <div className="admin-table-wrap">
 
-                    <thead>
-                      <tr>
-                        <th>
-                          Name
-                        </th>
+                    <table className="admin-table">
 
-                        <th>
-                          Email
-                        </th>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email / Username</th>
+                          <th>Role</th>
+                          <th>Account Status</th>
+                          <th>Last Active</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
 
-                        <th>
-                          Role
-                        </th>
+                      <tbody>
 
-                        <th>
-                          MFA
-                        </th>
-
-                        <th>
-                          Last Active
-                        </th>
-
-                        <th>
-                          Status
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-
-                      {Object.values(
-                        demoUsers
-                      ).map(
-                        (user) => (
-                          <tr
-                            key={
-                              user.email
-                            }
-                          >
-
-                            <td>
-                              {
-                                user.fullName
-                              }
-                            </td>
-
-                            <td>
-                              {
+                        {Object.values(
+                          accounts
+                        ).map(
+                          (user) => (
+                            <tr
+                              key={
                                 user.email
                               }
-                            </td>
+                            >
+                              <td>
+                                {user.fullName}
+                              </td>
 
-                            <td>
-                              {
-                                user.role
-                              }
-                            </td>
+                              <td>
+                                {user.email}
+                              </td>
 
-                            <td>
-                              Enabled
-                            </td>
+                              <td>
+                                {user.role}
+                              </td>
 
-                            <td>
-                              Today
-                            </td>
+                              <td>
+                                <span
+                                  className={`admin-status ${
+                                    user.status ===
+                                    "INACTIVE"
+                                      ? "warning"
+                                      : "success"
+                                  }`}
+                                >
+                                  {user.status ===
+                                  "INACTIVE"
+                                    ? "Inactive"
+                                    : "Active"}
+                                </span>
+                              </td>
 
-                            <td>
-                              <span className="admin-status success">
-                                Active
-                              </span>
-                            </td>
+                              <td>
+                                {user.lastActive ||
+                                  "Today"}
+                              </td>
 
-                          </tr>
-                        )
-                      )}
+                              <td>
+                                <button
+                                  type="button"
+                                  className="admin-table-action"
+                                  onClick={() =>
+                                    setSelectedAccountEmail(
+                                      user.email
+                                        .trim()
+                                        .toLowerCase()
+                                    )
+                                  }
+                                >
+                                  Edit Account
+                                </button>
+                              </td>
+                            </tr>
+                          )
+                        )}
 
-                    </tbody>
+                      </tbody>
 
-                  </table>
+                    </table>
 
-                </div>
+                  </div>
 
-              </section>
+                </section>
+              )}
             </>
           )}
 
@@ -8851,6 +9237,242 @@ function AdminWorkspace({
 /* =========================================================
    HELPERS
 ========================================================= */
+
+function AdminAccountEditor({
+  account,
+  onBack,
+  onSave,
+  onPasswordReset,
+}) {
+  const [draft, setDraft] =
+    useState({
+      fullName:
+        account.fullName,
+      email:
+        account.email,
+      role:
+        account.role,
+      status:
+        account.status ||
+        "ACTIVE",
+    });
+
+  const [message, setMessage] =
+    useState("");
+
+  const save = (
+    event
+  ) => {
+    event.preventDefault();
+
+    if (
+      !draft.fullName.trim() ||
+      !draft.email.trim()
+    ) {
+      setMessage(
+        "Name and email are required."
+      );
+      return;
+    }
+
+    onSave(draft);
+    setMessage(
+      "Account updated"
+    );
+  };
+
+  return (
+    <section className="admin-panel admin-account-editor">
+
+      <button
+        type="button"
+        className="admin-back-link"
+        onClick={onBack}
+      >
+        ← Back to Users & Access
+      </button>
+
+      <div className="admin-account-editor-head">
+
+        <div>
+          <h2>
+            Edit Account
+          </h2>
+
+          <p>
+            Manage account details, role and status.
+          </p>
+        </div>
+
+        <span
+          className={`admin-status ${
+            draft.status ===
+            "INACTIVE"
+              ? "warning"
+              : "success"
+          }`}
+        >
+          {draft.status ===
+          "INACTIVE"
+            ? "Inactive"
+            : "Active"}
+        </span>
+
+      </div>
+
+      <form
+        className="admin-account-form"
+        onSubmit={save}
+      >
+
+        <label>
+          <span>
+            Name
+          </span>
+
+          <input
+            value={
+              draft.fullName
+            }
+            onChange={(event) =>
+              setDraft(
+                (current) => ({
+                  ...current,
+                  fullName:
+                    event.target.value,
+                })
+              )
+            }
+          />
+        </label>
+
+        <label>
+          <span>
+            Email / Username
+          </span>
+
+          <input
+            type="email"
+            value={draft.email}
+            onChange={(event) =>
+              setDraft(
+                (current) => ({
+                  ...current,
+                  email:
+                    event.target.value,
+                })
+              )
+            }
+          />
+        </label>
+
+        <label>
+          <span>
+            Role
+          </span>
+
+          <select
+            value={draft.role}
+            onChange={(event) =>
+              setDraft(
+                (current) => ({
+                  ...current,
+                  role:
+                    event.target.value,
+                })
+              )
+            }
+          >
+            <option value="consumer">
+              Consumer
+            </option>
+
+            <option value="pharmacist">
+              Pharmacist
+            </option>
+
+            <option value="manufacturer">
+              Manufacturer
+            </option>
+
+            <option value="admin">
+              Admin
+            </option>
+          </select>
+        </label>
+
+        <label>
+          <span>
+            Account Status
+          </span>
+
+          <select
+            value={
+              draft.status
+            }
+            onChange={(event) =>
+              setDraft(
+                (current) => ({
+                  ...current,
+                  status:
+                    event.target.value,
+                })
+              )
+            }
+          >
+            <option value="ACTIVE">
+              Active
+            </option>
+
+            <option value="INACTIVE">
+              Inactive
+            </option>
+          </select>
+        </label>
+
+        <div className="admin-account-actions">
+
+          <button
+            type="submit"
+            className="admin-primary-action"
+          >
+            Save Account
+          </button>
+
+          <button
+            type="button"
+            className="admin-secondary-action"
+            onClick={() => {
+              onPasswordReset();
+
+              setMessage(
+                "Password reset requested"
+              );
+            }}
+          >
+            Reset Password
+          </button>
+
+        </div>
+
+      </form>
+
+      {message && (
+        <div
+          className="admin-account-message"
+          role="status"
+        >
+          {message}
+        </div>
+      )}
+
+      <p className="admin-account-note">
+        Passwords are never displayed. Account changes are recorded in the Audit Trail.
+      </p>
+
+    </section>
+  );
+}
 
 function ReportsTable({
   reports,
@@ -9577,7 +10199,7 @@ function MedicineResultDetails({
         label="Source"
         value={
           product.source ||
-          "MedAuth prototype dataset"
+          "MedAuth Records"
         }
       />
 
@@ -9616,7 +10238,7 @@ function SupplyChainSnapshot({
             </h3>
 
             <span className="prototype-label">
-              Prototype information
+              Registered information
             </span>
           </div>
 
@@ -9659,7 +10281,7 @@ function SupplyChainSnapshot({
         </div>
 
         <p className="supply-chain-note">
-          Supply-chain information is unavailable for this product in the current MedAuth prototype dataset.
+          Supply-chain information is unavailable for this product in the current MedAuth records.
         </p>
 
       </div>
@@ -9678,7 +10300,7 @@ function SupplyChainSnapshot({
           </h3>
 
           <span className="prototype-label">
-            Prototype / sample information
+            Registered information
           </span>
 
         </div>
@@ -9797,12 +10419,12 @@ function SupplyChainSnapshot({
       {result.status ===
         "NO_MATCH" && (
         <p className="supply-chain-warning">
-          A difference was found between the scanned information and the registered prototype record.
+          A difference was found between the scanned information and the registered MedAuth record.
         </p>
       )}
 
       <p className="supply-chain-note">
-        This is prototype/sample supply-chain information and is not a real blockchain record.
+        This supply-chain information is a MedAuth record and is not a real blockchain record.
       </p>
 
     </div>
@@ -9812,106 +10434,154 @@ function SupplyChainSnapshot({
 function EditableProfilePanel({
   currentUser,
   setCurrentUser,
+  onUpdateName,
+  onChangePassword,
   roleLabel,
   defaults,
-  accessibilityPrefs,
-  updateAccessibilityPrefs,
   privacyNote,
   web = false,
 }) {
   const [editing, setEditing] =
     useState(false);
 
+  const [
+    changingPassword,
+    setChangingPassword,
+  ] = useState(false);
+
   const [message, setMessage] =
     useState("");
 
-  const buildDraft = () => ({
-    fullName:
+  const [error, setError] =
+    useState("");
+
+  const [nameDraft, setNameDraft] =
+    useState(
       currentUser?.fullName ||
       defaults.fullName ||
-      "",
-    title:
-      currentUser?.title ||
-      defaults.title ||
-      "",
-    organisation:
-      currentUser?.organisation ||
-      defaults.organisation ||
-      "",
-    email:
-      currentUser?.email ||
-      defaults.email ||
-      "",
-    phone:
-      currentUser?.phone ||
-      defaults.phone ||
-      "",
-  });
+      ""
+    );
 
-  const [draft, setDraft] =
-    useState(buildDraft);
+  const [
+    currentPassword,
+    setCurrentPassword,
+  ] = useState("");
 
-  const [prefDraft, setPrefDraft] =
-    useState(accessibilityPrefs);
+  const [
+    newPassword,
+    setNewPassword,
+  ] = useState("");
+
+  const [
+    confirmPassword,
+    setConfirmPassword,
+  ] = useState("");
 
   const beginEdit = () => {
-    setDraft(buildDraft());
-    setPrefDraft(
-      accessibilityPrefs
+    setNameDraft(
+      currentUser?.fullName ||
+      defaults.fullName ||
+      ""
     );
+
     setMessage("");
+    setError("");
     setEditing(true);
   };
 
   const cancelEdit = () => {
-    setDraft(buildDraft());
-    setPrefDraft(
-      accessibilityPrefs
+    setNameDraft(
+      currentUser?.fullName ||
+      defaults.fullName ||
+      ""
     );
+
     setMessage("");
+    setError("");
     setEditing(false);
   };
 
   const saveProfile = () => {
+    const nextName =
+      nameDraft.trim();
+
+    if (!nextName) {
+      setError(
+        "Name cannot be empty."
+      );
+      return;
+    }
+
+    onUpdateName(
+      nextName
+    );
+
     setCurrentUser(
       (current) => ({
         ...(current || {}),
-        ...draft,
+        fullName:
+          nextName,
+        name:
+          nextName,
       })
     );
 
-    updateAccessibilityPrefs(
-      prefDraft
-    );
-
+    setEditing(false);
+    setError("");
     setMessage(
       "Profile updated"
     );
-    setEditing(false);
   };
 
-  const field = (
-    key,
-    label,
-    type = "text"
-  ) => (
-    <label className="editable-profile-field">
-      <span>{label}</span>
-      <input
-        type={type}
-        value={draft[key]}
-        onChange={(event) =>
-          setDraft(
-            (current) => ({
-              ...current,
-              [key]:
-                event.target.value,
-            })
-          )
-        }
-      />
-    </label>
-  );
+  const submitPassword = (
+    event
+  ) => {
+    event.preventDefault();
+
+    setError("");
+    setMessage("");
+
+    if (
+      !newPassword.trim()
+    ) {
+      setError(
+        "New password cannot be empty."
+      );
+      return;
+    }
+
+    if (
+      newPassword !==
+      confirmPassword
+    ) {
+      setError(
+        "New passwords do not match."
+      );
+      return;
+    }
+
+    const outcome =
+      onChangePassword({
+        currentPassword,
+        newPassword,
+      });
+
+    if (!outcome?.ok) {
+      setError(
+        outcome?.message ||
+        "Password could not be updated."
+      );
+      return;
+    }
+
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setChangingPassword(false);
+    setMessage(
+      "Password updated"
+    );
+  };
 
   return (
     <div
@@ -9920,12 +10590,14 @@ function EditableProfilePanel({
       }`}
     >
       <div className="editable-profile-heading">
+
         <div>
           <h2>
-            Profile details
+            Profile
           </h2>
+
           <p>
-            {roleLabel}
+            Your personal account details
           </p>
         </div>
 
@@ -9933,15 +10605,38 @@ function EditableProfilePanel({
           <button
             type="button"
             className="edit-profile-button"
-            onClick={beginEdit}
+            onClick={
+              beginEdit
+            }
           >
             Edit Profile
           </button>
         )}
+
       </div>
 
-      {!editing ? (
-        <div className="profile-information-card">
+      <div className="profile-information-card">
+
+        {editing ? (
+          <label className="editable-profile-field">
+
+            <span>
+              Name
+            </span>
+
+            <input
+              type="text"
+              value={nameDraft}
+              onChange={(event) =>
+                setNameDraft(
+                  event.target.value
+                )
+              }
+              autoComplete="name"
+            />
+
+          </label>
+        ) : (
           <ProfileRow
             label="Name"
             value={
@@ -9950,186 +10645,192 @@ function EditableProfilePanel({
               "—"
             }
           />
-          <ProfileRow
-            label="Job title"
-            value={
-              currentUser?.title ||
-              defaults.title ||
-              "—"
-            }
-          />
-          {(currentUser?.organisation ||
-            defaults.organisation) && (
-            <ProfileRow
-              label="Organisation"
-              value={
-                currentUser?.organisation ||
-                defaults.organisation
-              }
-            />
-          )}
-          <ProfileRow
-            label="Email"
-            value={
-              currentUser?.email ||
-              defaults.email ||
-              "—"
-            }
-          />
-          {(currentUser?.phone ||
-            defaults.phone) && (
-            <ProfileRow
-              label="Phone"
-              value={
-                currentUser?.phone ||
-                defaults.phone
-              }
-            />
-          )}
-          <ProfileRow
-            label="Role"
-            value={roleLabel}
-          />
-        </div>
-      ) : (
-        <div className="editable-profile-form">
-          {field("fullName", "Name")}
-          {field(
-            "title",
-            roleLabel === "Consumer"
-              ? "Display title"
-              : "Job title"
-          )}
-          {roleLabel !== "Consumer" &&
-            field(
-              "organisation",
-              "Organisation"
-            )}
-          {field(
-            "email",
-            "Email",
-            "email"
-          )}
-          {roleLabel !== "Consumer" &&
-            field(
-              "phone",
-              "Phone",
-              "tel"
-            )}
-        </div>
-      )}
+        )}
 
-      <div className="profile-preferences-card">
-        <div className="profile-preferences-head">
-          <h3>
-            Accessibility
-          </h3>
-          <span>
-            Calm Trust preferences
-          </span>
-        </div>
+        <ProfileRow
+          label="Email"
+          value={
+            currentUser?.email ||
+            defaults.email ||
+            "—"
+          }
+        />
 
-        <label className="profile-preference-row">
-          <div>
-            <strong>
-              Text Size
-            </strong>
-            <span>
-              Standard, Large or Extra Large
-            </span>
-          </div>
+        <ProfileRow
+          label="Role"
+          value={roleLabel}
+        />
 
-          <select
-            value={
-              editing
-                ? prefDraft.textSize
-                : accessibilityPrefs.textSize
-            }
-            disabled={!editing}
-            onChange={(event) =>
-              setPrefDraft(
-                (current) => ({
-                  ...current,
-                  textSize:
-                    event.target.value,
-                })
-              )
-            }
-          >
-            <option value="standard">
-              Standard
-            </option>
-            <option value="large">
-              Large
-            </option>
-            <option value="extra-large">
-              Extra Large
-            </option>
-          </select>
-        </label>
-
-        {[
-          ["highContrast", "High Contrast"],
-          ["voiceAssistance", "Voice Assistance"],
-          ["reducedMotion", "Reduced Motion"],
-        ].map(([key, label]) => (
-          <label
-            className="profile-preference-row"
-            key={key}
-          >
-            <div>
-              <strong>
-                {label}
-              </strong>
-              <span>
-                {(
-                  editing
-                    ? prefDraft[key]
-                    : accessibilityPrefs[key]
-                )
-                  ? "On"
-                  : "Off"}
-              </span>
-            </div>
-
-            <input
-              type="checkbox"
-              checked={
-                editing
-                  ? prefDraft[key]
-                  : accessibilityPrefs[key]
-              }
-              disabled={!editing}
-              onChange={(event) =>
-                setPrefDraft(
-                  (current) => ({
-                    ...current,
-                    [key]:
-                      event.target.checked,
-                  })
-                )
-              }
-            />
-          </label>
-        ))}
       </div>
 
       {editing && (
         <div className="editable-profile-actions">
+
           <button
             type="button"
             className="save-profile-button"
-            onClick={saveProfile}
+            onClick={
+              saveProfile
+            }
           >
             Save Changes
           </button>
+
           <button
             type="button"
             className="cancel-profile-button"
-            onClick={cancelEdit}
+            onClick={
+              cancelEdit
+            }
           >
             Cancel
           </button>
+
+        </div>
+      )}
+
+      <div className="profile-password-card">
+
+        <div className="profile-password-head">
+
+          <div>
+            <h3>
+              Password
+            </h3>
+
+            <p>
+              Keep your account sign-in protected.
+            </p>
+          </div>
+
+          {!changingPassword && (
+            <button
+              type="button"
+              className="change-password-button"
+              onClick={() => {
+                setChangingPassword(
+                  true
+                );
+
+                setError("");
+                setMessage("");
+              }}
+            >
+              Change Password
+            </button>
+          )}
+
+        </div>
+
+        {changingPassword && (
+          <form
+            className="change-password-form"
+            onSubmit={
+              submitPassword
+            }
+          >
+            <label className="editable-profile-field">
+              <span>
+                Current Password
+              </span>
+
+              <input
+                type="password"
+                value={
+                  currentPassword
+                }
+                onChange={(event) =>
+                  setCurrentPassword(
+                    event.target.value
+                  )
+                }
+                autoComplete="current-password"
+                required
+              />
+            </label>
+
+            <label className="editable-profile-field">
+              <span>
+                New Password
+              </span>
+
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(event) =>
+                  setNewPassword(
+                    event.target.value
+                  )
+                }
+                autoComplete="new-password"
+                required
+              />
+            </label>
+
+            <label className="editable-profile-field">
+              <span>
+                Confirm New Password
+              </span>
+
+              <input
+                type="password"
+                value={
+                  confirmPassword
+                }
+                onChange={(event) =>
+                  setConfirmPassword(
+                    event.target.value
+                  )
+                }
+                autoComplete="new-password"
+                required
+              />
+            </label>
+
+            <div className="editable-profile-actions">
+
+              <button
+                type="submit"
+                className="save-profile-button"
+              >
+                Update Password
+              </button>
+
+              <button
+                type="button"
+                className="cancel-profile-button"
+                onClick={() => {
+                  setChangingPassword(
+                    false
+                  );
+
+                  setCurrentPassword(
+                    ""
+                  );
+                  setNewPassword(
+                    ""
+                  );
+                  setConfirmPassword(
+                    ""
+                  );
+                  setError("");
+                }}
+              >
+                Cancel
+              </button>
+
+            </div>
+          </form>
+        )}
+
+      </div>
+
+      {error && (
+        <div
+          className="profile-error-message"
+          role="alert"
+        >
+          {error}
         </div>
       )}
 
@@ -10144,10 +10845,12 @@ function EditableProfilePanel({
 
       <div className="profile-note">
         <LockIcon />
+
         <span>
           {privacyNote}
         </span>
       </div>
+
     </div>
   );
 }
@@ -10156,459 +10859,35 @@ function BackButton({
   onClick,
 }) {
   return (
-    <button
-      type="button"
-      className="back-button"
-      onClick={onClick}
-    >
-      ← Back
-    </button>
-  );
-}
-
-function ProfileRow({
-  label,
-  value,
-}) {
-  return (
-    <div className="profile-row">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value}
-      </strong>
-
-    </div>
-  );
-}
-
-function PharmacistMetric({
-  label,
-  value,
-}) {
-  return (
-    <div className="pharmacist-metric">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value}
-      </strong>
-
-    </div>
-  );
-}
-
-function AdminMobileMetric({
-  label,
-  value,
-}) {
-  return (
-    <div className="admin-mobile-metric">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value}
-      </strong>
-
-    </div>
-  );
-}
-
-function PharmacistNav({
-  screen,
-  setScreen,
-}) {
-  const items = [
-    {
-      label:
-        "Dashboard",
-
-      screen:
-        "pharmacistDashboard",
-    },
-
-    {
-      label:
-        "Verify",
-
-      screen:
-        "scan",
-    },
-
-    {
-      label:
-        "Batch",
-
-      screen:
-        "pharmacistBatchLookup",
-    },
-
-    {
-      label:
-        "Recalls",
-
-      screen:
-        "pharmacistRecalls",
-    },
-
-    {
-      label:
-        "History",
-
-      screen:
-        "pharmacistHistory",
-    },
-  ];
-
-  return (
-    <nav className="pharmacist-nav">
-
-      {items.map(
-        (item) => (
-          <button
-            key={
-              item.screen
-            }
-            type="button"
-            className={
-              screen ===
-              item.screen
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setScreen(
-                item.screen
-              )
-            }
-          >
-            {
-              item.label
-            }
-          </button>
-        )
-      )}
-
-    </nav>
-  );
-}
-
-function AdminMobileNav({
-  screen,
-  setScreen,
-}) {
-  const items = [
-    {
-      label:
-        "Home",
-
-      screen:
-        "adminMobileDashboard",
-    },
-
-    {
-      label:
-        "Reports",
-
-      screen:
-        "adminMobileReports",
-    },
-
-    {
-      label:
-        "Scans",
-
-      screen:
-        "adminMobileScanMonitor",
-    },
-
-    {
-      label:
-        "Investigate",
-
-      screen:
-        "adminMobileInvestigation",
-    },
-
-    {
-      label:
-        "Audit",
-
-      screen:
-        "adminMobileAudit",
-    },
-  ];
-
-  return (
-    <nav className="admin-mobile-nav">
-
-      {items.map(
-        (item) => (
-          <button
-            key={
-              item.screen
-            }
-            type="button"
-            className={
-              screen ===
-              item.screen
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setScreen(
-                item.screen
-              )
-            }
-          >
-            {
-              item.label
-            }
-          </button>
-        )
-      )}
-
-    </nav>
-  );
-}
-
-function DashboardHeader({
-  title,
-  role,
-}) {
-  return (
-    <div className="dashboard-head">
-
-      <div>
-
-        <div className="eyebrow">
-          MedAuth account
-        </div>
-
-        <h1>
-          {title}
-        </h1>
-
-      </div>
-
-      <span className="role-badge">
-        {role}
-      </span>
-
-    </div>
-  );
-}
-
-function Row({
-  label,
-  value,
-}) {
-  return (
-    <div className="detail-row">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value || "—"}
-      </strong>
-
-    </div>
-  );
-}
-
-function Metric({
-  label,
-  value,
-}) {
-  return (
-    <div className="metric">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value}
-      </strong>
-
-    </div>
-  );
-}
-
-function ManufacturerDashboard({
-  totals,
-}) {
-  return (
-    <>
-      <div className="metric-grid">
-
-        <Metric
-          label="Demo scans"
-          value={
-            totals.scans
-          }
-        />
-
-        <Metric
-          label="Matches"
-          value={
-            totals.match
-          }
-        />
-
-        <Metric
-          label="No matches"
-          value={
-            totals.noMatch
-          }
-        />
-
-        <Metric
-          label="Covered"
-          value={
-            totals.covered
-          }
-        />
-
-      </div>
-
-      <div className="panel">
-
-        <h3>
-          Products
-        </h3>
-
-        <p>
-          SampleMed 10mg — enrolled
-        </p>
-
-        <p>
-          HealthMed 20mg — enrolled
-        </p>
-
-        <p>
-          TestMed 5mg — not yet covered
-        </p>
-
-      </div>
-    </>
-  );
-}
-
-function AdminPageHeader({
-  eyebrow,
-  title,
-  subtitle,
-  backAction,
-}) {
-  return (
-    <div className="admin-page-header">
-
-      <div>
-
-        {backAction && (
-          <button
-            className="admin-back-link"
-            onClick={
-              backAction
-            }
-          >
-            ← Back
-          </button>
-        )}
-
-        <span className="admin-eyebrow">
-          {eyebrow}
+    <div className="back-row">
+
+      <button
+        type="button"
+        className="back-button"
+        onClick={onClick}
+        aria-label="Go back"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+
+        <span>
+          Back
         </span>
+      </button>
 
-        <h1>
-          {title}
-        </h1>
-
-        <p>
-          {subtitle}
-        </p>
-
-      </div>
-
-      <span className="admin-access-badge">
-        Admin Access
-      </span>
+      <img
+        className="back-brand-logo"
+        src={`${import.meta.env.BASE_URL}medauth-logo.png`}
+        alt="MedAuth"
+      />
 
     </div>
   );
 }
-
-function AdminSummary({
-  label,
-  value,
-}) {
-  return (
-    <div className="admin-summary-card">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value}
-      </strong>
-
-    </div>
-  );
-}
-
-function AdminDetailRow({
-  label,
-  value,
-}) {
-  return (
-    <div className="admin-detail-row">
-
-      <span>
-        {label}
-      </span>
-
-      <strong>
-        {value || "—"}
-      </strong>
-
-    </div>
-  );
-}
-
-function AdminNavButton({
-  label,
-  active,
-  onClick,
-}) {
-  return (
-    <button
-      type="button"
-      className={`admin-nav-button ${
-        active
-          ? "active"
-          : ""
-      }`}
-      onClick={onClick}
-    >
-      {label}
-    </button>
-  );
-}
-
-/* ICONS */
 
 function ScanIcon() {
   return (
