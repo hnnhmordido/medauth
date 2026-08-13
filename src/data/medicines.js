@@ -267,3 +267,4 @@ export function getActiveRecalls() {
         medicine.recall.reason,
     }));
 }
+ 
