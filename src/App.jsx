@@ -2419,7 +2419,7 @@ export default function App() {
                       ""
                     );
                   }}
-                  placeholder="e.g. pharmacist@medauth.com"
+                  placeholder="e.g. example@medauth.com"
                   autoComplete="email"
                   required
                 />
