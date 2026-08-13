@@ -3449,7 +3449,7 @@ export default function App() {
                   </span>
 
                   <h1>
-                    Hi,{" "}
+                    Hi{" "}
                     {currentUser
                       ?.name ||
                       "Harry"}
@@ -4489,7 +4489,7 @@ export default function App() {
                   </span>
 
                   <h1>
-                    Hi, {currentUser?.name || "Ron"}
+                    Hi {currentUser?.name || "Ron"}
                   </h1>
 
                   <p>
@@ -5306,7 +5306,7 @@ export default function App() {
                   </span>
 
                   <h1>
-                    Hi,{" "}
+                    Hi{" "}
                     {currentUser
                       ?.name ||
                       "Marie"}
@@ -6376,7 +6376,7 @@ export default function App() {
               </span>
 
               <h1>
-                Hi, Luna
+                Hi Luna
               </h1>
 
               <p>
@@ -6505,7 +6505,7 @@ export default function App() {
                   </span>
 
                   <h1>
-                    Hi, Luna
+                    Hi Luna
                   </h1>
 
                   <p>
