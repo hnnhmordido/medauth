@@ -24,8 +24,6 @@ const demoUsers = {
     title: "Manufacturer Representative",
     organisation: "MedAuth Manufacturer",
     email: "manufacturer@medauth.com",
-    status: "ACTIVE",
-    lastActive: "Today",
   },
 
   "pharmacist@medauth.com": {
@@ -36,8 +34,6 @@ const demoUsers = {
     title: "Registered Pharmacist",
     organisation: "MedAuth Pharmacy",
     email: "pharmacist@medauth.com",
-    status: "ACTIVE",
-    lastActive: "Today",
   },
 
   "consumer@medauth.com": {
@@ -47,8 +43,6 @@ const demoUsers = {
     fullName: "Ron",
     title: "Consumer",
     email: "consumer@medauth.com",
-    status: "ACTIVE",
-    lastActive: "Today",
   },
 
   "admin@medauth.com": {
@@ -59,8 +53,6 @@ const demoUsers = {
     title: "MedAuth Administrator",
     organisation: "MedAuth Administration",
     email: "admin@medauth.com",
-    status: "ACTIVE",
-    lastActive: "Today",
   },
 };
 
@@ -505,41 +497,6 @@ export default function App() {
     currentUser,
     setCurrentUser,
   ] = useState(null);
-
-  const [
-    accounts,
-    setAccounts,
-  ] = useState(() => {
-    try {
-      const saved =
-        window.localStorage.getItem(
-          "medauth-accounts"
-        );
-
-      return saved
-        ? JSON.parse(saved)
-        : demoUsers;
-    } catch {
-      return demoUsers;
-    }
-  });
-
-  const saveAccounts = (
-    nextAccounts
-  ) => {
-    setAccounts(nextAccounts);
-
-    try {
-      window.localStorage.setItem(
-        "medauth-accounts",
-        JSON.stringify(
-          nextAccounts
-        )
-      );
-    } catch {
-      // Local account storage is optional.
-    }
-  };
 
   const [
     accessibilityPrefs,
@@ -1399,24 +1356,13 @@ export default function App() {
           .toLowerCase();
 
       const user =
-        accounts[
+        demoUsers[
           normalizedEmail
         ];
 
       if (!user) {
         setLoginError(
           "Account not found. Check your email address."
-        );
-
-        return;
-      }
-
-      if (
-        user.status ===
-        "INACTIVE"
-      ) {
-        setLoginError(
-          "This account is inactive. Contact an administrator."
         );
 
         return;
@@ -2200,272 +2146,6 @@ export default function App() {
     }
   };
 
-  const updateOwnAccount = (
-    nextName
-  ) => {
-    const emailKey =
-      currentUser?.email
-        ?.trim()
-        .toLowerCase();
-
-    if (!emailKey) {
-      return;
-    }
-
-    const nextAccounts = {
-      ...accounts,
-
-      [emailKey]: {
-        ...accounts[emailKey],
-        fullName: nextName,
-        name: nextName,
-      },
-    };
-
-    saveAccounts(
-      nextAccounts
-    );
-
-    setCurrentUser(
-      (current) => ({
-        ...(current || {}),
-        fullName: nextName,
-        name: nextName,
-      })
-    );
-  };
-
-  const changeOwnPassword = ({
-    currentPassword,
-    newPassword,
-  }) => {
-    const emailKey =
-      currentUser?.email
-        ?.trim()
-        .toLowerCase();
-
-    const account =
-      accounts[emailKey];
-
-    if (!account) {
-      return {
-        ok: false,
-        message:
-          "Account could not be found.",
-      };
-    }
-
-    if (
-      account.password !==
-      currentPassword
-    ) {
-      return {
-        ok: false,
-        message:
-          "Current password is incorrect.",
-      };
-    }
-
-    const nextAccounts = {
-      ...accounts,
-
-      [emailKey]: {
-        ...account,
-        password:
-          newPassword,
-      },
-    };
-
-    saveAccounts(
-      nextAccounts
-    );
-
-    return {
-      ok: true,
-      message:
-        "Password updated",
-    };
-  };
-
-  const updateAdminAccount = (
-    originalEmail,
-    updates
-  ) => {
-    if (
-      role !== "admin"
-    ) {
-      return;
-    }
-
-    const oldKey =
-      originalEmail
-        .trim()
-        .toLowerCase();
-
-    const existing =
-      accounts[oldKey];
-
-    if (!existing) {
-      return;
-    }
-
-    const newKey =
-      updates.email
-        .trim()
-        .toLowerCase();
-
-    const updatedAccount = {
-      ...existing,
-      fullName:
-        updates.fullName.trim(),
-      name:
-        updates.fullName.trim(),
-      email:
-        updates.email.trim(),
-      role:
-        updates.role,
-      status:
-        updates.status,
-    };
-
-    const nextAccounts = {
-      ...accounts,
-    };
-
-    delete nextAccounts[
-      oldKey
-    ];
-
-    nextAccounts[
-      newKey
-    ] = updatedAccount;
-
-    saveAccounts(
-      nextAccounts
-    );
-
-    if (
-      currentUser?.email
-        ?.toLowerCase() ===
-      oldKey
-    ) {
-      setCurrentUser(
-        updatedAccount
-      );
-
-      setRole(
-        updatedAccount.role
-      );
-    }
-
-    let action =
-      "Account updated";
-
-    if (
-      existing.role !==
-      updatedAccount.role
-    ) {
-      action =
-        "Role changed";
-    } else if (
-      existing.status !==
-      updatedAccount.status
-    ) {
-      action =
-        updatedAccount.status ===
-        "ACTIVE"
-          ? "Account activated"
-          : "Account deactivated";
-    }
-
-    setAuditEvents(
-      (current) => [
-        {
-          id:
-            `AUD-${Date.now()}`,
-          timestamp:
-            new Date().toISOString(),
-          actor:
-            currentUser?.fullName ||
-            "Admin",
-          action,
-          recordType:
-            "User Account",
-          recordId:
-            updatedAccount.email,
-          previousState:
-            `${existing.role} · ${existing.status || "ACTIVE"}`,
-          newState:
-            `${updatedAccount.role} · ${updatedAccount.status}`,
-        },
-
-        ...current,
-      ]
-    );
-  };
-
-  const requestAdminPasswordReset = (
-    accountEmail
-  ) => {
-    if (
-      role !== "admin"
-    ) {
-      return;
-    }
-
-    const key =
-      accountEmail
-        .trim()
-        .toLowerCase();
-
-    const account =
-      accounts[key];
-
-    if (!account) {
-      return;
-    }
-
-    const nextAccounts = {
-      ...accounts,
-
-      [key]: {
-        ...account,
-        password: "demo123",
-        resetRequested: true,
-      },
-    };
-
-    saveAccounts(
-      nextAccounts
-    );
-
-    setAuditEvents(
-      (current) => [
-        {
-          id:
-            `AUD-${Date.now()}`,
-          timestamp:
-            new Date().toISOString(),
-          actor:
-            currentUser?.fullName ||
-            "Admin",
-          action:
-            "Password reset requested",
-          recordType:
-            "User Account",
-          recordId:
-            account.email,
-          previousState:
-            "Password protected",
-          newState:
-            "Reset requested",
-        },
-
-        ...current,
-      ]
-    );
-  };
-
   const isAdminWebScreen =
     role === "admin" &&
     adminMode === "web" &&
@@ -2512,15 +2192,6 @@ export default function App() {
           }
           setCurrentUser={
             setCurrentUser
-          }
-          accounts={
-            accounts
-          }
-          onUpdateAccount={
-            updateAdminAccount
-          }
-          onPasswordReset={
-            requestAdminPasswordReset
           }
           accessibilityPrefs={
             accessibilityPrefs
@@ -3510,7 +3181,7 @@ export default function App() {
                 value={
                   result.product
                     .source ||
-                  "MedAuth Records"
+                  "MedAuth prototype dataset"
                 }
               />
 
@@ -3838,14 +3509,14 @@ export default function App() {
 
                 <strong>
                   {offline
-                    ? "Offline — Using saved records"
+                    ? "Offline Mode — Using Cached Data"
                     : "System Online"}
                 </strong>
 
                 <span>
                   {currentUser
                     ?.organisation ||
-                    "MedAuth Manufacturer"}
+                    "MedAuth Manufacturer Demo"}
                 </span>
 
               </div>
@@ -4141,8 +3812,6 @@ export default function App() {
             <EditableProfilePanel
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
-              onUpdateName={updateOwnAccount}
-              onChangePassword={changeOwnPassword}
               roleLabel="Manufacturer"
               defaults={{
                 fullName: "Harry",
@@ -4193,7 +3862,7 @@ export default function App() {
 
                   <span>
                     {offline
-                      ? "Offline — Using saved records"
+                      ? "Offline — Using Cached Data"
                       : "System Online"}
                   </span>
 
@@ -4217,7 +3886,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Activity waiting to synchronise
+                    Prototype activity waiting to synchronise
                   </span>
 
                 </div>
@@ -4237,7 +3906,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Keep your sign-in preference
+                    Keep your demo preference
                   </span>
 
                 </div>
@@ -4770,7 +4439,7 @@ export default function App() {
 
                         <strong>
                           {event.channel ||
-                            "MedAuth"}
+                            "Prototype"}
                         </strong>
                       </div>
 
@@ -4875,7 +4544,7 @@ export default function App() {
 
                 <strong>
                   {offline
-                    ? "Offline — Using saved records"
+                    ? "Offline — Using Cached Data"
                     : "System Online"}
                 </strong>
 
@@ -5442,8 +5111,6 @@ export default function App() {
             <EditableProfilePanel
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
-              onUpdateName={updateOwnAccount}
-              onChangePassword={changeOwnPassword}
               roleLabel="Consumer"
               defaults={{
                 fullName: "Ron",
@@ -5454,7 +5121,7 @@ export default function App() {
               }}
               accessibilityPrefs={accessibilityPrefs}
               updateAccessibilityPrefs={updateAccessibilityPrefs}
-              privacyNote="Medicine checking does not require medical history, prescriptions, diagnosis or health information."
+              privacyNote="Demo/local profile only. Medicine checking does not require medical history, prescriptions, diagnosis or health information."
             />
 
           </section>
@@ -5536,7 +5203,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Keep your sign-in preference
+                    Keep your demo preference
                   </span>
 
                 </div>
@@ -6522,8 +6189,6 @@ export default function App() {
             <EditableProfilePanel
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
-              onUpdateName={updateOwnAccount}
-              onChangePassword={changeOwnPassword}
               roleLabel="Pharmacist"
               defaults={{
                 fullName: "Marie Nguyen",
@@ -6534,7 +6199,7 @@ export default function App() {
               }}
               accessibilityPrefs={accessibilityPrefs}
               updateAccessibilityPrefs={updateAccessibilityPrefs}
-              privacyNote="No patient health information is stored in this profile."
+              privacyNote="Professional demo profile only. No patient health information is stored."
             />
 
           </section>
@@ -6613,7 +6278,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Keep your sign-in preference
+                    Keep demo sign-in preference
                   </span>
                 </div>
 
@@ -7779,8 +7444,6 @@ export default function App() {
             <EditableProfilePanel
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
-              onUpdateName={updateOwnAccount}
-              onChangePassword={changeOwnPassword}
               roleLabel="Admin / Regulator"
               defaults={{
                 fullName: "Luna Chen",
@@ -7868,7 +7531,7 @@ export default function App() {
                   </strong>
 
                   <span>
-                    Keep your sign-in preference
+                    Keep demo sign-in preference
                   </span>
                 </div>
 
@@ -7959,9 +7622,6 @@ function AdminWorkspace({
   setScreen,
   currentUser,
   setCurrentUser,
-  accounts,
-  onUpdateAccount,
-  onPasswordReset,
   accessibilityPrefs,
   updateAccessibilityPrefs,
   search,
@@ -7997,16 +7657,6 @@ function AdminWorkspace({
     exportOpen,
     setExportOpen,
   ] = useState(false);
-
-  const [
-    selectedAccountEmail,
-    setSelectedAccountEmail,
-  ] = useState("");
-
-  const selectedAccount =
-    accounts[
-      selectedAccountEmail
-    ] || null;
 
   return (
     <div className="admin-desktop">
@@ -8553,12 +8203,6 @@ function AdminWorkspace({
                   setCurrentUser={
                     setCurrentUser
                   }
-                  onUpdateName={
-                    updateOwnAccount
-                  }
-                  onChangePassword={
-                    changeOwnPassword
-                  }
                   roleLabel="Admin / Regulator"
                   defaults={{
                     fullName:
@@ -9104,125 +8748,95 @@ function AdminWorkspace({
                 subtitle="Application accounts and role permissions"
               />
 
-              {selectedAccount ? (
-                <AdminAccountEditor
-                  account={
-                    selectedAccount
-                  }
-                  onBack={() =>
-                    setSelectedAccountEmail(
-                      ""
-                    )
-                  }
-                  onSave={(
-                    updates
-                  ) => {
-                    onUpdateAccount(
-                      selectedAccountEmail,
-                      updates
-                    );
+              <section className="admin-panel">
 
-                    setSelectedAccountEmail(
-                      updates.email
-                        .trim()
-                        .toLowerCase()
-                    );
-                  }}
-                  onPasswordReset={() =>
-                    onPasswordReset(
-                      selectedAccount.email
-                    )
-                  }
-                />
-              ) : (
-                <section className="admin-panel">
+                <div className="admin-table-wrap">
 
-                  <div className="admin-table-wrap">
+                  <table className="admin-table">
 
-                    <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>
+                          Name
+                        </th>
 
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Email / Username</th>
-                          <th>Role</th>
-                          <th>Account Status</th>
-                          <th>Last Active</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
+                        <th>
+                          Email
+                        </th>
 
-                      <tbody>
+                        <th>
+                          Role
+                        </th>
 
-                        {Object.values(
-                          accounts
-                        ).map(
-                          (user) => (
-                            <tr
-                              key={
+                        <th>
+                          MFA
+                        </th>
+
+                        <th>
+                          Last Active
+                        </th>
+
+                        <th>
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+
+                      {Object.values(
+                        demoUsers
+                      ).map(
+                        (user) => (
+                          <tr
+                            key={
+                              user.email
+                            }
+                          >
+
+                            <td>
+                              {
+                                user.fullName
+                              }
+                            </td>
+
+                            <td>
+                              {
                                 user.email
                               }
-                            >
-                              <td>
-                                {user.fullName}
-                              </td>
+                            </td>
 
-                              <td>
-                                {user.email}
-                              </td>
+                            <td>
+                              {
+                                user.role
+                              }
+                            </td>
 
-                              <td>
-                                {user.role}
-                              </td>
+                            <td>
+                              Enabled
+                            </td>
 
-                              <td>
-                                <span
-                                  className={`admin-status ${
-                                    user.status ===
-                                    "INACTIVE"
-                                      ? "warning"
-                                      : "success"
-                                  }`}
-                                >
-                                  {user.status ===
-                                  "INACTIVE"
-                                    ? "Inactive"
-                                    : "Active"}
-                                </span>
-                              </td>
+                            <td>
+                              Today
+                            </td>
 
-                              <td>
-                                {user.lastActive ||
-                                  "Today"}
-                              </td>
+                            <td>
+                              <span className="admin-status success">
+                                Active
+                              </span>
+                            </td>
 
-                              <td>
-                                <button
-                                  type="button"
-                                  className="admin-table-action"
-                                  onClick={() =>
-                                    setSelectedAccountEmail(
-                                      user.email
-                                        .trim()
-                                        .toLowerCase()
-                                    )
-                                  }
-                                >
-                                  Edit Account
-                                </button>
-                              </td>
-                            </tr>
-                          )
-                        )}
+                          </tr>
+                        )
+                      )}
 
-                      </tbody>
+                    </tbody>
 
-                    </table>
+                  </table>
 
-                  </div>
+                </div>
 
-                </section>
-              )}
+              </section>
             </>
           )}
 
@@ -9237,242 +8851,6 @@ function AdminWorkspace({
 /* =========================================================
    HELPERS
 ========================================================= */
-
-function AdminAccountEditor({
-  account,
-  onBack,
-  onSave,
-  onPasswordReset,
-}) {
-  const [draft, setDraft] =
-    useState({
-      fullName:
-        account.fullName,
-      email:
-        account.email,
-      role:
-        account.role,
-      status:
-        account.status ||
-        "ACTIVE",
-    });
-
-  const [message, setMessage] =
-    useState("");
-
-  const save = (
-    event
-  ) => {
-    event.preventDefault();
-
-    if (
-      !draft.fullName.trim() ||
-      !draft.email.trim()
-    ) {
-      setMessage(
-        "Name and email are required."
-      );
-      return;
-    }
-
-    onSave(draft);
-    setMessage(
-      "Account updated"
-    );
-  };
-
-  return (
-    <section className="admin-panel admin-account-editor">
-
-      <button
-        type="button"
-        className="admin-back-link"
-        onClick={onBack}
-      >
-        ← Back to Users & Access
-      </button>
-
-      <div className="admin-account-editor-head">
-
-        <div>
-          <h2>
-            Edit Account
-          </h2>
-
-          <p>
-            Manage account details, role and status.
-          </p>
-        </div>
-
-        <span
-          className={`admin-status ${
-            draft.status ===
-            "INACTIVE"
-              ? "warning"
-              : "success"
-          }`}
-        >
-          {draft.status ===
-          "INACTIVE"
-            ? "Inactive"
-            : "Active"}
-        </span>
-
-      </div>
-
-      <form
-        className="admin-account-form"
-        onSubmit={save}
-      >
-
-        <label>
-          <span>
-            Name
-          </span>
-
-          <input
-            value={
-              draft.fullName
-            }
-            onChange={(event) =>
-              setDraft(
-                (current) => ({
-                  ...current,
-                  fullName:
-                    event.target.value,
-                })
-              )
-            }
-          />
-        </label>
-
-        <label>
-          <span>
-            Email / Username
-          </span>
-
-          <input
-            type="email"
-            value={draft.email}
-            onChange={(event) =>
-              setDraft(
-                (current) => ({
-                  ...current,
-                  email:
-                    event.target.value,
-                })
-              )
-            }
-          />
-        </label>
-
-        <label>
-          <span>
-            Role
-          </span>
-
-          <select
-            value={draft.role}
-            onChange={(event) =>
-              setDraft(
-                (current) => ({
-                  ...current,
-                  role:
-                    event.target.value,
-                })
-              )
-            }
-          >
-            <option value="consumer">
-              Consumer
-            </option>
-
-            <option value="pharmacist">
-              Pharmacist
-            </option>
-
-            <option value="manufacturer">
-              Manufacturer
-            </option>
-
-            <option value="admin">
-              Admin
-            </option>
-          </select>
-        </label>
-
-        <label>
-          <span>
-            Account Status
-          </span>
-
-          <select
-            value={
-              draft.status
-            }
-            onChange={(event) =>
-              setDraft(
-                (current) => ({
-                  ...current,
-                  status:
-                    event.target.value,
-                })
-              )
-            }
-          >
-            <option value="ACTIVE">
-              Active
-            </option>
-
-            <option value="INACTIVE">
-              Inactive
-            </option>
-          </select>
-        </label>
-
-        <div className="admin-account-actions">
-
-          <button
-            type="submit"
-            className="admin-primary-action"
-          >
-            Save Account
-          </button>
-
-          <button
-            type="button"
-            className="admin-secondary-action"
-            onClick={() => {
-              onPasswordReset();
-
-              setMessage(
-                "Password reset requested"
-              );
-            }}
-          >
-            Reset Password
-          </button>
-
-        </div>
-
-      </form>
-
-      {message && (
-        <div
-          className="admin-account-message"
-          role="status"
-        >
-          {message}
-        </div>
-      )}
-
-      <p className="admin-account-note">
-        Passwords are never displayed. Account changes are recorded in the Audit Trail.
-      </p>
-
-    </section>
-  );
-}
 
 function ReportsTable({
   reports,
@@ -10199,7 +9577,7 @@ function MedicineResultDetails({
         label="Source"
         value={
           product.source ||
-          "MedAuth Records"
+          "MedAuth prototype dataset"
         }
       />
 
@@ -10434,154 +9812,106 @@ function SupplyChainSnapshot({
 function EditableProfilePanel({
   currentUser,
   setCurrentUser,
-  onUpdateName,
-  onChangePassword,
   roleLabel,
   defaults,
+  accessibilityPrefs,
+  updateAccessibilityPrefs,
   privacyNote,
   web = false,
 }) {
   const [editing, setEditing] =
     useState(false);
 
-  const [
-    changingPassword,
-    setChangingPassword,
-  ] = useState(false);
-
   const [message, setMessage] =
     useState("");
 
-  const [error, setError] =
-    useState("");
-
-  const [nameDraft, setNameDraft] =
-    useState(
+  const buildDraft = () => ({
+    fullName:
       currentUser?.fullName ||
       defaults.fullName ||
-      ""
-    );
+      "",
+    title:
+      currentUser?.title ||
+      defaults.title ||
+      "",
+    organisation:
+      currentUser?.organisation ||
+      defaults.organisation ||
+      "",
+    email:
+      currentUser?.email ||
+      defaults.email ||
+      "",
+    phone:
+      currentUser?.phone ||
+      defaults.phone ||
+      "",
+  });
 
-  const [
-    currentPassword,
-    setCurrentPassword,
-  ] = useState("");
+  const [draft, setDraft] =
+    useState(buildDraft);
 
-  const [
-    newPassword,
-    setNewPassword,
-  ] = useState("");
-
-  const [
-    confirmPassword,
-    setConfirmPassword,
-  ] = useState("");
+  const [prefDraft, setPrefDraft] =
+    useState(accessibilityPrefs);
 
   const beginEdit = () => {
-    setNameDraft(
-      currentUser?.fullName ||
-      defaults.fullName ||
-      ""
+    setDraft(buildDraft());
+    setPrefDraft(
+      accessibilityPrefs
     );
-
     setMessage("");
-    setError("");
     setEditing(true);
   };
 
   const cancelEdit = () => {
-    setNameDraft(
-      currentUser?.fullName ||
-      defaults.fullName ||
-      ""
+    setDraft(buildDraft());
+    setPrefDraft(
+      accessibilityPrefs
     );
-
     setMessage("");
-    setError("");
     setEditing(false);
   };
 
   const saveProfile = () => {
-    const nextName =
-      nameDraft.trim();
-
-    if (!nextName) {
-      setError(
-        "Name cannot be empty."
-      );
-      return;
-    }
-
-    onUpdateName(
-      nextName
-    );
-
     setCurrentUser(
       (current) => ({
         ...(current || {}),
-        fullName:
-          nextName,
-        name:
-          nextName,
+        ...draft,
       })
     );
 
-    setEditing(false);
-    setError("");
+    updateAccessibilityPrefs(
+      prefDraft
+    );
+
     setMessage(
       "Profile updated"
     );
+    setEditing(false);
   };
 
-  const submitPassword = (
-    event
-  ) => {
-    event.preventDefault();
-
-    setError("");
-    setMessage("");
-
-    if (
-      !newPassword.trim()
-    ) {
-      setError(
-        "New password cannot be empty."
-      );
-      return;
-    }
-
-    if (
-      newPassword !==
-      confirmPassword
-    ) {
-      setError(
-        "New passwords do not match."
-      );
-      return;
-    }
-
-    const outcome =
-      onChangePassword({
-        currentPassword,
-        newPassword,
-      });
-
-    if (!outcome?.ok) {
-      setError(
-        outcome?.message ||
-        "Password could not be updated."
-      );
-      return;
-    }
-
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setChangingPassword(false);
-    setMessage(
-      "Password updated"
-    );
-  };
+  const field = (
+    key,
+    label,
+    type = "text"
+  ) => (
+    <label className="editable-profile-field">
+      <span>{label}</span>
+      <input
+        type={type}
+        value={draft[key]}
+        onChange={(event) =>
+          setDraft(
+            (current) => ({
+              ...current,
+              [key]:
+                event.target.value,
+            })
+          )
+        }
+      />
+    </label>
+  );
 
   return (
     <div
@@ -10590,14 +9920,12 @@ function EditableProfilePanel({
       }`}
     >
       <div className="editable-profile-heading">
-
         <div>
           <h2>
-            Profile
+            Profile details
           </h2>
-
           <p>
-            Your personal account details
+            {roleLabel}
           </p>
         </div>
 
@@ -10605,38 +9933,15 @@ function EditableProfilePanel({
           <button
             type="button"
             className="edit-profile-button"
-            onClick={
-              beginEdit
-            }
+            onClick={beginEdit}
           >
             Edit Profile
           </button>
         )}
-
       </div>
 
-      <div className="profile-information-card">
-
-        {editing ? (
-          <label className="editable-profile-field">
-
-            <span>
-              Name
-            </span>
-
-            <input
-              type="text"
-              value={nameDraft}
-              onChange={(event) =>
-                setNameDraft(
-                  event.target.value
-                )
-              }
-              autoComplete="name"
-            />
-
-          </label>
-        ) : (
+      {!editing ? (
+        <div className="profile-information-card">
           <ProfileRow
             label="Name"
             value={
@@ -10645,192 +9950,186 @@ function EditableProfilePanel({
               "—"
             }
           />
-        )}
+          <ProfileRow
+            label="Job title"
+            value={
+              currentUser?.title ||
+              defaults.title ||
+              "—"
+            }
+          />
+          {(currentUser?.organisation ||
+            defaults.organisation) && (
+            <ProfileRow
+              label="Organisation"
+              value={
+                currentUser?.organisation ||
+                defaults.organisation
+              }
+            />
+          )}
+          <ProfileRow
+            label="Email"
+            value={
+              currentUser?.email ||
+              defaults.email ||
+              "—"
+            }
+          />
+          {(currentUser?.phone ||
+            defaults.phone) && (
+            <ProfileRow
+              label="Phone"
+              value={
+                currentUser?.phone ||
+                defaults.phone
+              }
+            />
+          )}
+          <ProfileRow
+            label="Role"
+            value={roleLabel}
+          />
+        </div>
+      ) : (
+        <div className="editable-profile-form">
+          {field("fullName", "Name")}
+          {field(
+            "title",
+            roleLabel === "Consumer"
+              ? "Display title"
+              : "Job title"
+          )}
+          {roleLabel !== "Consumer" &&
+            field(
+              "organisation",
+              "Organisation"
+            )}
+          {field(
+            "email",
+            "Email",
+            "email"
+          )}
+          {roleLabel !== "Consumer" &&
+            field(
+              "phone",
+              "Phone",
+              "tel"
+            )}
+        </div>
+      )}
 
-        <ProfileRow
-          label="Email"
-          value={
-            currentUser?.email ||
-            defaults.email ||
-            "—"
-          }
-        />
+      <div className="profile-preferences-card">
+        <div className="profile-preferences-head">
+          <h3>
+            Accessibility
+          </h3>
+          <span>
+            Calm Trust preferences
+          </span>
+        </div>
 
-        <ProfileRow
-          label="Role"
-          value={roleLabel}
-        />
+        <label className="profile-preference-row">
+          <div>
+            <strong>
+              Text Size
+            </strong>
+            <span>
+              Standard, Large or Extra Large
+            </span>
+          </div>
 
+          <select
+            value={
+              editing
+                ? prefDraft.textSize
+                : accessibilityPrefs.textSize
+            }
+            disabled={!editing}
+            onChange={(event) =>
+              setPrefDraft(
+                (current) => ({
+                  ...current,
+                  textSize:
+                    event.target.value,
+                })
+              )
+            }
+          >
+            <option value="standard">
+              Standard
+            </option>
+            <option value="large">
+              Large
+            </option>
+            <option value="extra-large">
+              Extra Large
+            </option>
+          </select>
+        </label>
+
+        {[
+          ["highContrast", "High Contrast"],
+          ["voiceAssistance", "Voice Assistance"],
+          ["reducedMotion", "Reduced Motion"],
+        ].map(([key, label]) => (
+          <label
+            className="profile-preference-row"
+            key={key}
+          >
+            <div>
+              <strong>
+                {label}
+              </strong>
+              <span>
+                {(
+                  editing
+                    ? prefDraft[key]
+                    : accessibilityPrefs[key]
+                )
+                  ? "On"
+                  : "Off"}
+              </span>
+            </div>
+
+            <input
+              type="checkbox"
+              checked={
+                editing
+                  ? prefDraft[key]
+                  : accessibilityPrefs[key]
+              }
+              disabled={!editing}
+              onChange={(event) =>
+                setPrefDraft(
+                  (current) => ({
+                    ...current,
+                    [key]:
+                      event.target.checked,
+                  })
+                )
+              }
+            />
+          </label>
+        ))}
       </div>
 
       {editing && (
         <div className="editable-profile-actions">
-
           <button
             type="button"
             className="save-profile-button"
-            onClick={
-              saveProfile
-            }
+            onClick={saveProfile}
           >
             Save Changes
           </button>
-
           <button
             type="button"
             className="cancel-profile-button"
-            onClick={
-              cancelEdit
-            }
+            onClick={cancelEdit}
           >
             Cancel
           </button>
-
-        </div>
-      )}
-
-      <div className="profile-password-card">
-
-        <div className="profile-password-head">
-
-          <div>
-            <h3>
-              Password
-            </h3>
-
-            <p>
-              Keep your account sign-in protected.
-            </p>
-          </div>
-
-          {!changingPassword && (
-            <button
-              type="button"
-              className="change-password-button"
-              onClick={() => {
-                setChangingPassword(
-                  true
-                );
-
-                setError("");
-                setMessage("");
-              }}
-            >
-              Change Password
-            </button>
-          )}
-
-        </div>
-
-        {changingPassword && (
-          <form
-            className="change-password-form"
-            onSubmit={
-              submitPassword
-            }
-          >
-            <label className="editable-profile-field">
-              <span>
-                Current Password
-              </span>
-
-              <input
-                type="password"
-                value={
-                  currentPassword
-                }
-                onChange={(event) =>
-                  setCurrentPassword(
-                    event.target.value
-                  )
-                }
-                autoComplete="current-password"
-                required
-              />
-            </label>
-
-            <label className="editable-profile-field">
-              <span>
-                New Password
-              </span>
-
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(event) =>
-                  setNewPassword(
-                    event.target.value
-                  )
-                }
-                autoComplete="new-password"
-                required
-              />
-            </label>
-
-            <label className="editable-profile-field">
-              <span>
-                Confirm New Password
-              </span>
-
-              <input
-                type="password"
-                value={
-                  confirmPassword
-                }
-                onChange={(event) =>
-                  setConfirmPassword(
-                    event.target.value
-                  )
-                }
-                autoComplete="new-password"
-                required
-              />
-            </label>
-
-            <div className="editable-profile-actions">
-
-              <button
-                type="submit"
-                className="save-profile-button"
-              >
-                Update Password
-              </button>
-
-              <button
-                type="button"
-                className="cancel-profile-button"
-                onClick={() => {
-                  setChangingPassword(
-                    false
-                  );
-
-                  setCurrentPassword(
-                    ""
-                  );
-                  setNewPassword(
-                    ""
-                  );
-                  setConfirmPassword(
-                    ""
-                  );
-                  setError("");
-                }}
-              >
-                Cancel
-              </button>
-
-            </div>
-          </form>
-        )}
-
-      </div>
-
-      {error && (
-        <div
-          className="profile-error-message"
-          role="alert"
-        >
-          {error}
         </div>
       )}
 
@@ -10845,12 +10144,10 @@ function EditableProfilePanel({
 
       <div className="profile-note">
         <LockIcon />
-
         <span>
           {privacyNote}
         </span>
       </div>
-
     </div>
   );
 }
@@ -10859,35 +10156,459 @@ function BackButton({
   onClick,
 }) {
   return (
-    <div className="back-row">
+    <button
+      type="button"
+      className="back-button"
+      onClick={onClick}
+    >
+      ← Back
+    </button>
+  );
+}
 
-      <button
-        type="button"
-        className="back-button"
-        onClick={onClick}
-        aria-label="Go back"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
+function ProfileRow({
+  label,
+  value,
+}) {
+  return (
+    <div className="profile-row">
 
-        <span>
-          Back
-        </span>
-      </button>
+      <span>
+        {label}
+      </span>
 
-      <img
-        className="back-brand-logo"
-        src={`${import.meta.env.BASE_URL}medauth-logo.png`}
-        alt="MedAuth"
-      />
+      <strong>
+        {value}
+      </strong>
 
     </div>
   );
 }
+
+function PharmacistMetric({
+  label,
+  value,
+}) {
+  return (
+    <div className="pharmacist-metric">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
+function AdminMobileMetric({
+  label,
+  value,
+}) {
+  return (
+    <div className="admin-mobile-metric">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
+function PharmacistNav({
+  screen,
+  setScreen,
+}) {
+  const items = [
+    {
+      label:
+        "Dashboard",
+
+      screen:
+        "pharmacistDashboard",
+    },
+
+    {
+      label:
+        "Verify",
+
+      screen:
+        "scan",
+    },
+
+    {
+      label:
+        "Batch",
+
+      screen:
+        "pharmacistBatchLookup",
+    },
+
+    {
+      label:
+        "Recalls",
+
+      screen:
+        "pharmacistRecalls",
+    },
+
+    {
+      label:
+        "History",
+
+      screen:
+        "pharmacistHistory",
+    },
+  ];
+
+  return (
+    <nav className="pharmacist-nav">
+
+      {items.map(
+        (item) => (
+          <button
+            key={
+              item.screen
+            }
+            type="button"
+            className={
+              screen ===
+              item.screen
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setScreen(
+                item.screen
+              )
+            }
+          >
+            {
+              item.label
+            }
+          </button>
+        )
+      )}
+
+    </nav>
+  );
+}
+
+function AdminMobileNav({
+  screen,
+  setScreen,
+}) {
+  const items = [
+    {
+      label:
+        "Home",
+
+      screen:
+        "adminMobileDashboard",
+    },
+
+    {
+      label:
+        "Reports",
+
+      screen:
+        "adminMobileReports",
+    },
+
+    {
+      label:
+        "Scans",
+
+      screen:
+        "adminMobileScanMonitor",
+    },
+
+    {
+      label:
+        "Investigate",
+
+      screen:
+        "adminMobileInvestigation",
+    },
+
+    {
+      label:
+        "Audit",
+
+      screen:
+        "adminMobileAudit",
+    },
+  ];
+
+  return (
+    <nav className="admin-mobile-nav">
+
+      {items.map(
+        (item) => (
+          <button
+            key={
+              item.screen
+            }
+            type="button"
+            className={
+              screen ===
+              item.screen
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setScreen(
+                item.screen
+              )
+            }
+          >
+            {
+              item.label
+            }
+          </button>
+        )
+      )}
+
+    </nav>
+  );
+}
+
+function DashboardHeader({
+  title,
+  role,
+}) {
+  return (
+    <div className="dashboard-head">
+
+      <div>
+
+        <div className="eyebrow">
+          MedAuth account
+        </div>
+
+        <h1>
+          {title}
+        </h1>
+
+      </div>
+
+      <span className="role-badge">
+        {role}
+      </span>
+
+    </div>
+  );
+}
+
+function Row({
+  label,
+  value,
+}) {
+  return (
+    <div className="detail-row">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value || "—"}
+      </strong>
+
+    </div>
+  );
+}
+
+function Metric({
+  label,
+  value,
+}) {
+  return (
+    <div className="metric">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
+function ManufacturerDashboard({
+  totals,
+}) {
+  return (
+    <>
+      <div className="metric-grid">
+
+        <Metric
+          label="Demo scans"
+          value={
+            totals.scans
+          }
+        />
+
+        <Metric
+          label="Matches"
+          value={
+            totals.match
+          }
+        />
+
+        <Metric
+          label="No matches"
+          value={
+            totals.noMatch
+          }
+        />
+
+        <Metric
+          label="Covered"
+          value={
+            totals.covered
+          }
+        />
+
+      </div>
+
+      <div className="panel">
+
+        <h3>
+          Products
+        </h3>
+
+        <p>
+          SampleMed 10mg — enrolled
+        </p>
+
+        <p>
+          HealthMed 20mg — enrolled
+        </p>
+
+        <p>
+          TestMed 5mg — not yet covered
+        </p>
+
+      </div>
+    </>
+  );
+}
+
+function AdminPageHeader({
+  eyebrow,
+  title,
+  subtitle,
+  backAction,
+}) {
+  return (
+    <div className="admin-page-header">
+
+      <div>
+
+        {backAction && (
+          <button
+            className="admin-back-link"
+            onClick={
+              backAction
+            }
+          >
+            ← Back
+          </button>
+        )}
+
+        <span className="admin-eyebrow">
+          {eyebrow}
+        </span>
+
+        <h1>
+          {title}
+        </h1>
+
+        <p>
+          {subtitle}
+        </p>
+
+      </div>
+
+      <span className="admin-access-badge">
+        Admin Access
+      </span>
+
+    </div>
+  );
+}
+
+function AdminSummary({
+  label,
+  value,
+}) {
+  return (
+    <div className="admin-summary-card">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value}
+      </strong>
+
+    </div>
+  );
+}
+
+function AdminDetailRow({
+  label,
+  value,
+}) {
+  return (
+    <div className="admin-detail-row">
+
+      <span>
+        {label}
+      </span>
+
+      <strong>
+        {value || "—"}
+      </strong>
+
+    </div>
+  );
+}
+
+function AdminNavButton({
+  label,
+  active,
+  onClick,
+}) {
+  return (
+    <button
+      type="button"
+      className={`admin-nav-button ${
+        active
+          ? "active"
+          : ""
+      }`}
+      onClick={onClick}
+    >
+      {label}
+    </button>
+  );
+}
+
+/* ICONS */
 
 function ScanIcon() {
   return (
